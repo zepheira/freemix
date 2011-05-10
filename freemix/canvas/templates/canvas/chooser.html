@@ -1,0 +1,14 @@
+{% load i18n %}
+<div id="create_view_dialog" class="ui-helper-hidden">
+    <h1>{% trans "Pick a Canvas" %}</h1>
+<div class="chooser">
+        <ul id="canvas_chooser">
+            {% for canvas in canvases %}           
+            <li>
+                <a id='{{canvas.slug}}' href='' title='{{ canvas.name }}'><img src='{{ canvas.thumbnail }}' alt='{{ canvas.name }}' title='{{ canvas.name }}'/><span class='chooser-canvas-name'>{{ canvas.name }}</span></a>
+            </li>
+            {% endfor %}
+        </ul>
+</div>
+</div>
+<script type="text/javascript" src="{{STATIC_URL}}canvas/js/new_view_dialog.js"></script>

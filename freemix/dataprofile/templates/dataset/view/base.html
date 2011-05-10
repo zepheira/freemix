@@ -1,0 +1,111 @@
+{% extends "dataset/base.html" %}
+
+{% load i18n %}
+{% load freemix_helpers %}
+{% load compress %}
+{% block freemix_title %}{% blocktrans %}Data Profile{% endblocktrans %}: {{ profile.title }}{% endblock %}
+
+
+{% block freemix_css %}
+{{ block.super }}
+{% compress css %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/editor.css"/>
+{% endcompress %}
+<link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
+{% endblock %}
+
+{% block freemix_js%}
+    <script type="text/javascript" src="http://api.simile.zepheira.com/exhibit/2.2.0/exhibit-api.js?autoCreate=false"></script>
+
+    {{block.super}}
+    {% include "js_include/viewer.html" %}
+    {% compress js %}
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.uuid.js"></script>    
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
+    {% endcompress %}
+    <script type="text/javascript" src="{% url dataset_viewer_jsonp username=username, slug=slug %}"></script>
+{% endblock %}
+
+
+{% block body %}
+
+<div id="contents" class="ui-helper-hidden">
+  <div id="identify" class="ui-helper-clearfix">
+    <h1>{% trans "Data Profile" %}: {{ profile.title }}</h1>
+    {% ifequal user profile.user %}
+    <div class="priority-area">
+      <a href="{% url edit_data_set username=username slug=slug %}" class="button_link">{% trans "Edit" %}</a>
+      {% comment %}
+      <a href="{% url build_new_freemix username=user.username dataset=profile.get_url_path %}" class="button_link">{% trans "Build" %}</a>
+      {% endcomment %}
+    </div>
+    {% endifequal %}
+    {% with profile.data_views.count as view_count %}
+    {% ifnotequal view_count 0 %}
+    <p><a href="{% url dataviews_by_dataset username slug %}">{% trans "See all" %} {{ view_count }} {% trans "data views" %}</a> {%  trans  "based on this data profile." %}</p>
+    {% endifnotequal %}
+    {% endwith %}
+    <table id="identify-table" class="property-list-table">
+      <thead class="facet-header ui-widget-header">
+        <tr>
+          <th>
+        <div>
+          {% trans  "Enabled" %}
+        </div>
+          </th>
+          <th>
+        <div>
+              {% trans "Field Name" %}
+        </div>
+          </th>
+          <th>
+        <div>
+              {% trans "Types"%}
+        </div>
+          </th>
+          <th>
+        <div>
+              {% trans "Value" %}
+                <span class="record-pager">
+                    <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
+                    <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
+                </span>
+
+        </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr class='table-footer'>
+          <td colspan="3"></td>
+          <td>
+            <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
+              <span id="record-selector">
+                  <span class="record-pager">
+                    <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
+                    <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
+                  </span>
+                  <span id="current-record">#p</span> of <span id="record-count">#t</span>&#160;
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+
+<div class="ui-helper-hidden">
+  <div id="templates">
+  </div>
+</div>
+
+{% endblock %}

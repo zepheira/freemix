@@ -1,0 +1,64 @@
+{% load i18n %}
+{% load freemix_helpers %}
+
+<li class="dataset_summary result_set_item clearfix">
+
+    <div class="dataset-name"><a href="{{ dataset.get_url_path }}">{{ dataset.title }}</a></div>
+
+    <div class="dataset-left">
+        <div class="dataset-creator">
+          <span class="property-label">{% trans "Loaded by:" %} </span> <a href="{% url profile_detail dataset.user.username %}">{{ dataset.user|nicename }}</a> 
+        </div>
+        <div class="dataset-created-data"><span class="property-label">{% trans "Loaded on:" %} </span>{{ dataset.created|date:"N j, Y" }}</div> 
+        <div class="dataset-modified-data"><span class="property-label">{% trans "Last Modified:" %} </span>{{ dataset.modified|date:"N j, Y" }}</div>
+
+        {% ifnotequal dataset.data_views.count 0 %}
+        <div class="dataset-usedin">
+          <span class="property-label">{% trans "Basis for:" %}</span>
+          <span class="view-count"><a href="{% url dataviews_by_dataset username=dataset.user.username slug=dataset.slug %}">{{ dataset.data_views.count }} {% trans "Data View" %}{{ dataset.data_views.count|pluralize }}</a></span>
+        </div>
+        {% endifnotequal %}
+
+{% comment %}
+        {% if dataset.description %}
+        <div class="dataset-description"><span class="property-label">{% trans "Description:" %}</span></div>
+        {{ dataset.description }}
+        {% endif %}
+{% endcomment %}
+    </div>
+
+    {% if request.user.is_authenticated %}
+
+    <div class="dataset-right">
+
+      <div class="dataset-links">
+	
+        <span class="action action_create_dataset">
+          <a class="dataset_create" href="{% url build_new_freemix username=request.user.username dataset=dataset.get_url_path %}">{% trans "Build" %}</a>
+        </span>
+
+        <span class="divider">|</span>
+
+        <span class="action action_create_dataset">
+          <a class="dataset_export" href="{% url dataset_data username=dataset.user.username slug=dataset.slug %}">{% trans "Export" %}</a>
+        </span>
+
+        {% ifequal request.user.username dataset.user.username %}
+        <span class="divider">|</span>
+
+        <span class="action action_edit_dataset">
+          <a class="dataset_edit" href="{% url edit_data_set username=dataset.user.username slug=dataset.slug %}">{% trans "Edit" %}</a>
+        </span>
+
+        <span class="divider">|</span>
+
+        <span class="action action_edit_dataset">
+            <a class="dataset_delete" href="{{ dataset.get_url_path }}">{% trans "Delete" %}</a>
+        </span>
+        {% endifequal %}
+
+      </div>
+    </div>
+   {% endif %}
+
+</li>

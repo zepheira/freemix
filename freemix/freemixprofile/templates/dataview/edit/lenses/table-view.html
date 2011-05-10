@@ -1,0 +1,23 @@
+{% extends "dataview/edit/lenses/record-view.html" %}
+{% load i18n %}
+
+{% block template_id %}id="table-view-template"{% endblock %}
+{% block view_header %}{% endblock %}
+{% block property-list-headers %}
+    <th class="visible">Show</th>
+    <th>Sort By<br />
+        <select name="sort-order" class="sort-order">
+            <option value="true">Ascend</option>
+            <option value="false">Descend</option>
+        </select>
+    </th>
+    <th>Property</th>
+    <th>
+        Value
+        <span class="record-pager">
+            <button class="left-record-button" title="{% trans "Previous Record" %}">{% trans "Previous Record" %}</button>
+            <button class="right-record-button" title="{% trans "Next Record" %}">{% trans "Next Record" %}</button>
+        </span>    
+    </th>
+{% endblock %}
+{% block footer-filler-colspan %}colspan="2"{% endblock %}

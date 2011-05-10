@@ -1,0 +1,19 @@
+include setup.py README MANIFEST.in
+global-include fixtures/*
+
+graft freemix/templates
+graft freemix/static
+graft requirements
+graft freemix/locale
+graft test
+graft docs
+graft akara
+
+recursive-include freemix/*/templates *
+recursive-include freemix/*/static *
+
+recursive-include freemix/apps/*/templates *
+recursive-include freemix/apps/*/static *
+
+prune freemix/site_media
+prune docs/_build

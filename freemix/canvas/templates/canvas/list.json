@@ -1,0 +1,11 @@
+[
+    {% for canvas in canvas_list %}
+    {% templatetag openbrace %}
+        "slug": "{{ canvas.slug }}",
+        "name": "{{ canvas.name }}",
+        "description": "{{ canvas.description }}"
+    
+    {% templatetag closebrace %}
+    {% if not forloop.last %},{% endif %}
+    {% endfor %}
+]

@@ -1,0 +1,54 @@
+{% load i18n %}
+
+<div class="delete_dataview_dialog ui-helper-hidden">
+    <div class="delete_dataview_form">
+    <p>{% blocktrans %}Really delete this <a href="" class="dataview_url">data view</a>?{% endblocktrans %}</p>
+    <div class="button_group">
+        <a href="#" class='button_link ok-button' title='OK'>OK</a>
+        <a href="#" class='button_link negative-button cancel-button' title='Cancel'>Cancel</a>
+    </div>
+    </div>
+    <div class='delete_dataview_failed'>Delete Failed<span class='cancel-button button ui-state-default ui-corner-all' title='OK'>OK</span></div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete_dataview_dialog").dialog({
+                    autoOpen: false,
+                    modal: true,
+                    draggable: false,
+                    resizable: false,
+                    title: "Delete a Data View"
+    });
+    $(".delete_dataview_dialog .ok-button").click(function(e) {
+        $.ajax({
+            type: "DELETE",
+            url: $(".delete_dataview_dialog .dataview_url").attr("href"),
+            success: function(msg) {
+                window.location.reload( true );
+            },
+            error: function(xhr, status, error) {
+                $(".delete_dataview_form").hide();
+                $(".delete_dataview_form").show();
+
+            }
+        });
+        
+        e.preventDefault();
+    });
+
+    $(".delete_dataview_dialog .cancel-button").click(function(e) {
+        $(".delete_dataview_dialog").dialog("close");
+        e.preventDefault();
+    });
+
+    $("a.dataview_delete").click(function(e) {
+        root = $(this).closest(".dataview_summary");
+        var url = $(this).attr("href");
+        $(".delete_dataview_dialog").find("a.dataview_url").attr("href", url);
+        $(".delete_dataview_failed").hide();
+        $(".delete_dataview_dialog").dialog("open");
+        e.preventDefault();
+    });
+});
+</script>

@@ -1,0 +1,54 @@
+{% load i18n %}
+<div id="image-facet-editor">
+<div id="add-facet" title="Add a Facet" style="width:64em">
+<table>
+<tr>
+<td>
+	<label style="height:2em">Properties</label>
+</td>
+<td>
+	<label for="user" style="height:2em">Picasa Username:</label>
+	<input id="user" name="user"/>
+</td>
+</tr>
+<tr>
+<td>
+     <table id="add-facet-table" style="width:32em">
+         <thead class="facet-header ui-widget-header">
+             <tr>
+                 <th></th>
+                 <th>
+                     Properties
+                 </th>
+                 <th>
+                     Values
+                 </th>
+                 <th>
+                     Missing
+                 </th>
+             </tr>
+         </thead>
+         <tbody style="height:32em;overflow:auto;overflow-x:hidden"></tbody>
+     </table>
+</td>
+<td>
+     <table id="album-facet-table" style="width:32em">
+         <thead class="facet-header ui-widget-header">
+             <tr>
+                 <th></th>
+                 <th>
+                     Title
+                 </th>
+                 <th>
+                     Thumbnail
+                 </th>
+                 <th></th>
+             </tr>
+         </thead>
+         <tbody style="height:32em;overflow:auto;overflow-x:hidden"></tbody>
+     </table>
+</td>
+</tr>
+</table>
+ </div>
+</div>

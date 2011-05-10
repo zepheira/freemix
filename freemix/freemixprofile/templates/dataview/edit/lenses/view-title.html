@@ -1,0 +1,26 @@
+{% load i18n %}
+
+<div class="ui-widget-header view-header-container" title="Add a title to make a heading or label for the data in your view.">
+    <span class="view-title">
+        Title:&nbsp;<span class="title-value"></span>
+        &middot;&nbsp;<a href="#" class="title-edit-link">edit</a>
+    </span>
+    <span class="view-title-editor ui-helper-hidden">
+        Title:&nbsp;
+        <select class="title-property">
+    	    <option value="">
+    		    (None)
+    	    </option>
+        </select>
+        <span class="ui-helper-hidden">
+            Link:&nbsp;
+            <select class="title-property-link" >
+        	    <option value="">
+        		    (None)
+        	    </option>
+            </select>
+        </span>
+        <button class="ok-button" title="OK">OK</button>
+        <button class="cancel-button" title="Cancel">Cancel</button>
+    </span>
+</div>

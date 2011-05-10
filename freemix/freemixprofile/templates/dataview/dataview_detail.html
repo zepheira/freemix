@@ -1,0 +1,48 @@
+{% load i18n %}
+{% load freemix_helpers %}
+
+<li class="dataview_summary result_set_item clearfix">
+
+    <div class="dataview-name"><a href="{{  dataview.get_url_path }}">{{dataview.title}}</a></div>
+
+    <div class="dataview-left">
+        <div class="dataview-creator">
+                <span class="property-label">{% trans "Created by:"%} </span> <a href="{% url profile_detail dataview.user.username %}">{{dataview.user|nicename}}</a>  
+        </div>
+        <div class="dataview-created-data"><span class="property-label">{% trans "Created on:"%} </span>{{dataview.created|date:"N j, Y"}}</div> 
+        <div class="dataview-modified-data"><span class="property-label">{% trans "Last Modified:"%} </span>{{dataview.modified|date:"N j, Y"}}</div>
+        <div class="dataview-dataset-name"><a href="{{dataview.data_profile.get_url_path }}" title="{{dataview.data_profile.title}}">{% blocktrans %}Original data set{% endblocktrans %}</a></div>
+
+{% comment %}
+        {% if dataview.description %}
+        <span class="property-label">{% trans "Description:" %}</span>
+        {{dataview.description}}
+        {% endif %}
+{% endcomment %}
+
+    </div>
+
+    {% if request.user.is_authenticated %}
+    {% ifequal request.user.username  dataview.user.username %}
+
+    <div class="dataview-right">
+
+      <div class="dataview-links">
+
+        <span class="action action_edit_dataview">
+          <a class="dataview_edit" href="{% url build_freemix username=dataview.user.username slug=dataview.slug %}">{% trans "Edit" %}</a>
+        </span>
+
+        <span class="divider">|</span>
+
+        <span class="action action_edit_dataview">
+          <a class="dataview_delete" href="{{  dataview.get_url_path }}">{% trans "Delete" %}</a>
+        </span>
+      
+      </div>
+    </div>
+
+    {% endifequal %}
+    {% endif %}
+
+</li>

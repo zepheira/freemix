@@ -1,0 +1,205 @@
+{% extends "dataset/base.html" %}
+
+{% load i18n %}
+{% load canvas %}
+{% load compress %}
+
+{% block freemix_title %}{% blocktrans %}Data Profile Editor{% endblocktrans %}{% endblock %}
+
+{% block rtab_id %}id="builder_tab"{% endblock %}
+{% block body_class %}dataprofile{% endblock %}
+
+{% block subnav %}
+
+{% if user.is_authenticated %}
+
+{% if upload %} <ul class="step-menu"> {% else %} <ul class="ui-helper-hidden step-menu"> {% endif %}
+  <li>
+    <a href="#load"><span class="step">1.</span>&nbsp;
+      {% if upload %}      
+      <span class="initial">{% trans "Upload" %}</span><span class="success ui-helper-hidden">
+      {% else %}
+      <span>
+      {% endif %}          
+      {% trans "Replace" %}</span>
+      </a>
+  </li>
+  <li>
+    <a href="#identify"><span class="step">2.</span>&nbsp;{% trans "Describe" %}</a>
+  </li>
+  <li>
+    <a href="#publish"><span class="step">3.</span>&nbsp;{% trans "Publish"%}</a>
+  </li>
+</ul>
+
+  <p id="subnav-extra">
+    <a href="{% url profile_detail user.username %}" id="dialog_link" class="ui-state-default ui-corner-all button button-icon-left">
+      <span class="ui-icon ui-icon-cancel"></span> Cancel</a>
+  </p>
+{% else %}
+
+&nbsp;
+{% endif %}
+
+{% endblock %}
+    
+{% block freemix_meta %}
+{{block.super}}
+{% if publishurl %}
+<link rel="freemix/publish" href="{{ publishurl }}"/>
+{% endif %}
+
+{% endblock %}
+
+{% block freemix_js %}
+    <script type="text/javascript" src="http://api.simile.zepheira.com/exhibit/2.2.0/exhibit-api.js?autoCreate=false"></script>
+    {{block.super}}
+    {% include "js_include/viewer.html" %}
+    {% compress js %}
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.jeditable.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.uuid.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>  
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>  
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify-edit.js"></script>    
+    <script type="text/javascript" src="{{STATIC_URL}}canvas/js/new_view_dialog.js"></script>   
+    <script type="text/javascript" src="{{STATIC_URL}}dataset/js/editor.js"></script>
+    {% endcompress %}
+    {% block data_script %}
+    <script type="text/javascript" src="{% url dataset_editor_jsonp username=username, slug=slug %}"></script>
+    {% endblock data_script %}
+{% endblock freemix_js%}
+
+    
+{% block freemix_css %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
+{% compress css %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/editor.css"/>
+{% endcompress %}
+{% endblock %}
+
+{% block freemix_body %}
+
+<div id="contents" class="ui-helper-hidden">
+{% block contents %}
+  {% include "dataset/edit/load.html" %}
+
+  <div id="identify" class="ui-helper-clearfix ui-helper-hidden builder-tab">
+    {% block describe %}
+    <div id="editor">
+    {% block editor %} 
+
+    <h1>{% trans "Describe Your Data" %}</h1>
+    
+    <ul id="describe_messages" class="messages">
+        {% block describe_messages %}
+        {% endblock describe_messages %}
+    </ul>
+
+
+    <h2 class='editable' id='profile-label'></h2>
+    <table id="identify-table" class="property-list-table">
+      <thead class="facet-header ui-widget-header">
+        <tr>
+          <th width="5%">
+              {% trans "Enabled" %}
+          </th>
+          <th width="35%">
+              {% trans "Field Name" %}
+          </th>
+          <th width="10%">
+              {% trans "Type"%}
+          </th>
+          <th width="50%" colspan=2>
+              {% trans "Value" %}
+
+            <div class="record-pager">
+                <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
+                <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
+            </div>
+          </th> 
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr class='table-footer'>
+            <td colspan="5">
+            <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
+            
+            {% block record_controls %}
+              <button class="data-record-delete">{% trans "Delete This Record" %}</button>
+              <span id="record-selector">
+                  <span class="record-pager">
+                    <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
+                    <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
+                  </span>
+                  <span id="current-record">#p</span> of <span id="record-count">#t</span>&#160;
+              </span>
+            {% endblock %}  
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+    </div>
+    {% endblock editor %}
+    {% endblock describe %}
+    <div class="clear">&nbsp;</div>
+  </div>
+
+  <div id="publish" class="ui-helper-clearfix ui-helper-hidden builder-tab">
+    {% block publish %}
+    <div id="publish-label" class="ui-helper-hidden">{% blocktrans %}Please enter a name for your dataset:{% endblocktrans %}<input type="text" id="profile-name"/><input type="button" id="profile-name-button" value="{% trans "Publish" %}"/></div>
+    <div id="publish-success" class="ui-helper-hidden">{% blocktrans %}This dataset has been published to{% endblocktrans %}&nbsp;<span id="publish-url"></span>.
+      <div class="hyper-upload">
+        <p><a class="button_link build-freemix" href="{% url freemix_root username=user.username %}?build=true">{% trans "Create a Data View" %}</a></p>
+        <p>{% blocktrans %}Create a new {{ SITE_NAME }} view of this data, or{% endblocktrans %}</p>
+        <p><a class="button_link" href="{% url upload_dataset %}" title="{% blocktrans %}Create a new dataset{% endblocktrans %}">{% trans "Upload More Data" %}</a></p>
+      </div>
+    </div>
+    <div id="publish-failure" class="ui-helper-hidden">{% blocktrans %}Publish Failed:{% endblocktrans %}<span id="publish-error"></span></div>
+    {% endblock publish %}
+  </div>
+  {% endblock contents %}
+</div>
+
+
+<div class="ui-helper-hidden">
+  {% block dataset_edit_hidden %}
+  <span id="title-placeholder">{% trans "Click to Edit Profile Title..." %}</span>
+  
+  <div id="delete-record-dialog" title="{% trans "Delete This Record" %}">
+      <p>
+          <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+          {% blocktrans %}
+          You will not be able to recover this record after publishing this dataset. 
+          Really delete it?
+          {% endblocktrans %}
+      </p>
+  </div>
+
+  <div id="delete-property-dialog" title="Delete Property">
+      <p>
+          <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+          {% blocktrans %}
+          This property will be permanently deleted and cannot be recovered. Are you sure?
+          {% endblocktrans %}
+      </p>}
+  </div>
+  
+  <div id="record-picker-dialog">
+
+  </div>
+
+  {% endblock dataset_edit_hidden %}
+</div>
+{% canvas_chooser %}
+{% endblock %}
+

@@ -1,0 +1,193 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load canvas %}
+{% load dataview_tags %}
+{% load compress %}
+
+{% block head_title %}{% blocktrans %}Builder{% endblocktrans %}{% endblock %}
+
+{% block rtab_id %}id="builder_tab"{% endblock %}
+{% block body_class %}attraction{% endblock %}
+
+{% block subnav %}
+{% if user.is_authenticated %}
+<ul class="step-menu">
+  <li>
+    <a id="b1" href="#identify"><span class="step">1.</span>&nbsp;{% trans "Describe" %}</a>
+  </li>
+  <li>
+    <a id="b2" href="#build"><span class="step">2.</span>&nbsp;{% trans "Build" %}</a>
+  </li>
+  <li>
+    <a id="b3" href="#preview"><span class="step">3.</span>&nbsp;{% trans "Preview"%}</a>
+  </li>
+  <li>
+    <a id="b4" href="#publish"><span class="step">4.</span>&nbsp;{% trans "Publish"%}</a>
+  </li>
+</ul>
+{% else %}
+&nbsp;
+{% endif %}
+{% endblock %}
+    
+{% block head_data %}
+    {% if publishurl %}
+        <link rel="freemix/publish" href="{{ publishurl }}">
+    {% endif %}
+{% endblock %}
+
+{% block head_css %}
+{{block.super}}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/editor.css"/>
+<link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
+<style type="text/css">
+      {% canvas_css canvas %}   
+</style>
+{% endblock head_css %}
+
+       
+{% block head_scripts %}
+
+    {% include "js_include/exhibit.html" %}
+    {{ block.super }}
+    {% include "js_include/jquery_ui.html" %}
+    {% include "js_include/viewer.html" %}
+    {% compress js %}
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.jeditable.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/hoverIntent.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.qtip.1.0.0-rc3.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.qtip.themeroller.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.uuid.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>   
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>   
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>  
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}dataview/js/widget.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}dataview/js/facet.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}dataview/js/view.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}dataview/js/views/map-view.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}dataview/js/views/record-pager.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}view_theme/js/jquery.themeswitcher.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify-edit.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}dataview/js/editor.js"></script>
+    {% endcompress %}
+    {% include "dataview/lens_js.html" %}
+    {% include "dataview/facet_js.html" %}
+
+    {% if slug %}
+    <script type="text/javascript">
+        {% view_json username slug %}
+    </script>
+    {% else %}
+    <script type="text/javascript" >
+        {% new_view_json data_profile canvas %}
+    </script>
+
+    {% endif %}
+
+{% endblock head_scripts %}
+
+{% block body %}
+<div id="toolbar">      
+    <div id="theme" >
+        {% theme_list %}
+    </div>
+</div>
+<div id="contents" class="ui-helper-hidden">
+
+  <div id="identify" class="ui-helper-clearfix ui-helper-hidden builder-tab">
+
+    <h1>{% trans "Describe Your Data" %}</h1>
+
+    <table id="identify-table" class="property-list-table">
+      <thead class="facet-header ui-widget-header">
+        <tr>
+          <th>
+              {% trans "Enabled" %}
+          </th>
+          <th>
+          {% trans "Field Name" %}
+          </th>
+          <th>
+              {% trans "Type" %}
+          </th>
+          <th>
+              {% trans "Value" %}
+              <span class="record-pager">
+                  <button class="left-record-button" title="{% trans "Previous Record" %}">{% trans "Previous Record" %}</button>
+                  <button class="right-record-button" title="{% trans "Next Record" %}">{% trans "Next Record" %}</button>
+              </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr class='table-footer'>
+          <td colspan="3"></td>
+          <td>
+            <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
+              <span id="record-selector">
+                <span class="record-pager">
+                  <button class="left-record-button" title="{% trans "Previous Record" %}">{% trans "Previous Record" %}</button>
+                  <button class="right-record-button" title="{% trans "Next Record" %}">{% trans "Next Record" %}</button>
+                </span>
+                <span id="current-record">#p</span> of <span id="record-count">#t</span>
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="clear">&nbsp;</div>
+    
+  </div>
+  <div id="build" class="ui-helper-clearfix ui-helper-hidden builder-tab">
+    <div id="canvas">
+        {% canvas_html canvas %}              
+    </div>                
+  </div>
+  <div id="preview" class="ui-helper-clearfix ui-helper-hidden builder-tab"></div>
+  <div id="publish" class="ui-helper-clearfix ui-helper-hidden builder-tab">
+    <div id="publish-success" class="ui-helper-hidden">{% blocktrans %}This data view has been published to{% endblocktrans %} <span id="publish-url"></span>.</div>
+    <div id="publish-failure" class="ui-helper-hidden">{% blocktrans %}Publish Failed:{% endblocktrans %}<span id="publish-error"></span></div>
+  </div>
+
+
+</div>
+
+
+<div class="ui-helper-hidden">
+  <div id="templates">
+    <div id="canvas-template">
+        {% canvas_html canvas %}             
+    </div>
+
+    {% block builder_templates %}
+    {# facets #}
+    {% include "dataview/edit/facets/image-facet-editor.html" %}
+    {% include "dataview/edit/facets/list-facet-editor.html" %}
+    {% include "dataview/edit/facets/logo-facet-editor.html" %}
+    {% include "dataview/edit/facets/tagcloud-facet-editor.html" %}
+    {% include "dataview/edit/facets/text-facet-editor.html" %}
+
+    {# lenses #}
+    {% include "dataview/edit/lenses/list-view.html" %}
+    {% include "dataview/edit/lenses/map-view.html" %}
+    {% include "dataview/edit/lenses/piechart-view.html" %}
+    {% include "dataview/edit/lenses/record-view.html" %}
+    {% include "dataview/edit/lenses/scatterplot-view.html" %}
+    {% include "dataview/edit/lenses/table-view.html" %}
+    {% include "dataview/edit/lenses/timeline-view.html" %}
+
+    {% endblock %}
+
+  </div>
+  <div id="popup-scratch" class="ui-helper-reset ui-widget"></div>
+</div>
+
+{% endblock body %}
+

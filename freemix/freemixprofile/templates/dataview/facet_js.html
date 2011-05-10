@@ -1,0 +1,10 @@
+{% load compress %}
+
+{% compress js %}
+<script type="text/javascript" src="{{STATIC_URL}}dataview/js/facets/search-facet.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}dataview/js/facets/list-facet.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}dataview/js/facets/tagcloud-facet.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}dataview/js/facets/logo-facet.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}dataview/js/lib/creole.js"></script> 
+<script type="text/javascript" src="{{STATIC_URL}}dataview/js/facets/text-facet.js"></script>
+{% endcompress %}

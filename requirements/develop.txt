@@ -1,0 +1,6 @@
+Werkzeug
+bpython
+pylint
+sphinx
+
+-r requirements.txt

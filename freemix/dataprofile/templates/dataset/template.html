@@ -1,0 +1,7 @@
+{% extends "freemix/base.html" %}
+
+{% block freemix_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery-1.5.2.js"></script>
+    {% include "js_include/jquery_ui.html" %}
+{% endblock %}

@@ -1,0 +1,11 @@
+/*global jQuery */
+(function($) { 
+    $(document).ready(function() {
+
+        var upload = new $.freemix.UploadForm();
+        var editor = new $.freemix.DatasetEditor();
+        editor.setData({{json|safe}});
+
+    });
+
+})(jQuery);
