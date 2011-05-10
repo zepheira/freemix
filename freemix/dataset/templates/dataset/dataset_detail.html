@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+    <div class="dataset_summary result_set_item clearfix {% if dataset.published %}public{% else %}private{% endif %}">
+        <div class="dataset-name">
+            <a href="{{ detail_url }}">{{ dataset.title }}</a>
+        </div>
+        <p>
+            {{ dataset.description }}
+        </p>
+    </div>
+    <h2>{% trans "Data Sources" %}</h2>
+    {%  if dataset.sources.all %}
+    <ul class="datasource_list">
+
+        {% for source in dataset.sources.all %}
+            <li class="datasource_summary">
+                {{ source }}
+            </li>
+        {% endfor %}
+
+
+    {% else %}
+{#        <a href="{% url datasource_create %}">{% trans "Add a Data Source" %}</a>#}
+    {% endif %}
+
+    </ul>
+{% endblock %}

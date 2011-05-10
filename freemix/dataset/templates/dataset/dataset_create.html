@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{%  load uni_form_tags %}
+
+{% block content %}
+
+<h1>Create a dataset</h1>
+
+<form action="{% url dataset_create %}" method="post" class="uniForm">
+    {% csrf_token %}
+    {{ form|as_uni_form }}
+    <input type="submit" value="Submit" />
+</form>
+{% endblock %}

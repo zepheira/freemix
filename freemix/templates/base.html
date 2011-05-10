@@ -1,0 +1,39 @@
+{% load uni_form_tags %}
+{% load i18n %}
+<html>
+    <head>
+        <link type="text/css" href="{{ STATIC_URL }}freemix/css/base/jquery-ui.css" rel="Stylesheet" />
+        <link type="text/css" href="{{ STATIC_URL }}freemix/css/base.css" rel="Stylesheet" />
+
+        <script type="text/javascript" src="{{ STATIC_URL }}freemix/js/jquery-1.5.2.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}freemix/js/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="{{ STATIC_URL }}uni_form/uni-form-generic.css" type="text/css" />
+        <link rel="stylesheet" href="{{ STATIC_URL }}uni_form/uni-form.css" type="text/css" />
+        <script type="text/javascript" src="{{ STATIC_URL }}uni_form/uni-form.jquery.js"></script>
+    </head>
+    <body class="container_12">
+    <div id="header">
+    {%  block header %}
+        <div class="login">
+            {% if user.is_authenticated %}
+                <span class="login-welcome"><strong>{% trans "Welcome" %}, {{ user.username }}</strong> </span>
+                <span class="divider">|</span>
+                {% if user.is_staff %}
+                    <a href="{% url admin:index %}">{% trans "Admin" %}</a>
+                    <span class="divider">|</span>
+                {% endif %}
+                <a href="{% url acct_logout %}">{% trans "Logout" %}</a>
+            {% else %}
+                <a href="{% url acct_login %}">{% trans "Login" %}</a>
+            {% endif %}
+        </div>
+    {% endblock %}
+    </div>
+
+    <div id="body" class="freemix-themeable">
+    {%  block content %}
+
+    {% endblock %}
+    </div>
+    </body>
+</html>

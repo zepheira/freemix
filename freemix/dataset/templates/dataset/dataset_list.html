@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{%  load i18n %}
+
+{% block content %}
+<div class="ui-helper-clearfix">
+<h1>{{ owner }}'s Datasets</h1>
+    <div class="priority-area">
+        <a class="button_link" href="{% url dataset_create %}">{% trans "Create a New Dataset" %}</a>
+    </div>
+    <ul class="dataset_list_items">
+   {% for dataset in object_list %}
+       {% url dataset_detail dataset.owner dataset.slug as detail_url %}
+       <li class="dataset_summary result_set_item clearfix {% if dataset.published %}public{% else %}private{% endif %}">
+            <div class="dataset-name">
+                <a href="{{ detail_url }}">{{ dataset.title }}</a>
+            </div>
+            <p>
+                <span class="short-description">
+                {{ dataset.description|safe|truncatewords:20 }}
+                {% ifnotequal dataset.description dataset.description|truncatewords:20 %}
+                    <a class="readmore" href="{{ detail_url }}">read more</a>
+                {% endifnotequal %}
+                </span>
+            </p>
+            
+       </li>
+   {% endfor %}
+    </ul>
+</div>
+{% endblock %}
