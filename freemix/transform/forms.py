@@ -16,6 +16,14 @@ class URLUploadForm(forms.Form):
     service = forms.ChoiceField(required=True, label=_("Data service"), choices=service_choices, help_text=_("Leave as 'None' for files or if you are otherwise unsure"))
     cdm_collection_name = forms.CharField(required=False, label=_("Collection name"), help_text=_("Collection names begin with the <strong>/</strong> character"))
     cdm_search_term = forms.CharField(required=False, label=_("Search term"))
+    cdm_limit = forms.ChoiceField(label=_("Limit"),
+                              help_text=_(
+                                  "The maximum number of records to load"),
+                              choices=((100, "100"),
+                                       (200, "200"),
+                                       (300, "300"),
+                                       (400, "400")))
+
     diagnostics=forms.BooleanField(required=False, label=_("Verify data"), help_text=_("<a class='verify_data_help' href='#load-info-verify-data'>What's This?</a>"))
 
     def clean(self):

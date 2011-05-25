@@ -57,7 +57,6 @@ class AkaraTransformClient(object):
         return self._akara_call(self.akara_url, body=contents, diagnostics=diagnostics)
 
     def contentdm(self, params, diagnostics=False):
-        params['limit'] = 100
         return self._akara_call(conf.AKARA_CONTENTDM_URL, params=params, diagnostics=diagnostics)
 
     def oaipmh(self, params, diagnostics=False):
@@ -124,11 +123,14 @@ class URLTransformView(TransformView):
             if service == 'cdm':
                 cdm_collection_name = form.cleaned_data['cdm_collection_name']
                 cdm_search_term = form.cleaned_data['cdm_search_term']
+                cdm_limit = form.cleaned_data['cdm_limit']
                 params = {'site': url}
                 if cdm_collection_name:
                     params["collection"] = cdm_collection_name
                 if cdm_search_term:
                     params["query"] = cdm_search_term
+                if cdm_limit:
+                    params["limit"] = cdm_limit
                 data = self.proxy.contentdm(params, diagnostics=diagnostics)
                 if data:
                     return JSONResponse(data)
