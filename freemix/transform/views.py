@@ -35,7 +35,9 @@ class AkaraTransformClient(object):
         self.akara_url = url
         self.credentials = credentials
 
-    def _akara_call(self, url, params={}, body=None, diagnostics=False):
+    def _akara_call(self, url, params=None, body=None, diagnostics=False):
+        if params is None:
+            params={}
         if diagnostics:
             params['diagnostics'] = 'yes'
         if self.credentials:
