@@ -1,147 +1,74 @@
-"""Views for transforming data via akara"""
+"""Views for loading data from an external source"""
+import uuid
 
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.utils.translation import ugettext_lazy as _
+from django.views.generic.base import View
 import urllib2
 from urllib import urlencode
-from freemix.transform.forms import URLUploadForm,FileUploadForm
-from freemix.utils.views import RESTResource, JSONResponse
+from freemix.transform import forms
+from freemix.utils.views import JSONResponse
 from . import conf
 
 import json
-import cgi
+from cgi import escape
 
-ERROR = _("Error uploading and transforming data.  Please contact support.\n")
-
-from django.core.cache import cache
-
-def get_akara_version():
-    version = cache.get("akara_version")
-    if not version:
-        version = cache_akara_version()
-    return str(version)
-
-def cache_akara_version():
-    try:
-        version = urllib2.urlopen(conf.AKARA_VERSION_URL).read(100)
-    except:
-        version = "Unknown"
-    cache.set("akara_version", version, 60)
-    return version
 
 class AkaraTransformClient(object):
     def __init__(self, url, credentials=None):
-        self.akara_url = url
+        self.url = url
         self.credentials = credentials
 
-    def _akara_call(self, url, params=None, body=None, diagnostics=False):
+    def __call__(self, params=None, body=None):
         if params is None:
-            params={}
-        if diagnostics:
-            params['diagnostics'] = 'yes'
+            params = {}
+
         if self.credentials:
-            auth_handler= urllib2.HTTPDigestAuthHandler()
+            auth_handler = urllib2.HTTPDigestAuthHandler()
             auth_handler.add_password(realm=self.credentials[0],
-                                      uri=url,
+                                      uri=self.url,
                                       user=self.credentials[1],
                                       passwd=self.credentials[2])
             opener = urllib2.build_opener(auth_handler)
         else:
-            opener=urllib2.build_opener()
-        r = urllib2.Request('%s?%s' % (url, urlencode(params)), body)
+            opener = urllib2.build_opener()
+        r = urllib2.Request('%s?%s' % (self.url, urlencode(params)), body)
         data = json.load(opener.open(r))
         return data
 
-    def transform(self, contents, diagnostics=False):
-        return self._akara_call(self.akara_url, body=contents, diagnostics=diagnostics)
 
-    def contentdm(self, params, diagnostics=False):
-        return self._akara_call(conf.AKARA_CONTENTDM_URL, params=params, diagnostics=diagnostics)
-
-    def oaipmh(self, params, diagnostics=False):
-        return self._akara_call(conf.AKARA_OAIPMH_URL, params=params, diagnostics=diagnostics)
-
-transform_client = AkaraTransformClient(conf.AKARA_TRANSFORM_URL)
-
-class TransformView(RESTResource):
+class TransformView(View):
     """Generic transform proxy
 
     By default, posted data is sent directly to the provided client.  If the
     request included a `X-Data-Load-TxId` header, it will be included in the
     response as well.
     """
-    def __init__(self, proxy = None):
-        self.proxy = proxy or transform_client
 
-    def __call__(self, request, *args, **kwargs):
+    transform = AkaraTransformClient(conf.AKARA_TRANSFORM_URL)
+
+    def dispatch(self, request, *args, **kwargs):
         # Extract client provide transaction ID and append it to the response
-        response = super(TransformView, self).__call__(request, args, kwargs)
-        txid = request.META.get("HTTP_X_DATA_LOAD_TXID", None)
-        if txid:
-            response["X-Data-Load-TxId"] = txid
+        self.txid = request.META.get("HTTP_X_DATA_LOAD_TXID", str(uuid.uuid4()))
+        response = super(TransformView, self).dispatch(request, args, kwargs)
+        response["X-Data-Load-TxId"] = self.txid
         return response
 
-    def POST(self, request, *args, **kwargs):
-        data = self.proxy.transform(request.raw_post_data)
+    def get_params(self):
+        return dict()
+
+    def get_body(self):
+        return None
+
+
+class RawTransformView(TransformView):
+    def get_body(self):
+        return self.request.raw_post_data
+
+    def post(self, request, *args, **kwargs):
+        data = self.transform(body=self.get_body(), params=self.get_params())
         if data:
             return JSONResponse(data)
         return HttpResponseBadRequest()
 
-class FileTransformView(TransformView):
-
-    def __init__(self, proxy=None, form_class=None):
-        super(FileTransformView, self).__init__(proxy)
-        self.form_class = form_class or FileUploadForm
-
-    def POST(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)
-        if form.is_valid():
-            file = request.FILES['file']
-            input = file.read()
-            file.close()
-            output = self.proxy.transform(input, diagnostics=form.cleaned_data["diagnostics"])
-            if not output:
-                return HttpResponseBadRequest(_("Invalid Request"))
-            output = "<textarea>%s</textarea>"% cgi.escape(json.dumps(output))
-            response = HttpResponse(output)
-            response['Content-Type'] = "text/html"
-            return response
-        return HttpResponseBadRequest()
-
-class URLTransformView(TransformView):
-    def __init__(self, proxy=None, form_class=None):
-        super(URLTransformView, self).__init__(proxy)
-        self.form_class = form_class or URLUploadForm
-
-    def GET(self, request, *args, **kwargs):
-        form = self.form_class(request.GET)
-        if form.is_valid():
-            url = form.cleaned_data['url']
-            service = form.cleaned_data['service']
-            diagnostics = form.cleaned_data['diagnostics']
-            if service == 'cdm':
-                cdm_collection_name = form.cleaned_data['cdm_collection_name']
-                cdm_search_term = form.cleaned_data['cdm_search_term']
-                cdm_limit = form.cleaned_data['cdm_limit']
-                params = {'site': url}
-                if cdm_collection_name:
-                    params["collection"] = cdm_collection_name
-                if cdm_search_term:
-                    params["query"] = cdm_search_term
-                if cdm_limit:
-                    params["limit"] = cdm_limit
-                data = self.proxy.contentdm(params, diagnostics=diagnostics)
-                if data:
-                    return JSONResponse(data)
-            elif service == 'oai':
-                return None
-            else:
-                r= urllib2.urlopen(url)
-                contents = r.read()
-                data = self.proxy.transform(contents, diagnostics=diagnostics)
-                if data:
-                    return JSONResponse(data)
-        return HttpResponseBadRequest()
-
-
+    def get_body(self):
+        return self.request.raw_post_data

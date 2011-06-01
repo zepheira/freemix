@@ -6,10 +6,6 @@ dataset_pattern = r"%s(?P<slug>[a-zA-Z0-9_.-]+)/"%username_pattern
 
 urlpatterns = patterns('freemix.dataprofile.views',
 
-    url(r'upload/$',
-        'upload_dataset',
-        name='upload_dataset'),
-
     url(r'%s$'%username_pattern,
         'datasets_by_user',
         name='user_datasets'),

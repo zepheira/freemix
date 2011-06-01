@@ -1,9 +1,5 @@
-"""
-Views for managing datasets and their associated JSON description files, as
-well as JSON representations of transformed data.
-
-This is a bit muddy and should be replaced by a simpler django-piston based
-interface as soon as possible.
+"""Views for managing datasets and their associated JSON description files, as
+   well as JSON representations of transformed data.
 """
 from django.utils.translation import ugettext_lazy as _
 
@@ -11,6 +7,7 @@ from django.http import *
 from django.views.defaults import *
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response, get_object_or_404
+from django.views.generic.base import View, TemplateView
 
 from freemix.utils import get_user
 from freemix.utils import get_site_url
@@ -19,7 +16,6 @@ from .decorators import is_user
 from freemix.freemixprofile.models import Freemix
 from .models import DataProfile, DataFile
 from .models import create_dataset
-from . import signals
 
 from freemix.transform.forms import FileUploadForm, URLUploadForm
 import json
@@ -35,41 +31,34 @@ class DatasetListView(ListView):
     Returns a list of datasets for a particular user on GET.
     """
     template = "dataset/list/dataset_list_by_user.html"
+
     def get_queryset(self, request, username, other_user):
         return DataProfile.objects.filter(user__username=username)
 
     def extra_context(self, request, username):
-        return { "other_user": get_user(username)}
+        return {"other_user": get_user(username)}
+
 datasets_by_user = DatasetListView()
 
 def get_data_profile(username, slug):
     return get_object_or_404(DataProfile, slug=slug, user__username=username)
+
 
 class CreateDatasetView(RESTResource):
     """
     Create a new Dataset belonging to the specified user based on an
     incoming JSON document
     """
+
     def create_dataset(self, user, contents):
         """
         Creates the dataset and returns an HTML fragment including the URL for
         the new dataset
         """
-        responses = signals.dataset_pre_create.send(
-            sender=self,
-            user=user
-        )
 
-        for (receiver, response) in responses:
-            if response == False:
-                return HttpResponseBadRequest()
         data_profile = create_dataset(user, contents)
         url = data_profile.get_url_path()
 
-        signals.dataset_create.send(
-            sender=self,
-            dataset=data_profile
-        )
 
         return HttpResponse("<span><a href='%s'>%s</a></span>" %
                             (url, get_site_url(url)))
@@ -120,27 +109,13 @@ class DatasetMetadataView(RESTResource):
         contents = json.loads(request.raw_post_data)
         profile = get_data_profile(username, slug)
 
-        responses = signals.dataset_pre_update_profile.send(
-            sender=self,
-            dataset=profile
-        )
-
-        for (receiver, response) in responses:
-            if response == False:
-                return HttpResponseBadRequest()
-
-
         profile.update_profile(contents)
         url = profile.get_url_path()
 
-        signals.dataset_update_profile.send(
-            sender=self,
-            dataset=profile
-        )
         return HttpResponse("<span><a href='%s'>%s</a></span>"
-                            %(url, get_site_url(url)))
+        % (url, get_site_url(url)))
 
-    def POST(self,*args, **kwargs):
+    def POST(self, *args, **kwargs):
         self.PUT(*args, **kwargs)
 
     @method_decorator(login_required)
@@ -151,15 +126,6 @@ class DatasetMetadataView(RESTResource):
         reference this profile
         """
         profile = get_data_profile(username, slug)
-
-        responses = signals.dataset_pre_delete.send(
-            sender=self,
-            dataset=profile
-        )
-
-        for (receiver, response) in responses:
-            if response == False:
-                return HttpResponseBadRequest()
 
         # Get children freemixes
         freemixes = Freemix.objects.filter(data_profile=profile)
@@ -172,22 +138,17 @@ class DatasetMetadataView(RESTResource):
                     message=_("The data view at "
                               "%(freemix_url)s has been deleted because the "
                               "data set at %(profile_url)s was deleted") %
-                    {'freemix_url': freemix_url,
-                     'profile_url': profile_url})
+                            {'freemix_url': freemix_url,
+                             'profile_url': profile_url})
 
         request.user.message_set.create(
             message=_("The data profile at %(profile_url)s has been deleted") %
-            {'profile_url': profile_url})
+                    {'profile_url': profile_url})
         profile.delete()
 
-        signals.dataset_delete.send(
-            sender=self,
-            dataset=profile
-        )
+        return HttpResponse(_("%(file_id)s deleted") % {'file_id': profile_url})
 
-        return HttpResponse(_("%(file_id)s deleted")%{'file_id': profile_url})
-
-dataset_profile= DatasetMetadataView()
+dataset_profile = DatasetMetadataView()
 
 class DatasetView(DatasetMetadataView):
     """
@@ -198,69 +159,41 @@ class DatasetView(DatasetMetadataView):
             template_name="dataset/view/view.html"):
         profile = get_data_profile(username, slug)
 
-        responses = signals.dataset_pre_render.send(
-            sender=self,
-            request=request,
-            dataset=profile
-        )
-
-        for (receiver, response) in responses:
-            if response == False:
-                return HttpResponseBadRequest()
-
-        response =  render_to_response(template_name , {
+        response = render_to_response(template_name, {
             "profile": profile,
             "username": username,
             "slug": slug,
             "user": request.user,
-        },context_instance=RequestContext(request))
-
-        signals.dataset_render.send(
-            sender=self,
-            request=request,
-            dataset=profile
-        )
+            }, context_instance=RequestContext(request))
 
         return response
+
 dataset_view = DatasetView()
 
 @login_required
 @is_user
 def edit_dataset(request, username, slug,
-                      template_name="dataset/edit/build.html"):
+                 template_name="dataset/edit/build.html"):
     """
     Renders the editor for an existing dataset
     """
 
     profile = get_data_profile(username, slug)
 
-    responses = signals.dataset_editor_pre_render.send(
-        sender=None,
-        request=request,
-        dataset=profile
-    )
 
-    for (receiver, response) in responses:
-        if response == False:
-            return HttpResponseBadRequest()
-
-
-    response =  render_to_response(template_name , {
+    response = render_to_response(template_name, {
         "username": username,
         "slug": slug,
         "publishurl": profile.get_url_path(),
         "file_form": FileUploadForm(),
-        "url_form":URLUploadForm(),
+        "url_form": URLUploadForm(),
         "owner": username
-    },context_instance=RequestContext(request))
+    }, context_instance=RequestContext(request))
 
-    signals.dataset_editor_render.send(
-        sender=None,
-        request=request,
-        dataset=profile
-    )
+
 
     return response
+
 
 @login_required
 def upload_dataset(request, template_name="dataset/upload/upload.html"):
@@ -268,35 +201,21 @@ def upload_dataset(request, template_name="dataset/upload/upload.html"):
     Renders the editor and forms to create a new dataset
     """
     username = request.user.username
-    
-    responses = signals.dataset_upload_pre_render.send(
-        sender=None,
-        request=request,
-        username=username
-    )
-
-    for (receiver, response) in responses:
-        if response == False:
-            return HttpResponseBadRequest()
 
 
-    response = render_to_response(template_name , {
+    response = render_to_response(template_name, {
         "username": username,
-        "publishurl":reverse("publish_dataset",
-                             kwargs={"username": username}),
+        "publishurl": reverse("publish_dataset",
+                              kwargs={"username": username}),
         "upload": True,
         "file_form": FileUploadForm(),
-        "url_form":URLUploadForm(),
+        "url_form": URLUploadForm(),
         "owner": username
-    },context_instance=RequestContext(request))
+    }, context_instance=RequestContext(request))
 
-    signals.dataset_upload_render.send(
-        sender=None,
-        request=request,
-        username=username
-    )
 
     return response
+    
 
 class DataFileView(RESTResource):
     """
@@ -304,7 +223,7 @@ class DataFileView(RESTResource):
     with a particular dataset
     """
 
-    def __init__(self, filekey = "data.json",
+    def __init__(self, filekey="data.json",
                  jsonp_template="dataset/data.js"):
         self.filekey = filekey
         self.jsonp_template = jsonp_template
@@ -329,24 +248,12 @@ class DataFileView(RESTResource):
     def PUT(self, request, username, slug):
         contents = json.loads(request.raw_post_data)
         profile = get_data_profile(username, slug)
-        responses = signals.dataset_pre_update_datafile.send(
-            sender=self,
-            data_profile=data_profile,
-            file_name=self.filekey
-        )
 
-        for (receiver, response) in responses:
-            if response == False:
-                return HttpResponseBadRequest()
         profile.save_file(self.filekey, contents)
         url = request.build_absolute_uri(request.get_full_path())
         response = HttpResponse("<span><a href='%s'>%s</a></span>"
-                                % (url,url))
+        % (url, url))
 
-        signals.dataset_update_datafile.send(
-            sender=self,
-            datafile=data_file
-        )
         return response
 
     def POST(self, request, *args, **kwargs):
@@ -357,9 +264,9 @@ class DataFileView(RESTResource):
     def DELETE(self, request, username, slug):
         profile = get_data_profile(username, slug)
         file = get_object_or_404(DataFile, name=self.filekey,
-                          data_profile=profile)
+                                 data_profile=profile)
         file.delete()
-        response = HttpResponse(_("%(file_id)s deleted")%{'fileid': slug})
+        response = HttpResponse(_("%(file_id)s deleted") % {'fileid': slug})
         return response
 
 # Returns transformed data
@@ -368,10 +275,12 @@ transformed_data = DataFileView("data.json", "dataset/data.js")
 # JSON representations of merged datasets
 def get_merge_data(username, slug):
     return get_data_profile(username, slug).merge_data()
+
 merged_dataset = JSONView(get_merge_data)
 
 def get_everything(username, slug):
     return get_data_profile(username, slug).everything()
+
 everything_json = JSONView(get_everything)
 editor_jsonp = JSONView(get_everything, "dataset/edit/data.jsonp")
 viewer_jsonp = JSONView(get_everything, "dataset/view/data.jsonp")

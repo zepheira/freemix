@@ -1,18 +1,14 @@
-import json
-
-from django.template.defaultfilters import slugify
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django_extensions.db.models import (TimeStampedModel,
                                          TitleSlugDescriptionModel)
+from freemix.dataset.models import DataSource
 from freemix.utils import get_username
 from freemix.utils import UrlMixin
 from django_extensions.db.fields.json import JSONField
 
-
-import uuid
+#------------------------------------------------------------------------------#
 
 def create_dataset(user, contents, slug=None):
     profile = contents.get("data_profile", contents)
@@ -21,22 +17,21 @@ def create_dataset(user, contents, slug=None):
 
     data_profile = DataProfile.objects.create(user=user,
                                               title=title,
-                                              properties={"properties": profile["properties"]},
-                                              original_mime_type=profile.get("original_MIME_type"),
-                                              mime_type_guess=profile.get("Akara_MIME_type_guess"),
-                                              mime_type_magic_guess=profile.get("Akara_MIME_type_magic_guess"))
+                                              properties={"properties": profile["properties"]})
     if "items" in contents:
         data_profile.save_file("data.json", {"items": contents["items"]})
     return data_profile
 
+#------------------------------------------------------------------------------#
 
 class DataProfile(TitleSlugDescriptionModel, TimeStampedModel, UrlMixin):
-    user = models.ForeignKey(User, null=True, related_name="data_sets")
+    user = models.ForeignKey(User, null=True, related_name="datasets")
+
+    published = models.BooleanField(default=True)
+
     properties = JSONField()
-    original_mime_type = models.CharField(max_length=50, null=True, blank=True)
-    mime_type_guess = models.CharField(max_length=50, null=True, blank=True)
-    mime_type_magic_guess = models.CharField(max_length=50, null=True,
-                                             blank=True)
+
+    source = models.ForeignKey(DataSource, null=True, related_name="datasets")
 
     def __unicode__( self ):
         return self.title
@@ -60,9 +55,7 @@ class DataProfile(TitleSlugDescriptionModel, TimeStampedModel, UrlMixin):
         profile = contents.get("data_profile", contents)
         self.title= profile.get("label", self.slug)
         self.properties = {"properties": profile.get("properties")}
-        self.original_mime_type = profile.get("original_MIME_type")
-        self.mime_type_guess = profile.get("Akara_MIME_type_guess")
-        self.mime_type_magic_guess = profile.get("Akara_MIME_type_magic_guess")
+
         self.save()
         if "items" in contents:
             self.save_file("data.json", {"items": contents["items"]})
@@ -73,9 +66,7 @@ class DataProfile(TitleSlugDescriptionModel, TimeStampedModel, UrlMixin):
         dict["url"] = reverse('dataset_data',
                               kwargs={ "username": self.user.username,
                                   "slug": self.slug})
-        dict["original_MIME_type"] = self.original_mime_type
-        dict["Akara_MIME_type_guess"] = self.mime_type_guess
-        dict["Akara_MIME_type_magic_guess"] = self.mime_type_magic_guess
+
         return dict
 
     def merge_data(self):
@@ -112,6 +103,8 @@ class DataProfile(TitleSlugDescriptionModel, TimeStampedModel, UrlMixin):
         verbose_name = "Data Set"
         ordering = ('-modified', )
 
+#------------------------------------------------------------------------------#
+
 class DataFile(TimeStampedModel):
 
     name = models.CharField(max_length=200)
@@ -130,6 +123,6 @@ class DataFile(TimeStampedModel):
     def register(cls, filename, label):
         cls.__registry[filename] = label
 
-
-
 DataFile.register("data.json", "Transformed Data")
+
+#------------------------------------------------------------------------------#

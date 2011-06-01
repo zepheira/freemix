@@ -1,8 +1,6 @@
 from django.db import models
 from django_extensions.db.models import TitleSlugDescriptionModel
 from django.utils.translation import ugettext_lazy as _
-from freemix.transform.views import AkaraTransformClient
-from . import conf
 
 class ListPattern(TitleSlugDescriptionModel):
     type = models.CharField(_('type'), max_length=30)
@@ -38,4 +36,3 @@ def list_patterns():
                                 pattern.pattern}
     return result
 
-augment_client = AkaraTransformClient(conf.AKARA_AUGMENT_URL)

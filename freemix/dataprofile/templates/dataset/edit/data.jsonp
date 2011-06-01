@@ -1,11 +1,10 @@
 /*global jQuery */
-(function($) { 
+(function($, Freemix) {
     $(document).ready(function() {
 
-        var upload = new $.freemix.UploadForm();
-        var editor = new $.freemix.DatasetEditor();
+        var editor = new Freemix.DatasetEditor();
         editor.setData({{json|safe}});
 
     });
 
-})(jQuery);
+})(jQuery, jQuery.freemix);

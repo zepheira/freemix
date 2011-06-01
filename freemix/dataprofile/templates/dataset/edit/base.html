@@ -11,42 +11,18 @@
 
 {% block subnav %}
 
-{% if user.is_authenticated %}
-
-{% if upload %} <ul class="step-menu"> {% else %} <ul class="ui-helper-hidden step-menu"> {% endif %}
-  <li>
-    <a href="#load"><span class="step">1.</span>&nbsp;
-      {% if upload %}      
-      <span class="initial">{% trans "Upload" %}</span><span class="success ui-helper-hidden">
-      {% else %}
-      <span>
-      {% endif %}          
-      {% trans "Replace" %}</span>
-      </a>
-  </li>
-  <li>
-    <a href="#identify"><span class="step">2.</span>&nbsp;{% trans "Describe" %}</a>
-  </li>
-  <li>
-    <a href="#publish"><span class="step">3.</span>&nbsp;{% trans "Publish"%}</a>
-  </li>
-</ul>
-
   <p id="subnav-extra">
     <a href="{% url profile_detail user.username %}" id="dialog_link" class="ui-state-default ui-corner-all button button-icon-left">
       <span class="ui-icon ui-icon-cancel"></span> Cancel</a>
   </p>
-{% else %}
-
-&nbsp;
-{% endif %}
 
 {% endblock %}
-    
+
 {% block freemix_meta %}
 {{block.super}}
 {% if publishurl %}
 <link rel="freemix/publish" href="{{ publishurl }}"/>
+<link rel="freemix/profile" href="{{ profileurl }}"/>
 {% endif %}
 
 {% endblock %}
@@ -69,7 +45,7 @@
     <script type="text/javascript" src="{{STATIC_URL}}dataset/js/editor.js"></script>
     {% endcompress %}
     {% block data_script %}
-    <script type="text/javascript" src="{% url dataset_editor_jsonp username=username, slug=slug %}"></script>
+{#    <script type="text/javascript" src="{% url dataset_editor_jsonp username=username, slug=slug %}"></script>#}
     {% endblock data_script %}
 {% endblock freemix_js%}
 
@@ -88,7 +64,6 @@
 
 <div id="contents" class="ui-helper-hidden">
 {% block contents %}
-  {% include "dataset/edit/load.html" %}
 
   <div id="identify" class="ui-helper-clearfix ui-helper-hidden builder-tab">
     {% block describe %}
