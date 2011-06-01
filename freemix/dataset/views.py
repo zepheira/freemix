@@ -52,7 +52,7 @@ class ProcessTransactionView(DataSourceTransactionView):
     def pending(self):
         tx = self.transaction
         tx.run()
-        self.redirect()
+        return self.redirect()
 
     def scheduled(self):
         return self.pending()
