@@ -1,8 +1,8 @@
 from django.http import *
 from django.views.defaults import *
-from django.shortcuts import render_to_response, get_object_or_404
+from django.views.generic.base import View
+from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
-from django.utils.encoding import force_unicode
 import json
 
 # RESTResource and JSONResponse poached from http://www.djangosnippets.org/snippets/1740/
@@ -42,14 +42,14 @@ class JSONResponse(HttpResponse):
             mimetype = mime,
         )
 
-class JSONView(RESTResource):
+class JSONView(View):
 
-    def __init__(self, function, template=None):
-        self.function = function
-        self.template = template
+    template=None
+    def get_dict(self, *args, **kwargs):
+        return {}
 
-    def GET(self, request, *args, **kwargs):
-        content = self.function(*args, **kwargs)
+    def get(self, *args, **kwargs):
+        content = self.get_dict(*args, **kwargs)
         return JSONResponse(content, self.template)
 
 

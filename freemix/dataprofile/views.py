@@ -20,7 +20,7 @@ from .models import create_dataset
 from freemix.transform.forms import FileUploadForm, URLUploadForm
 import json
 
-from freemix.utils.views import RESTResource, JSONResponse, JSONView, ListView
+from freemix.utils.views import JSONResponse, JSONView, ListView
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -44,7 +44,7 @@ def get_data_profile(username, slug):
     return get_object_or_404(DataProfile, slug=slug, user__username=username)
 
 
-class CreateDatasetView(RESTResource):
+class CreateDatasetView(View):
     """
     Create a new Dataset belonging to the specified user based on an
     incoming JSON document
@@ -71,7 +71,7 @@ class CreateDatasetView(RESTResource):
         return request.raw_post_data
 
     @method_decorator(login_required)
-    def POST(self, request, username):
+    def post(self, request, username):
         """
         Creates a new dataset on POST.  Expects to be able to extract the
         profile describing the new dataset by calling self.extract_content()
@@ -80,21 +80,21 @@ class CreateDatasetView(RESTResource):
         contents = json.loads(self.extract_content(request))
         return self.create_dataset(user, contents)
 
-    def PUT(self, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         """
         Creates a new dataset.  Same behavior as POST
         """
-        return self.POST(*args, **kwargs)
+        return self.post(request, *args, **kwargs)
 
-publish_dataset = CreateDatasetView()
+publish_dataset = CreateDatasetView.as_view()
 
-class DatasetMetadataView(RESTResource):
+class DatasetMetadataView(View):
     """
     Read, update, delete the profile for a particular dataset,
     identified by a username and slug
     """
 
-    def GET(self, request, username, slug):
+    def get(self, request, username, slug):
         """
         Return the profile JSON for the requested dataset
         """
@@ -102,7 +102,7 @@ class DatasetMetadataView(RESTResource):
 
     @method_decorator(login_required)
     @method_decorator(is_user)
-    def PUT(self, request, username, slug):
+    def put(self, request, username, slug):
         """
         Updates the dataset profile.  Expects a JSON document.
         """
@@ -115,12 +115,12 @@ class DatasetMetadataView(RESTResource):
         return HttpResponse("<span><a href='%s'>%s</a></span>"
         % (url, get_site_url(url)))
 
-    def POST(self, *args, **kwargs):
-        self.PUT(*args, **kwargs)
+    def post(self, *args, **kwargs):
+        self.put(*args, **kwargs)
 
     @method_decorator(login_required)
     @method_decorator(is_user)
-    def DELETE(self, request, username, slug):
+    def delete(self, request, username, slug):
         """
         Deletes the dataset and notifies the owners of all data views that
         reference this profile
@@ -148,14 +148,14 @@ class DatasetMetadataView(RESTResource):
 
         return HttpResponse(_("%(file_id)s deleted") % {'file_id': profile_url})
 
-dataset_profile = DatasetMetadataView()
+dataset_profile = DatasetMetadataView.as_view()
 
 class DatasetView(DatasetMetadataView):
     """
     Overrides the metadata view to display the HTML viewer for a dataset on GET
     """
 
-    def GET(self, request, username, slug,
+    def get(self, request, username, slug,
             template_name="dataset/view/view.html"):
         profile = get_data_profile(username, slug)
 
@@ -168,7 +168,7 @@ class DatasetView(DatasetMetadataView):
 
         return response
 
-dataset_view = DatasetView()
+dataset_view = DatasetView.as_view()
 
 @login_required
 @is_user
@@ -217,16 +217,15 @@ def upload_dataset(request, template_name="dataset/upload/upload.html"):
     return response
     
 
-class DataFileView(RESTResource):
+class DataFileView(View):
     """
     Provides a somewhat RESTful interface for managing JSON files associated
     with a particular dataset
     """
 
-    def __init__(self, filekey="data.json",
-                 jsonp_template="dataset/data.js"):
-        self.filekey = filekey
-        self.jsonp_template = jsonp_template
+    filekey = "data.json"
+    jsonp_template="dataset/data.js"
+    
 
     def get_json(self, username, slug):
         profile = get_data_profile(username, slug)
@@ -234,7 +233,7 @@ class DataFileView(RESTResource):
                                  data_profile=profile)
         return data.json
 
-    def GET(self, request, username, slug, jsonp=False):
+    def get(self, request, username, slug, jsonp=False):
         file_json = self.get_json(username, slug)
         if jsonp:
             response = JSONResponse(file_json, self.jsonp_template,
@@ -245,7 +244,7 @@ class DataFileView(RESTResource):
 
     @method_decorator(login_required)
     @method_decorator(is_user)
-    def PUT(self, request, username, slug):
+    def put(self, request, username, slug):
         contents = json.loads(request.raw_post_data)
         profile = get_data_profile(username, slug)
 
@@ -256,12 +255,12 @@ class DataFileView(RESTResource):
 
         return response
 
-    def POST(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         return self.PUT(request, *args, **kwargs)
 
     @method_decorator(login_required)
     @method_decorator(is_user)
-    def DELETE(self, request, username, slug):
+    def delete(self, request, username, slug):
         profile = get_data_profile(username, slug)
         file = get_object_or_404(DataFile, name=self.filekey,
                                  data_profile=profile)
@@ -270,17 +269,23 @@ class DataFileView(RESTResource):
         return response
 
 # Returns transformed data
-transformed_data = DataFileView("data.json", "dataset/data.js")
+transformed_data = DataFileView.as_view()
 
 # JSON representations of merged datasets
-def get_merge_data(username, slug):
-    return get_data_profile(username, slug).merge_data()
+class MergedDataJSONView(JSONView):
 
-merged_dataset = JSONView(get_merge_data)
+    def get_dict(self, *args, **kwargs):
+        return get_data_profile(kwargs["username"], kwargs["slug"]).merge_data()
 
-def get_everything(username, slug):
-    return get_data_profile(username, slug).everything()
+merged_dataset = MergedDataJSONView.as_view()
 
-everything_json = JSONView(get_everything)
-editor_jsonp = JSONView(get_everything, "dataset/edit/data.jsonp")
-viewer_jsonp = JSONView(get_everything, "dataset/view/data.jsonp")
+
+class EverythingJSONView(JSONView):
+
+    def get_dict(self, *args, **kwargs):
+        return get_data_profile(kwargs["username"], kwargs["slug"]).everything()
+
+
+everything_json = EverythingJSONView.as_view()
+editor_jsonp = EverythingJSONView.as_view(template="dataset/edit/data.jsonp")
+viewer_jsonp = EverythingJSONView.as_view(template="dataset/view/data.jsonp")

@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.http import *
 from django.views.defaults import *
+from django.views.generic.base import View
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import render_to_string
@@ -19,7 +20,7 @@ from freemix.utils import get_site_url
 from freemix.dataprofile.models import DataProfile
 
 from freemix.utils import get_user
-from freemix.utils.views import ListView, RESTResource
+from freemix.utils.views import ListView
 import json
 import uuid
 
@@ -268,7 +269,7 @@ def exhibit_history(request):
     return HttpResponse("<html><body></body></html>")
 
 
-class EmbeddedExhibitView(RESTResource):
+class EmbeddedExhibitView(View):
     """Generate the javascript necessary to embed an exhibit on an external site
     """
     # The
@@ -287,7 +288,7 @@ class EmbeddedExhibitView(RESTResource):
         response['Content-Type'] = "application/javascript"
         return response
 
-    def GET(self, request, username, slug):
+    def get(self, request, username, slug):
         where = request.GET.get('where', 'freemix-embed')
         try:
             exhibit = models.Freemix.objects.get(slug=slug,
@@ -310,4 +311,3 @@ class EmbeddedExhibitView(RESTResource):
             "canvas": canvas_html}, context_instance=RequestContext(request))
         response['Content-Type'] = "application/javascript"
         return response
-embed_exhibit = EmbeddedExhibitView()

@@ -35,8 +35,7 @@
         if (db.getAllItemsCount()<=1) {
             $("button.data-record-delete").hide();
         }
-        $(".step-menu").freemixStepTabs("select", "#identify");
-
+        $("#contents").show();
         $("#contents").data("identifier", identify);
 
         $("#contents").trigger("post_setup_identifier.dataset", data);
