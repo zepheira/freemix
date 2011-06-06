@@ -3,17 +3,14 @@ import json
 import logging
 import urllib2
 from django.contrib.auth.models import User
-from django.core.files.storage import FileSystemStorage
 from django_extensions.db.fields import UUIDField
 
-import os
 from django.conf import settings
 from django.db import models, transaction as db_tx
 from django_extensions.db.models import TimeStampedModel
 from freemix.transform.conf import AKARA_TRANSFORM_URL
 from freemix.transform.views import AkaraTransformClient
 from freemix.utils import UrlMixin
-from freemix.dataset import conf
 
 logger = logging.getLogger(__name__)
 
