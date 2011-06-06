@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 import json
+import logging
 import urllib2
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
 from django_extensions.db.fields import UUIDField
 
 import os
@@ -11,6 +13,10 @@ from django_extensions.db.models import TimeStampedModel
 from freemix.transform.conf import AKARA_TRANSFORM_URL
 from freemix.transform.views import AkaraTransformClient
 from freemix.utils import UrlMixin
+from freemix.dataset import conf
+
+logger = logging.getLogger(__name__)
+
 
 class DataSource(TimeStampedModel):
     classname = models.CharField(max_length=32, editable=False, null=True)
@@ -37,39 +43,43 @@ class DataSource(TimeStampedModel):
             self.classname = self.__class__.__name__
         super(DataSource, self).save(*args, **kwargs)
 
-class URLDataSourceMixin(models.Model):
+class TransformMixin(models.Model):
+    transform = AkaraTransformClient(AKARA_TRANSFORM_URL)
+
+    class Meta:
+        abstract=True
+
+    def get_transform_params(self):
+        return {}
+
+    def get_transform_body(self):
+        return None
+
+    def refresh(self):
+        return json.dumps(self.transform(body=self.get_transform_body(), params=self.get_transform_params()))
+
+
+class URLDataSourceMixin(TransformMixin, models.Model):
 
     url = models.URLField(verify_exists=False)
 
     class Meta:
         abstract=True
 
-    # Data loading
-    transform = AkaraTransformClient(AKARA_TRANSFORM_URL)
-
-    def get_transform_params(self):
-        return {}
-
     def get_transform_body(self):
         r = urllib2.urlopen(self.url)
         return r.read()
 
-    def refresh(self):
-        return json.dumps(self.transform(body=self.get_transform_body(), params=self.get_transform_params()))
 
+def make_file_data_source_mixin(storage, upload_to):
+    class FileDataSourceMixin(TransformMixin, models.Model):
+        file = models.FileField(storage=storage, upload_to=upload_to, max_length=255)
+        class Meta:
+            abstract=True
 
-def source_upload_path(instance, filename):
-    return os.path.join(instance.get_absolute_url()[1:], filename)
-
-
-class FileDataSourceMixin(models.Model):
-
-    file = models.FileField(upload_to=source_upload_path, max_length=255)
-
-    class Meta:
-        abstract=True
-
-
+        def get_transform_body(self):
+            return self.file.read()
+    return FileDataSourceMixin
 #------------------------------------------------------------------------------#
 
 TX_STATUS = {
@@ -123,8 +133,10 @@ class DataSourceTransaction(TimeStampedModel, UrlMixin):
                 self.result = self.source.get_concrete().refresh()
                 self.status=TX_STATUS["success"]
             except Exception as ex:
+
+                logger.error("Error for transaction %s: %s"%(self.tx_id, ex.message))
                 self.status=TX_STATUS["failure"]
-                self.result = json.dumps({"exception":ex.__str__()})
+                self.result = json.dumps({"exception":ex.message})
 
             self.save()
 

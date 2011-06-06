@@ -256,7 +256,7 @@ class DataFileView(View):
         return response
 
     def post(self, request, *args, **kwargs):
-        return self.PUT(request, *args, **kwargs)
+        return self.put(request, *args, **kwargs)
 
     @method_decorator(login_required)
     @method_decorator(is_user)

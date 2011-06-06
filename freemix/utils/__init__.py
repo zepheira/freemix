@@ -14,8 +14,6 @@ def get_user(username):
         return None
     return get_object_or_404(User,username=username)
 
-from django.http import *
-
 def get_site_url(path="/"):
     return "http://%s%s"%(Site.objects.get_current().domain, path)
 

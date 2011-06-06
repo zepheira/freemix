@@ -1,17 +1,17 @@
 """Views for loading data from an external source"""
+import logging
 import uuid
 
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import  HttpResponseBadRequest
 from django.views.generic.base import View
 import urllib2
 from urllib import urlencode
-from freemix.transform import forms
 from freemix.utils.views import JSONResponse
 from . import conf
 
 import json
-from cgi import escape
 
+logger = logging.getLogger(__name__)
 
 class AkaraTransformClient(object):
     def __init__(self, url, credentials=None):
@@ -19,9 +19,10 @@ class AkaraTransformClient(object):
         self.credentials = credentials
 
     def __call__(self, params=None, body=None):
-        if params is None:
-            params = {}
-
+        url = self.url
+        if params:
+            url = "%s?%s"%(url, urlencode(params))
+        
         if self.credentials:
             auth_handler = urllib2.HTTPDigestAuthHandler()
             auth_handler.add_password(realm=self.credentials[0],
@@ -31,7 +32,8 @@ class AkaraTransformClient(object):
             opener = urllib2.build_opener(auth_handler)
         else:
             opener = urllib2.build_opener()
-        r = urllib2.Request('%s?%s' % (self.url, urlencode(params)), body)
+        logger.debug("Transformation request for %s"%url)
+        r = urllib2.Request(url, body)
         data = json.load(opener.open(r))
         return data
 
