@@ -69,6 +69,11 @@ class URLDataSourceMixin(TransformMixin, models.Model):
 
 
 def make_file_data_source_mixin(storage, upload_to):
+    """Generate a mixin for a file based data source allowing for custom storage and file path.
+
+        storage -- A django FileStorage implementation
+        upload_to -- the default path for an uploaded file
+    """
     class FileDataSourceMixin(TransformMixin, models.Model):
         file = models.FileField(storage=storage, upload_to=upload_to, max_length=255)
         class Meta:

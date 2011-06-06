@@ -40,8 +40,10 @@ class ProcessTransactionView(DataSourceTransactionView):
         return response
 
     def failure(self):
-        return HttpResponseRedirect(reverse('datasource_transaction_result',
-                kwargs={'tx_id': self.transaction.tx_id}))
+        response = render_to_response("dataset/transaction_failed.html", {
+            "transaction": self.transaction
+        }, context_instance = RequestContext(self.request))
+        return response
 
     def cancelled(self):
         return  HttpResponseRedirect(reverse('dataset_upload'))
