@@ -23,6 +23,7 @@ class OwnerListView(ListView):
         kwargs = super(OwnerListView, self).get_context_data(**kwargs)
         kwargs["owner"] = get_object_or_404(User,
                                             username=self.kwargs.get("owner"))
+        kwargs["user"] = self.request.user
         return kwargs
 
 
@@ -30,7 +31,7 @@ class OwnerSlugDetailView(DetailView):
 
     def filter_by_perm(self, obj):
         if hasattr(self, "object_perm") and \
-            not self.request.user.has_perm(getattr(self, object_perm), obj):
+            not self.request.user.has_perm(getattr(self, "object_perm"), obj):
                 raise Http404
         return obj
 

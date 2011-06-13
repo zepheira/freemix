@@ -11,7 +11,7 @@ from freemix.dataset import models
 import json
 
 # Data Source Transaction Views
-from freemix.views import OwnerListView
+from freemix.views import OwnerListView, OwnerSlugDetailView
 
 class DataSourceTransactionView(View):
     def redirect(self):
@@ -146,14 +146,11 @@ dataset_list_by_owner = OwnerListView.as_view(template_name="dataset/dataset_lis
                                                model=models.Dataset,
                                                permission = "dataset.can_view")
 
-class DatasetResourceView(DetailView):
+class DatasetResourceView(OwnerSlugDetailView):
 
+    model = models.Dataset
+    object_perm="dataset.can_view"
     template_name="dataset/dataset_detail.html"
-
-    def get_object(self, queryset=None):
-        owner = self.kwargs["owner"]
-        slug = self.kwargs["slug"]
-        return get_object_or_404(models.Dataset, owner__username=owner, slug=slug)
 
     def delete(self, request, *args, **kwargs):
         ds = self.get_object()
