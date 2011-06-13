@@ -1,32 +1,30 @@
 from django.contrib.auth.models import User
-from django.db.models.query_utils import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from freemix.permissions import PermissionsRegistry
 
 class OwnerListView(ListView):
     """A base view for filtering based on the 'owner' of a particular object.  For now, 'owner' is expected to be a
        username that maps to a Django User.
-
     """
 
-    def query_filter(self, user):
-        if user.is_authenticated():
-            return Q(published=True)|owner_filter(user)
-        return Q(published=True)
+    permission = None
 
     def get_queryset(self):
         owner = get_object_or_404(User, username=self.kwargs.get("owner"))
         list = self.model.objects.filter(owner=owner)
-        if hasattr(self, "query_filter"):
-            list = list.filter(self.query_filter(self.request.user))
+        if self.permission:
+            list = list.filter(PermissionsRegistry.get_filter(self.permission, self.request.user))
         return list
-    
+
     def get_context_data(self, **kwargs):
+        kwargs = super(OwnerListView, self).get_context_data(**kwargs)
         kwargs["owner"] = get_object_or_404(User,
                                             username=self.kwargs.get("owner"))
         return kwargs
+
 
 class OwnerSlugDetailView(DetailView):
 

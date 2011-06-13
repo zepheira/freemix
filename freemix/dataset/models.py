@@ -3,14 +3,15 @@ import json
 import logging
 import urllib2
 from django.contrib.auth.models import User
+from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
 
 from django.conf import settings
 from django.db import models, transaction as db_tx
-from django_extensions.db.models import TimeStampedModel
+from django_extensions.db.fields.json import JSONField
+from django_extensions.db.models import TimeStampedModel, TitleSlugDescriptionModel
 from freemix.transform.conf import AKARA_TRANSFORM_URL
 from freemix.transform.views import AkaraTransformClient
-from freemix.utils import UrlMixin
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 class DataSource(TimeStampedModel):
     classname = models.CharField(max_length=32, editable=False, null=True)
 
-    user = models.ForeignKey(User, related_name="data_sources")
+    owner = models.ForeignKey(User, related_name="data_sources")
 
     uuid = UUIDField()
 
@@ -39,6 +40,9 @@ class DataSource(TimeStampedModel):
         if self.classname is None:
             self.classname = self.__class__.__name__
         super(DataSource, self).save(*args, **kwargs)
+
+
+
 
 class TransformMixin(models.Model):
     transform = AkaraTransformClient(AKARA_TRANSFORM_URL)
@@ -82,6 +86,35 @@ def make_file_data_source_mixin(storage, upload_to):
         def get_transform_body(self):
             return self.file.read()
     return FileDataSourceMixin
+
+class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
+    owner = models.ForeignKey(User, null=True, related_name="datasets")
+
+    source = models.ForeignKey(DataSource, null=True,blank=True, related_name="datasets")
+
+    published = models.BooleanField(default=True)
+
+    profile = JSONField(default='{"properties": []}')
+
+    data = JSONField(default='{"items": []}')
+
+    class Meta:
+        unique_together=("slug", "owner")
+        verbose_name_plural = "Data Sets"
+        verbose_name = "Data Set"
+        ordering = ('-modified', )
+
+    def __unicode__( self ):
+        return self.title
+
+    def natural_key(self):
+        return [self.owner,self.title]
+
+    @permalink
+    def get_absolute_url(self):
+        return ("dataset_detail",  (), {
+            'owner': self.owner.username,
+            'slug': self.slug})
 #------------------------------------------------------------------------------#
 
 TX_STATUS = {
@@ -96,7 +129,7 @@ TX_STATUS = {
 TRANSACTION_LIFESPAN = getattr(settings, "TRANSACTION_EXPIRATION_INTERVAL",
                                           timedelta(hours=24))
 
-class DataSourceTransaction(TimeStampedModel, UrlMixin):
+class DataSourceTransaction(TimeStampedModel):
     """Stores the the status and raw result of a remote data transaction for a
        particular data source.
 
@@ -117,7 +150,7 @@ class DataSourceTransaction(TimeStampedModel, UrlMixin):
         return self.modified < (datetime.now() - TRANSACTION_LIFESPAN)
 
     @models.permalink
-    def get_url_path(self):
+    def get_absolute_url(self):
         return ('datasource_transaction', (), {
             "tx_id": self.tx_id
         })

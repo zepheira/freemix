@@ -3,9 +3,8 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django_extensions.db.models import (TimeStampedModel,
                                          TitleSlugDescriptionModel)
-from freemix.dataset.models import DataSource
+
 from freemix.utils import get_username
-from freemix.utils import UrlMixin
 from django_extensions.db.fields.json import JSONField
 
 #------------------------------------------------------------------------------#
@@ -24,14 +23,12 @@ def create_dataset(user, contents, slug=None):
 
 #------------------------------------------------------------------------------#
 
-class DataProfile(TitleSlugDescriptionModel, TimeStampedModel, UrlMixin):
-    user = models.ForeignKey(User, null=True, related_name="datasets")
+class DataProfile(TitleSlugDescriptionModel, TimeStampedModel):
+    user = models.ForeignKey(User, null=True)
 
-    published = models.BooleanField(default=True)
 
     properties = JSONField()
 
-    source = models.ForeignKey(DataSource, null=True, related_name="datasets")
 
     def __unicode__( self ):
         return self.title
@@ -41,7 +38,7 @@ class DataProfile(TitleSlugDescriptionModel, TimeStampedModel, UrlMixin):
 
 
     @models.permalink
-    def get_url_path(self):
+    def get_absolute_url(self):
         return ('dataset_viewer', (), {
             'username': get_username(self.user),
             'slug': self.slug

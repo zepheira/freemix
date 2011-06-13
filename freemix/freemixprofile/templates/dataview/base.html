@@ -10,6 +10,11 @@
 
 {% block rtab_id %}id="builder_tab"{% endblock %}
 {% block body_class %}main-attraction{% endblock %}
+{% block head_data %}
+    {{ block.super }}
+    <link rel="freemix/data" href="{% url dataset_data_json owner=exhibit.dataset.owner.username slug=exhibit.dataset.slug %}"/>
+    <link rel="freemix/profile" href="{% url dataset_profile_json owner=exhibit.dataset.owner.username slug=exhibit.dataset.slug %}"/>
+{% endblock %}
 
 {% block head_scripts %}
     {% include "js_include/exhibit.html" %}
@@ -88,7 +93,7 @@
   </div>
 </div>
 
-<p class="center">{% trans "Created by" %} <a href="{{ owner_user.get_profile.get_absolute_url }}">{{ owner_user|nicename }}</a> {% trans "based on" %} <a href="{{ data_profile.get_url_path }}">{{ data_profile }}</a>.</p>
+<p class="center">{% trans "Created by" %} <a href="{{ owner_user.get_profile.get_absolute_url }}">{{ owner_user|nicename }}</a> {% trans "based on" %} <a href="{{ data_profile.get_absolute_url }}">{{ data_profile }}</a>.</p>
 {% endblock %}
 
 

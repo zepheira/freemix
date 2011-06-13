@@ -2,7 +2,7 @@ from django.db.models.query_utils import Q
 
 
 def check_owner(user_obj, obj):
-    return user_obj.id == obj.user_id
+    return user_obj.id == obj.owner_id
 
 def check_published(user_obj, obj):
     if obj.published:
@@ -20,19 +20,20 @@ class PermissionsRegistry:
 
     @classmethod
     def register(cls, perm, callback=None, filter=None):
+        if filter is None:
+            filter = Q()
         if callback:
             cls._perm_registry[perm] = callback
-        if filter:
-            cls._filter_registry[perm] = filter
+        cls._filter_registry[perm] = filter
+
 
     @classmethod
     def get_callback(cls, perm):
         return cls._perm_registry.get(perm, lambda x,y: False)
 
     @classmethod
-    def get_filter(cls, perm):
-        return cls._filter_registry[perm]
-
+    def get_filter(cls, perm, user):
+        return cls._filter_registry[perm](user)
 
 
 class RegistryBackend:
@@ -49,7 +50,7 @@ class RegistryBackend:
         pfunc = PermissionsRegistry.get_callback(perm)
         return pfunc(user_obj, obj)
 
-owner_filter = lambda user: Q(user=user)
+owner_filter = lambda user: Q(owner=user)
 
 def published_query_filter(user):
     if user.is_authenticated():
@@ -63,3 +64,7 @@ PermissionsRegistry.register('datasource.can_view', check_owner, owner_filter)
 PermissionsRegistry.register('datasource.can_edit', check_owner, owner_filter)
 PermissionsRegistry.register('datasource.can_delete', check_owner, owner_filter)
 PermissionsRegistry.register('datasourcetransaction.can_view', lambda user_obj, obj: user_obj.id==obj.source.user_id)
+
+PermissionsRegistry.register('exhibit.can_view', lambda user_obj, obj: True, lambda user: Q())
+PermissionsRegistry.register('exhibit.can_edit', lambda user_obj, obj: user_obj.id==obj.user.id, lambda user:Q(user=user))
+PermissionsRegistry.register('exhibit.can_delete', lambda user_obj, obj: user_obj.id==obj.user.id, lambda user:Q(user=user))

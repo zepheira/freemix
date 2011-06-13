@@ -8,32 +8,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Deleting field 'DataProfile.mime_type_guess'
-        db.delete_column('dataprofile_dataprofile', 'mime_type_guess')
-
-        # Deleting field 'DataProfile.mime_type_magic_guess'
-        db.delete_column('dataprofile_dataprofile', 'mime_type_magic_guess')
-
-        # Deleting field 'DataProfile.original_mime_type'
-        db.delete_column('dataprofile_dataprofile', 'original_mime_type')
-
-        # Adding field 'DataProfile.source'
-        db.add_column('dataprofile_dataprofile', 'source', self.gf('django.db.models.fields.related.ForeignKey')(related_name='datasets', null=True, to=orm['dataset.DataSource']), keep_default=False)
+        # Deleting field 'Freemix.data_profile'
+        db.delete_column('freemixprofile_freemix', 'data_profile_id')
 
 
     def backwards(self, orm):
         
-        # Adding field 'DataProfile.mime_type_guess'
-        db.add_column('dataprofile_dataprofile', 'mime_type_guess', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True), keep_default=False)
-
-        # Adding field 'DataProfile.mime_type_magic_guess'
-        db.add_column('dataprofile_dataprofile', 'mime_type_magic_guess', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True), keep_default=False)
-
-        # Adding field 'DataProfile.original_mime_type'
-        db.add_column('dataprofile_dataprofile', 'original_mime_type', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True), keep_default=False)
-
-        # Deleting field 'DataProfile.source'
-        db.delete_column('dataprofile_dataprofile', 'source_id')
+        # User chose to not deal with backwards NULL issues for 'Freemix.data_profile'
+        raise RuntimeError("Cannot reverse this migration. 'Freemix.data_profile' and its values cannot be restored.")
 
 
     models = {
@@ -66,6 +48,16 @@ class Migration(SchemaMigration):
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
+        'canvas.canvas': {
+            'Meta': {'object_name': 'Canvas'},
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'enabled': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'location': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'default': "'Label'", 'max_length': '30'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'}),
+            'thumbnail': ('django.db.models.fields.URLField', [], {'max_length': '200'})
+        },
         'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -73,27 +65,19 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'dataprofile.datafile': {
-            'Meta': {'unique_together': "(('name', 'data_profile'),)", 'object_name': 'DataFile'},
+        'dataset.dataset': {
+            'Meta': {'ordering': "('-modified',)", 'unique_together': "(('slug', 'owner'),)", 'object_name': 'Dataset'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'data_profile': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'data_files'", 'to': "orm['dataprofile.DataProfile']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'json': ('django.db.models.fields.TextField', [], {'default': "'{}'"}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'})
-        },
-        'dataprofile.dataprofile': {
-            'Meta': {'ordering': "('-modified',)", 'unique_together': "(('slug', 'user'),)", 'object_name': 'DataProfile'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'data': ('django.db.models.fields.TextField', [], {'default': '\'{"items": []}\''}),
             'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'properties': ('django.db.models.fields.TextField', [], {'default': "'{}'"}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'datasets'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'profile': ('django.db.models.fields.TextField', [], {'default': '\'{"properties": []}\''}),
             'published': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
             'source': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'datasets'", 'null': 'True', 'to': "orm['dataset.DataSource']"}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'datasets'", 'null': 'True', 'to': "orm['auth.User']"})
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
         'dataset.datasource': {
             'Meta': {'object_name': 'DataSource'},
@@ -101,8 +85,33 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'data_sources'", 'to': "orm['auth.User']"}),
             'uuid': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'})
+        },
+        'freemixprofile.exhibittheme': {
+            'Meta': {'object_name': 'ExhibitTheme'},
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'enabled': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
+            'thumbnail': ('django.db.models.fields.files.ImageField', [], {'default': "'static/images/thumbnails/three-column/smoothness.png'", 'max_length': '100'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'url': ('django.db.models.fields.URLField', [], {'default': "'/static/view_theme/smoothness/smoothness.css'", 'max_length': '100'})
+        },
+        'freemixprofile.freemix': {
+            'Meta': {'ordering': "('-modified',)", 'unique_together': "(('slug', 'user'),)", 'object_name': 'Freemix'},
+            'canvas': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['canvas.Canvas']"}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'dataset': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'exhibits'", 'to': "orm['dataset.Dataset']"}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'json': ('django.db.models.fields.TextField', [], {'default': "'{}'"}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
+            'theme': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'to': "orm['freemixprofile.ExhibitTheme']"}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'exhibits'", 'null': 'True', 'to': "orm['auth.User']"})
         }
     }
 
-    complete_apps = ['dataprofile']
+    complete_apps = ['freemixprofile']

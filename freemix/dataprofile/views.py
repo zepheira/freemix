@@ -7,7 +7,7 @@ from django.http import *
 from django.views.defaults import *
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response, get_object_or_404
-from django.views.generic.base import View, TemplateView
+from django.views.generic.base import View
 
 from freemix.utils import get_user
 from freemix.utils import get_site_url
@@ -20,17 +20,17 @@ from .models import create_dataset
 from freemix.transform.forms import FileUploadForm, URLUploadForm
 import json
 
-from freemix.utils.views import JSONResponse, JSONView, ListView
+from freemix.utils.views import JSONResponse, JSONView, LegacyListView
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 
-class DatasetListView(ListView):
+class DatasetListView(LegacyListView):
     """
     Returns a list of datasets for a particular user on GET.
     """
-    template = "dataset/list/dataset_list_by_user.html"
+    template = "dataset/dataset_list_by_owner.html"
 
     def get_queryset(self, request, username, other_user):
         return DataProfile.objects.filter(user__username=username)
@@ -57,7 +57,7 @@ class CreateDatasetView(View):
         """
 
         data_profile = create_dataset(user, contents)
-        url = data_profile.get_url_path()
+        url = data_profile.get_absolute_url()
 
 
         return HttpResponse("<span><a href='%s'>%s</a></span>" %
@@ -110,7 +110,7 @@ class DatasetMetadataView(View):
         profile = get_data_profile(username, slug)
 
         profile.update_profile(contents)
-        url = profile.get_url_path()
+        url = profile.get_absolute_url()
 
         return HttpResponse("<span><a href='%s'>%s</a></span>"
         % (url, get_site_url(url)))
@@ -130,10 +130,10 @@ class DatasetMetadataView(View):
         # Get children freemixes
         freemixes = Freemix.objects.filter(data_profile=profile)
         # send messages to the owners of each freemix
-        profile_url = profile.get_url_path()
+        profile_url = profile.get_absolute_url()
         for freemix in freemixes:
             if freemix.user:
-                freemix_url = freemix.get_url_path()
+                freemix_url = freemix.get_absolute_url()
                 freemix.user.message_set.create(
                     message=_("The data view at "
                               "%(freemix_url)s has been deleted because the "
@@ -156,7 +156,7 @@ class DatasetView(DatasetMetadataView):
     """
 
     def get(self, request, username, slug,
-            template_name="dataset/view/view.html"):
+            template_name="dataset/dataset_detail.html"):
         profile = get_data_profile(username, slug)
 
         response = render_to_response(template_name, {
@@ -173,7 +173,7 @@ dataset_view = DatasetView.as_view()
 @login_required
 @is_user
 def edit_dataset(request, username, slug,
-                 template_name="dataset/edit/build.html"):
+                 template_name="dataset/dataset_edit.html"):
     """
     Renders the editor for an existing dataset
     """
@@ -184,7 +184,7 @@ def edit_dataset(request, username, slug,
     response = render_to_response(template_name, {
         "username": username,
         "slug": slug,
-        "publishurl": profile.get_url_path(),
+        "publishurl": profile.get_absolute_url(),
         "file_form": FileUploadForm(),
         "url_form": URLUploadForm(),
         "owner": username

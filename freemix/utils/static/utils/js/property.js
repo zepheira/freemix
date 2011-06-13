@@ -112,13 +112,8 @@
             var pl = {};
 
             var localProperties = Freemix.profile.properties;
-
             mergeProperties(pl, Freemix.profile.properties);
-            if (typeof Freemix.profile.dataProfiles != "undefined") {
-                $.each(Freemix.profile.dataProfiles, function(key, profile) {
-                    mergeProperties(pl, profile.properties);
-                });
-            }
+            mergeProperties(pl, Freemix.data_profile.properties);
 
             var props = [];
             Freemix.profile.localProperties = {};

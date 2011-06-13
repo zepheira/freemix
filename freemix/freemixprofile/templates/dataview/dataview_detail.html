@@ -3,7 +3,7 @@
 
 <li class="dataview_summary result_set_item clearfix">
 
-    <div class="dataview-name"><a href="{{  dataview.get_url_path }}">{{dataview.title}}</a></div>
+    <div class="dataview-name"><a href="{{  dataview.get_absolute_url }}">{{dataview.title}}</a></div>
 
     <div class="dataview-left">
         <div class="dataview-creator">
@@ -11,7 +11,7 @@
         </div>
         <div class="dataview-created-data"><span class="property-label">{% trans "Created on:"%} </span>{{dataview.created|date:"N j, Y"}}</div> 
         <div class="dataview-modified-data"><span class="property-label">{% trans "Last Modified:"%} </span>{{dataview.modified|date:"N j, Y"}}</div>
-        <div class="dataview-dataset-name"><a href="{{dataview.data_profile.get_url_path }}" title="{{dataview.data_profile.title}}">{% blocktrans %}Original data set{% endblocktrans %}</a></div>
+        <div class="dataview-dataset-name"><a href="{{dataview.dataset.get_absolute_url }}" title="{{dataview.dataset.title}}">{% blocktrans %}Original data set{% endblocktrans %}</a></div>
 
 {% comment %}
         {% if dataview.description %}
@@ -36,7 +36,7 @@
         <span class="divider">|</span>
 
         <span class="action action_edit_dataview">
-          <a class="dataview_delete" href="{{  dataview.get_url_path }}">{% trans "Delete" %}</a>
+          <a class="dataview_delete" href="{{  dataview.get_absolute_url }}">{% trans "Delete" %}</a>
         </span>
       
       </div>

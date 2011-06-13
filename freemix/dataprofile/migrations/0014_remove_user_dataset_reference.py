@@ -8,8 +8,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding field 'DataProfile.published'
-        db.add_column('dataprofile_dataprofile', 'published', self.gf('django.db.models.fields.BooleanField')(default=True), keep_default=False)
+        # Deleting field 'DataProfile.mime_type_guess'
+        db.delete_column('dataprofile_dataprofile', 'mime_type_guess')
+
+        # Deleting field 'DataProfile.mime_type_magic_guess'
+        db.delete_column('dataprofile_dataprofile', 'mime_type_magic_guess')
+
+        # Deleting field 'DataProfile.original_mime_type'
+        db.delete_column('dataprofile_dataprofile', 'original_mime_type')
 
         # Changing field 'DataProfile.properties'
         db.alter_column('dataprofile_dataprofile', 'properties', self.gf('django.db.models.fields.TextField')())
@@ -20,8 +26,14 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         
-        # Deleting field 'DataProfile.published'
-        db.delete_column('dataprofile_dataprofile', 'published')
+        # Adding field 'DataProfile.mime_type_guess'
+        db.add_column('dataprofile_dataprofile', 'mime_type_guess', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True), keep_default=False)
+
+        # Adding field 'DataProfile.mime_type_magic_guess'
+        db.add_column('dataprofile_dataprofile', 'mime_type_magic_guess', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True), keep_default=False)
+
+        # Adding field 'DataProfile.original_mime_type'
+        db.add_column('dataprofile_dataprofile', 'original_mime_type', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True), keep_default=False)
 
         # Changing field 'DataProfile.properties'
         db.alter_column('dataprofile_dataprofile', 'properties', self.gf('django_extensions.db.fields.json.JSONField')())
@@ -81,15 +93,11 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'mime_type_guess': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'mime_type_magic_guess': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'original_mime_type': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'properties': ('django.db.models.fields.TextField', [], {'default': "'{}'"}),
-            'published': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'data_sets'", 'null': 'True', 'to': "orm['auth.User']"})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'})
         }
     }
 

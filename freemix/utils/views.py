@@ -53,7 +53,7 @@ class JSONView(View):
         return JSONResponse(content, self.template)
 
 
-class ListView(RESTResource):
+class LegacyListView(RESTResource):
     def __init__(self, template=None, filter_func=None, extra_context_func=None,
                 annotate=None):
         if template:

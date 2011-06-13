@@ -5,10 +5,9 @@ from django.core.urlresolvers import resolve
 from django_extensions.db.models import (TimeStampedModel,
                                          TitleSlugDescriptionModel)
 from django.utils.translation import ugettext_lazy as _
+from freemix.dataset.models import Dataset
 
 from freemix.utils import get_user, get_username
-from freemix.utils import UrlMixin
-from freemix.dataprofile.models import DataProfile
 from freemix.canvas.models import Canvas
 from django_extensions.db.fields.json import JSONField
 
@@ -40,16 +39,16 @@ def create_exhibit(user, contents, exhibit_id=None):
 
     url = contents["dataProfile"]
     view, args, kwargs = resolve(url)
-    profile_user = get_user(kwargs["username"])
-    profile = get_object_or_404(DataProfile,
-                                user=profile_user,
+    ds_owner = get_user(kwargs["owner"])
+    dataset = get_object_or_404(Dataset,
+                                owner=ds_owner,
                                 slug=kwargs["slug"])
 
     canvas = get_object_or_404(Canvas, slug=contents["canvas"])
     theme = get_object_or_404(ExhibitTheme, slug=contents["theme"])
 
     exhibit = Freemix.objects.create(user=user,
-                                     data_profile=profile,
+                                     dataset=dataset,
                                      canvas=canvas,
                                      theme=theme,
                                      title=title,
@@ -59,10 +58,10 @@ def create_exhibit(user, contents, exhibit_id=None):
     return exhibit
 
 
-class Freemix(TitleSlugDescriptionModel, TimeStampedModel, UrlMixin):
-    user = models.ForeignKey(User, null=True, related_name="data_views")
+class Freemix(TitleSlugDescriptionModel, TimeStampedModel):
+    user = models.ForeignKey(User, null=True, related_name="exhibits")
     json = JSONField()
-    data_profile = models.ForeignKey(DataProfile, related_name="data_views")
+    dataset = models.ForeignKey(Dataset, null=True, blank=True, related_name="exhibits")
     canvas = models.ForeignKey(Canvas)
     theme = models.ForeignKey(ExhibitTheme, default=0)
 
@@ -70,7 +69,7 @@ class Freemix(TitleSlugDescriptionModel, TimeStampedModel, UrlMixin):
         return self.user, self.slug
 
     @models.permalink
-    def get_url_path(self):
+    def get_absolute_url(self):
         return ('view-freemix', (), {
             'username': get_username(self.user),
             'slug': self.slug})
@@ -87,6 +86,14 @@ class Freemix(TitleSlugDescriptionModel, TimeStampedModel, UrlMixin):
         self.theme = get_object_or_404(ExhibitTheme, slug=contents["theme"])
         self.json = contents
         self.save()
+
+    def dataset_available(self, user):
+        """True if the provided user is able to view the dataset associated with this exhibit
+        """
+        ds = self.dataset
+        if not ds or not user.has_perm("dataset.can_view", ds):
+            return False
+        return True
 
     class Meta:
         unique_together = ("slug", "user")

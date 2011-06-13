@@ -120,6 +120,7 @@ FreemixEmbed.loadFreemix = function() {
                 var begin = function(next) {
                     $.freemix.profile = {{ metadata|safe }};
                     $.freemix.data = {{ data|safe }};
+                    $.freemix.data_profile = {{ data_profile|safe }};
                     $.freemix.initialize(next);
                 };
 

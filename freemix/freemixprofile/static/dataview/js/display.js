@@ -35,29 +35,36 @@
         });
     };
 
-    Freemix.initialize = function(nextFn) {
-        var model = Freemix.profile;
-        var data;
-        var dataProfile = model.dataProfile;
-
+    function run_init(nextFn) {
         Freemix.property.initializeFreemix();
 
-        if (Freemix.data) {
-            data = Freemix.data;
+        var data = $.freemix.data || [$("link[rel='freemix/data']").attr("href")];
+
+        $.exhibit.initializeDatabase(data, function() {
+            $("#canvas").generateExhibitHTML(Freemix.profile).createExhibit();
+        });
+
+        if (typeof nextFn != "undefined") {
+            nextFn();
+        }
+    }
+
+    Freemix.initialize = function(nextFn) {
+        if (Freemix.data_profile) {
+            run_init(nextFn);
+
         } else {
-            data = [];
-            $.each(model.dataProfiles, function(inx, source) {
-                if (source.url) {
-                    data.push(source.url);
+            var dp_url = $("link[rel='freemix/profile']").attr("href");
+            $.ajax({
+                url: dp_url,
+                type: "GET",
+                dataType: "json",
+                success: function(dp) {
+                    Freemix.data_profile=dp;
+                    run_init(nextFn);
                 }
             });
         }
-        $.exhibit.initializeDatabase(data, function() {
-            $("#canvas").generateExhibitHTML(model).createExhibit();
-        });
-
-        if (typeof nextFn != "undefined")
-            nextFn();
     };
 
 
