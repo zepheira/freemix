@@ -32,17 +32,10 @@ class ExhibitTheme(TitleSlugDescriptionModel, models.Model):
         verbose_name_plural = _("Themes")
 
 
-def create_exhibit(user, contents, exhibit_id=None):
+def create_exhibit(user, dataset, contents):
     text = contents.get("text", {})
     title = text.get("title", "")
     description = text.get("subtitle")
-
-    url = contents["dataProfile"]
-    view, args, kwargs = resolve(url)
-    ds_owner = get_user(kwargs["owner"])
-    dataset = get_object_or_404(Dataset,
-                                owner=ds_owner,
-                                slug=kwargs["slug"])
 
     canvas = get_object_or_404(Canvas, slug=contents["canvas"])
     theme = get_object_or_404(ExhibitTheme, slug=contents["theme"])
@@ -70,7 +63,7 @@ class Freemix(TitleSlugDescriptionModel, TimeStampedModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('view-freemix', (), {
+        return ('exhibit_detail', (), {
             'username': get_username(self.user),
             'slug': self.slug})
 

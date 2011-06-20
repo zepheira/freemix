@@ -11,7 +11,7 @@
     function setupProfile(profile) {
         Freemix.profile = profile;
         Freemix.property.initializeDataProfile();
-        var dataURL = $("link[rel='freemix/data']").attr("href");
+        var dataURL = $("link[rel='exhibit/data']").attr("href");
         $.ajax({
             url: dataURL,
             type: "GET",
@@ -25,7 +25,10 @@
     }
 
     function setup() {
-        var profileURL = $("link[rel='freemix/profile']").attr("href");
+         var url = $("#create_exhibit_button").attr("href");
+        $("#create_exhibit_button").newExhibitDialog(url);
+
+        var profileURL = $("link[rel='freemix/dataprofile']").attr("href");
         $.ajax({
             url: profileURL,
             type: "GET",

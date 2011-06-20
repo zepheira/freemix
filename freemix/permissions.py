@@ -1,13 +1,7 @@
 from django.db.models.query_utils import Q
 
 
-def check_owner(user_obj, obj):
-    return user_obj.id == obj.owner_id
 
-def check_published(user_obj, obj):
-    if obj.published:
-        return True
-    return check_owner(user_obj, obj)
 
 class PermissionsRegistry:
 
@@ -52,6 +46,14 @@ class RegistryBackend:
 
 owner_filter = lambda user: Q(owner=user)
 
+def check_owner(user_obj, obj):
+    return user_obj.id == obj.owner_id
+
+def check_published(user_obj, obj):
+    if obj.published:
+        return True
+    return check_owner(user_obj, obj)
+
 def published_query_filter(user):
     if user.is_authenticated():
         return Q(published=True)|owner_filter(user)
@@ -65,6 +67,26 @@ PermissionsRegistry.register('datasource.can_edit', check_owner, owner_filter)
 PermissionsRegistry.register('datasource.can_delete', check_owner, owner_filter)
 PermissionsRegistry.register('datasourcetransaction.can_view', lambda user_obj, obj: user_obj.id==obj.source.user_id)
 
+def exhibit_can_edit(user, obj):
+    if user.is_authenticated() and user.id==obj.user.id:
+        return obj.dataset_available(user)
+    return False
+
+def exhibit_edit_filter(user):
+    if user.is_authenticated():
+        return Q(user=user)&(Q(dataset__owner=user)|Q(dataset__published=True))
+    return False
+
+def exhibit_can_delete(user, obj):
+    if user.is_authenticated():
+        return user.id == obj.user.id
+    return False
+
+def exhibit_delete_filter(user):
+    if user.is_authenticated():
+        return Q(user=user)
+    return 
+
 PermissionsRegistry.register('exhibit.can_view', lambda user_obj, obj: True, lambda user: Q())
-PermissionsRegistry.register('exhibit.can_edit', lambda user_obj, obj: user_obj.id==obj.user.id, lambda user:Q(user=user))
+PermissionsRegistry.register('exhibit.can_edit', exhibit_can_edit, exhibit_edit_filter)
 PermissionsRegistry.register('exhibit.can_delete', lambda user_obj, obj: user_obj.id==obj.user.id, lambda user:Q(user=user))

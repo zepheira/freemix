@@ -10,19 +10,12 @@ def canvases(context):
     return {'STATIC_URL': settings.STATIC_URL,
             'canvases': Canvas.objects.filter(enabled=True)}
 canvas_chooser=canvases
-canvas_list=canvases
-canvas_template_list=canvases
-@register.inclusion_tag("canvas/chooser.html", takes_context=True)
-def canvas_chooser(context):
-    return canvases(context)
+@register.inclusion_tag("canvas/chooser.html")
+def canvas_chooser(base_url):
+    return {'STATIC_URL': settings.STATIC_URL,
+            'canvases': Canvas.objects.filter(enabled=True),
+            'base_url': base_url}
 
-@register.inclusion_tag("canvas/list.json", takes_context=True)
-def canvas_list(context):
-    return canvases(context)
-
-@register.inclusion_tag("canvas/template_list.html", takes_context=True)
-def canvas_template_list(context):
-    return canvases(context)
 
 @register.tag
 def canvas_html ( parser, token ):

@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.http import *
 from django.views.generic.base import View
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, render
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.core.urlresolvers import resolve, reverse
@@ -12,10 +12,11 @@ from django.core.urlresolvers import resolve, reverse
 from django.contrib.auth.models import User
 from . import models
 from freemix.dataset.models import Dataset
+from freemix.freemixprofile.models import Freemix
 from freemix.utils import get_site_url
 
 from freemix.utils import get_user
-from freemix.utils.views import LegacyListView
+from freemix.utils.views import LegacyListView, JSONResponse
 import json
 import uuid
 
@@ -28,7 +29,7 @@ def validate_user(user, username=None):
 
 
 class DataviewsListView(LegacyListView):
-    template = "dataview/list/dataview_list_by_user.html"
+    template = "exhibit/list/dataview_list_by_user.html"
 
     def get_queryset(self, request, username, other_user):
         return models.Freemix.objects.filter(user=get_user(username))
@@ -38,8 +39,8 @@ class DataviewsListView(LegacyListView):
 dataviews_by_user = DataviewsListView()
 
 
-class DataviewsByDatasetListView(LegacyListView):
-    template = "dataview/list/dataview_list_by_dataset.html"
+class ExhibitsByDatasetListView(LegacyListView):
+    template = "exhibit/list/dataview_list_by_dataset.html"
 
     def get_queryset(self, request, *args, **kwargs):
         return models.Freemix.objects.filter(dataset=kwargs["dataset"])
@@ -47,11 +48,11 @@ class DataviewsByDatasetListView(LegacyListView):
     def extra_context(self, request, *args, **kwargs):
         return {"dataset": get_object_or_404(Dataset, slug=kwargs["slug"],
                                              owner__username=kwargs["owner"])}
-exhibits_by_dataset = DataviewsByDatasetListView()
+exhibits_by_dataset = ExhibitsByDatasetListView()
 
 
 def create_view_json(data_set_url, canvas="three-column",
-    template_name="dataview/profile.js"):
+    template_name="exhibit/profile.js"):
     view, args, kwargs = resolve(data_set_url)
     user = get_object_or_404(User, username=kwargs["owner"])
     dataset = get_object_or_404(Dataset, slug=kwargs["slug"],
@@ -73,10 +74,37 @@ def create_view_json(data_set_url, canvas="three-column",
         "canvas": canvas})
 
 
+class StockExhibitProfileJSONView(View):
+    """Generate the default profile description of an exhibit for a particular dataset and canvas
+    """
+    def get(self, request, *args, **kwargs):
+        owner = kwargs["owner"]
+        slug = kwargs["slug"]
+        canvas = request.GET.get("canvas", "three-column")
+
+        ds = get_object_or_404(models.Dataset, owner__username=owner, slug=slug)
+        user = self.request.user
+
+        if not user.has_perm("dataset.can_view", ds):
+            raise Http404
+
+        return JSONResponse({
+            "theme": "smoothness",
+            "properties": [],
+            "facets": {},
+            "views": {
+                "views": [{
+                    "id": str(uuid.uuid4()),
+                    "type": "list",
+                    "name": "List"}]},
+            "text": {"title": ds.title},
+            "canvas": canvas})
+
+
 def process_freemixes(request, username):
     if request.method == 'GET':
         if request.GET.__contains__("build"):
-            response = build_freemix(request, username)
+            response = exhibit_edit(request, username)
         else:
             response = dataviews_by_user(request, username=username)
     elif request.method == 'POST' or request.method == 'PUT':
@@ -90,14 +118,14 @@ def process_freemix(request, username, slug, jsonp=False):
     if request.method == 'GET':
         if request.GET.__contains__("format"):
             if request.REQUEST["format"] == 'json':
-                response = get_freemix_metadata(request, username, slug, jsonp)
+                response = get_exhibit_profile(request, username, slug, jsonp)
             else:
                 response = HttpResponseNotFound()
 
         elif request.GET.__contains__("build"):
-            response = build_freemix(request, username, slug)
+            response = exhibit_edit(request, username, slug)
         else:
-            response = view_exhibit(request, username, slug)
+            response = exhibit_display(request, username, slug)
     elif request.method == 'POST':
         response = create_exhibit(request, username, slug)
     elif request.method == 'PUT':
@@ -107,9 +135,9 @@ def process_freemix(request, username, slug, jsonp=False):
     return response
 
 
-def freemix_metadata(request, username, slug, jsonp=False):
+def exhibit_profile(request, username, slug, jsonp=False):
     if request.method == 'GET':
-        return get_freemix_metadata(request, username, slug, jsonp)
+        return get_exhibit_profile(request, username, slug, jsonp)
     else:
         return process_freemix(request, username, slug, jsonp)
 
@@ -127,8 +155,8 @@ def get_metadata(username, slug):
     return metadata
 
 
-def get_freemix_metadata(request, username, slug, jsonp=False,
-                         template_name="dataview/profile.js"):
+def get_exhibit_profile(request, username, slug, jsonp=False,
+                         template_name="exhibit/profile.js"):
     try:
         if jsonp:
             response = render_to_response(template_name, {
@@ -147,10 +175,10 @@ def get_freemix_metadata(request, username, slug, jsonp=False,
     return response
 
 
-def build_freemix(request, username, slug=None,
-                  template_name="dataview/edit/build.html"):
+def exhibit_edit(request, username, slug=None,
+                  template_name="exhibit/exhibit_edit.html"):
     # Get a URL from the query string representing a data file's metadata.
-    # Return the Builder, with URLs for the freemix/profile and
+    # Return the Builder, with URLs for the freemix/dataprofile and
     # freemix/publish links.
 
     if request.method == 'GET':
@@ -158,33 +186,135 @@ def build_freemix(request, username, slug=None,
             canvas = "three-column"
             if slug:
                 user = models.get_user(username)
-                freemix = get_object_or_404(models.Freemix,
+                exhibit = get_object_or_404(models.Freemix,
                                             slug=slug,
                                             user=request.user)
-                canvas = freemix.canvas.slug
-                publishUrl = freemix.get_absolute_url()
-                data_profile = None
-            elif "data_profile" in request.GET:
+                canvas = exhibit.canvas.slug
+                publishUrl = exhibit.get_absolute_url()
+                dataset = exhibit.dataset
+            elif "dataset" in request.GET:
                 if "canvas" in request.GET:
                     canvas = request.GET["canvas"]
                 publishUrl = reverse("freemix_root",
                                      kwargs={"username": username})
-                data_profile = request.GET["data_profile"]
+                view, args, kwargs = resolve(request.get["dataset"])
+                dataset = get_object_or_404(Dataset, owner=kwargs["owner"], slug=kwargs["slug"])
             else:
                 return HttpResponseForbidden(_("Invalid Request"))
 
             return render_to_response(template_name, {
                 "username": username,
                 "slug": slug,
-                "data_profile": data_profile,
+                "dataset": dataset,
                 "publishurl": publishUrl,
                 "canvas": canvas,
                 "owner": username}, context_instance=RequestContext(request))
     return HttpResponseForbidden(_("Invalid Request"))
-build_freemix = login_required(build_freemix)
+exhibit_edit = login_required(exhibit_edit)
 
 
-def view_exhibit(request, username, slug, template_name="dataview/view.html"):
+class NewExhibitEditorView(View):
+
+    template_name="exhibit/exhibit_edit.html"
+
+    def setup(self):
+        self.dataset_args = {"owner": self.kwargs["owner"], "slug": self.kwargs["slug"]}
+        self.dataset = get_object_or_404(Dataset,owner__username=self.kwargs["owner"], slug=self.kwargs["slug"])
+
+    def get_profile_url(self):
+        return reverse("exhibit_profile_template", kwargs=self.dataset_args)
+
+    def get_dataset_profile_url(self):
+        return reverse("dataset_profile_json", kwargs=self.dataset_args)
+
+    def get_data_url(self):
+        return reverse("dataset_data_json", kwargs=self.dataset_args)
+
+    def get_canvas(self):
+        return self.request.GET.get("canvas", "three-column")
+
+    def check_permissions(self):
+        return self.request.user.has_perm("dataset.can_view", self.dataset)
+
+    def get(self, request, *args, **kwargs):
+        self.setup()
+
+        if not self.check_permissions():
+            raise Http404()
+
+        return render(request, self.template_name, {
+            "exhibit_profile_url": self.get_profile_url(),
+            "dataset_profile_url": self.get_dataset_profile_url(),
+            "data_url": self.get_data_url(),
+            "canvas": self.get_canvas(),
+            "owner": request.user.username
+        })
+
+
+    def post(self, request, *args, **kwargs):
+        self.setup()
+        user = request.user
+
+        if not self.check_permissions():
+            raise Http404()
+
+        contents = json.loads(self.request.raw_post_data)
+        exhibit = models.create_exhibit(user, self.dataset, contents)
+        return url_response(exhibit.get_absolute_url())
+
+
+class ExhibitEditorView(View):
+    template_name="exhibit/exhibit_edit.html"
+
+    def setup(self):
+        self.exhibit = get_object_or_404(models.Freemix, user__username=self.kwargs["username"],
+                                         slug=self.kwargs["slug"])
+        self.dataset = self.exhibit.dataset
+        self.dataset_args = {"owner": self.dataset.owner.username, "slug": self.dataset.slug}
+
+    def get_profile_url(self):
+        return reverse("exhibit_profile", kwargs={"username": self.kwargs["username"],
+                                                       "slug": self.kwargs["slug"]})
+    def get_dataset_profile_url(self):
+        return reverse("dataset_profile_json", kwargs=self.dataset_args)
+
+    def get_data_url(self):
+        return reverse("dataset_data_json", kwargs=self.dataset_args)
+
+    def get_canvas(self):
+        return self.exhibit.canvas.slug
+
+    def check_permissions(self):
+        return self.request.user.has_perm("exhibit.can_edit", self.exhibit)
+
+    def get(self, request, *args, **kwargs):
+        self.setup()
+
+        if not self.check_permissions():
+            raise Http404()
+
+        return render(request, self.template_name, {
+            "exhibit_profile_url": self.get_profile_url(),
+            "dataset_profile_url": self.get_dataset_profile_url(),
+            "data_url": self.get_data_url(),
+            "canvas": self.get_canvas(),
+            "owner": request.user.username
+        })
+
+
+    def post(self, request, *args, **kwargs):
+        self.setup()
+        user = request.user
+
+        if not self.check_permissions():
+            raise Http404()
+
+        contents = json.loads(self.request.raw_post_data)
+        self.exhibit.update_profile(contents)
+        url = self.exhibit.get_absolute_url()
+        return url_response(self.exhibit.get_absolute_url())
+
+def exhibit_display(request, username, slug, template_name="exhibit/exhibit_display.html"):
     user = get_user(username)
     exhibit = get_object_or_404(models.Freemix, user=user, slug=slug)
     if not request.user.has_perm("exhibit.can_view", exhibit):
@@ -269,12 +399,12 @@ class EmbeddedExhibitView(View):
     """Generate the javascript necessary to embed an exhibit on an external site
     """
     # The
-    template_name = "embed/show.js"
+    template_name = "exhibit/embed/show.js"
 
     # The template to display when an exhibit is not found
-    not_found_template_name = "embed/none.js"
+    not_found_template_name = "exhibit/embed/none.js"
 
-    no_data_template_name = "embed/no_dataset.js"
+    no_data_template_name = "exhibit/embed/no_dataset.js"
 
     def not_found_response(self, request, where):
         """Returns a trivial response when the desired exhibit is not found
@@ -318,7 +448,7 @@ class EmbeddedExhibitView(View):
             "metadata": json.dumps(metadata),
             "data_profile": json.dumps(profile.profile),
             "where": where,
-            "permalink": get_site_url(reverse("view-freemix",
+            "permalink": get_site_url(reverse("exhibit_detail",
                                               kwargs={'username': username,
                                                       'slug': slug})),
             "canvas": canvas_html}, context_instance=RequestContext(request))

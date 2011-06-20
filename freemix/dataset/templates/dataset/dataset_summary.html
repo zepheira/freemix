@@ -42,7 +42,7 @@
       <div class="dataset-links">
 	
         <span class="action action_create_dataset">
-          <a class="dataset_create" href="{% url build_new_freemix username=request.user.username dataset=dataset.get_absolute_url %}">{% trans "Build" %}</a>
+          <a class="dataset_create" href="{% url exhibit_canvas_chooser owner=dataset.owner.username slug=dataset.slug %}">{% trans "Build" %}</a>
         </span>
 
         <span class="divider">|</span>

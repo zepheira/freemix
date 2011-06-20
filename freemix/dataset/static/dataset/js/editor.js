@@ -55,8 +55,8 @@
             } else {
                 publishing=true;
                 metadata = $.extend({},  $.exhibit.exportDatabase($.exhibit.database), {"data_profile": metadata});
-                if (window.location.hash.startsWith("#data_profile=")) {
-                    var publishURL = window.location.hash.substring("#data_profile=".length, window.location.hash.length);
+                if (window.location.hash.startsWith("#dataset=")) {
+                    var publishURL = window.location.hash.substring("#dataset=".length, window.location.hash.length);
                 } else{
                     publishURL = $("link[rel='freemix/publish']").attr("href");
                 }
@@ -76,7 +76,7 @@
                         url = url.substr(url.indexOf('/'));
                     }
                     if ($("link[rel='freemix/publish']").attr("href") != url) {
-                        window.location.hash = "data_profile=" + url;
+                        window.location.hash = "dataset=" + url;
                         $("link[rel='freemix/publish']").attr("href", url);
                         Freemix.profile.url=url+"data.json";
                     }
@@ -84,11 +84,11 @@
 
 
                     var freemix_url = $("#publish-success .hyper-upload a.build-freemix").attr("href");
-                    if (freemix_url.indexOf("&data_profile=") < 0) {
-                        $("#publish-success .hyper-upload a.build-freemix").attr("href", freemix_url+"&data_profile=" + Freemix.profile.url);
+                    if (freemix_url.indexOf("&dataset=") < 0) {
+                        $("#publish-success .hyper-upload a.build-freemix").attr("href", freemix_url+"&dataset=" + Freemix.profile.url);
                     }
                     $("#publish-success .hyper-upload a.build-freemix").bind("click", function(){
-                        $("#create_view_dialog").newViewDialog($("#publish-success .hyper-upload a.build-freemix").attr("href"));
+                        $("#create_view_dialog").newViewDialog("show");
                         return false;
                     });
                     $(".step-menu a span.initial").hide();
@@ -209,7 +209,7 @@
             }
         });
 
-        var profileURL = $("link[rel='freemix/profile']").attr("href");
+        var profileURL = $("link[rel='freemix/dataprofile']").attr("href");
 
         var xhr = $.ajax({
                  url: profileURL,

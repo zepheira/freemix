@@ -1,0 +1,60 @@
+{% load i18n %}
+{% load freemix_helpers %}
+
+<li class="dataview_summary result_set_item clearfix">
+
+    <div class="dataview-name"><a href="{{  exhibit.get_absolute_url }}">{{exhibit.title}}</a></div>
+    {% if not visible %}
+        <div class="dataview-left">
+            {% blocktrans %}The dataset is no longer available.{% endblocktrans %}
+        </div>
+        {% if request.user.is_authenticated and request.user.username == exhibit.user.username %}
+        <div class="dataview-right">
+
+          <div class="dataview-links">
+            <span class="action action_edit_dataview">
+              <a class="dataview_delete" href="{{  exhibit.get_absolute_url }}">{% trans "Delete" %}</a>
+            </span>
+          </div>
+        </div>
+        {% endif %}
+    {%  else %}
+    <div class="dataview-left">
+        <div class="dataview-creator">
+                <span class="property-label">{% trans "Created by:"%} </span> <a href="{% url profile_detail exhibit.user.username %}">{{exhibit.user|nicename}}</a>
+        </div>
+        <div class="dataview-created-data"><span class="property-label">{% trans "Created on:"%} </span>{{exhibit.created|date:"N j, Y"}}</div>
+        <div class="dataview-modified-data"><span class="property-label">{% trans "Last Modified:"%} </span>{{exhibit.modified|date:"N j, Y"}}</div>
+        <div class="dataview-dataset-name"><a href="{{exhibit.dataset.get_absolute_url }}" title="{{exhibit.dataset.title}}">{% blocktrans %}Original data set{% endblocktrans %}</a></div>
+
+{% comment %}
+        {% if dataview.description %}
+        <span class="property-label">{% trans "Description:" %}</span>
+        {{dataview.description}}
+        {% endif %}
+{% endcomment %}
+
+    </div>
+
+    {% if request.user.is_authenticated and request.user.username == exhibit.user.username %}
+
+    <div class="dataview-right">
+
+      <div class="dataview-links">
+
+        <span class="action action_edit_dataview">
+          <a class="dataview_edit" href="{% url exhibit_edit username=exhibit.user.username slug=exhibit.slug %}">{% trans "Edit" %}</a>
+        </span>
+
+        <span class="divider">|</span>
+
+        <span class="action action_edit_dataview">
+          <a class="dataview_delete" href="{{  exhibit.get_absolute_url }}">{% trans "Delete" %}</a>
+        </span>
+      
+      </div>
+    </div>
+
+    {% endif %}
+    {% endif %}
+</li>

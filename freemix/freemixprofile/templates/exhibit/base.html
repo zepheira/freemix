@@ -1,0 +1,100 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load canvas %}
+{% load exhibit_tags %}
+{% load freemix_helpers %}
+{% load compress %}
+
+{% block head_title %}{{ freemix_title }}{% endblock %}
+
+{% block rtab_id %}id="builder_tab"{% endblock %}
+{% block body_class %}main-attraction{% endblock %}
+{% block head_data %}
+    {{ block.super }}
+    <link rel="exhibit/data" href="{% url dataset_data_json owner=exhibit.dataset.owner.username slug=exhibit.dataset.slug %}"/>
+    <link rel="freemix/dataprofile" href="{% url dataset_profile_json owner=exhibit.dataset.owner.username slug=exhibit.dataset.slug %}"/>
+{% endblock %}
+
+{% block head_scripts %}
+    {% include "js_include/exhibit.html" %}
+    {{ block.super }}
+    {% include "js_include/jquery_ui.html" %}
+    {% include "js_include/viewer.html" %}
+    {% compress js %}
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>   
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>   
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>  
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/widget.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/facet.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/view.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/views/map-view.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.highlight.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/embed_button.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/display.js"></script>
+    {% endcompress %}
+    {% include "exhibit/lens_js.html" %}
+    {% include "exhibit/facet_js.html" %}
+    {% autoescape off %} 
+    <script type="text/javascript">
+        (function(Freemix) {
+            Freemix.profile = {{ metadata }};
+
+            $(document).ready(function() {
+                Freemix.initialize();
+                Freemix.embedWidget('embed');
+            });
+
+         })(jQuery.freemix);
+    </script>
+    {% endautoescape %}
+{% endblock head_scripts %}
+    
+    
+{% block head_css %}
+{{block.super}}
+{% compress css %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
+{% endcompress %}
+<link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
+<style type="text/css">
+    {% canvas_css canvas %}
+</style>
+{% theme_css_link theme %}
+
+{% endblock %}
+
+{% block body %}
+{% if user.is_authenticated %}
+{% ifequal user.username username %}
+<div id="embed">
+  <div id="embed-info" class="ui-helper-hidden ui-widget-content ui-corner-all">
+    <p><strong>{% blocktrans %}Copy the following and paste it into your page where you'd like your data view to be placed.{% endblocktrans %}</strong></p>
+    <p id="embedding-code" style="display: block; line-height: 2.5em; width: 75%; overflow-y: none; overflow-x: auto;margin: 0.5em auto; border: 1px solid #c6c6c6; color: #000; background: #F3F3F3 url({{ STATIC_URL }}exhibit/img/form-shadow.png) repeat-x scroll left top; text-align: left; font-family: monospace; padding: 0.5em; white-space: nowrap;"></p>
+    <p class="buttons"><a id="embed-info-close" class="ui-state-default ui-corner-all button button-icon-left"><span class="ui-icon ui-icon-close"></span>{% trans "Close" %}</a></p>
+  </div>
+  <a id="embed-activate" class="ui-state-default ui-corner-all button button-icon-left"><span class="ui-icon ui-icon-circle-triangle-s"></span>{% trans "Embed" %}</a>
+</div>
+{% endifequal %}
+{% endif %}
+<div id="contents" class="freemix-themeable">
+  
+  <div id="canvas">
+      {% canvas_html canvas %}         
+  </div>                
+  
+</div>
+
+
+<div class="ui-helper-hidden">
+  <div id="templates">
+  </div>
+</div>
+
+<p class="center">{% trans "Created by" %} <a href="{{ owner_user.get_profile.get_absolute_url }}">{{ owner_user|nicename }}</a> {% trans "based on" %} <a href="{{ data_profile.get_absolute_url }}">{{ data_profile }}</a>.</p>
+{% endblock %}
+
+
+

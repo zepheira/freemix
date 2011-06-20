@@ -22,7 +22,7 @@
 {{block.super}}
 {% if publishurl %}
 <link rel="freemix/publish" href="{{ publishurl }}"/>
-<link rel="freemix/profile" href="{{ profileurl }}"/>
+<link rel="freemix/dataprofile" href="{{ profileurl }}"/>
 {% endif %}
 
 {% endblock %}
@@ -131,7 +131,7 @@
     <div id="publish-label" class="ui-helper-hidden">{% blocktrans %}Please enter a name for your dataset:{% endblocktrans %}<input type="text" id="profile-name"/><input type="button" id="profile-name-button" value="{% trans "Publish" %}"/></div>
     <div id="publish-success" class="ui-helper-hidden">{% blocktrans %}This dataset has been published to{% endblocktrans %}&nbsp;<span id="publish-url"></span>.
       <div class="hyper-upload">
-        <p><a class="button_link build-freemix" href="{% url freemix_root username=user.username %}?build=true">{% trans "Create a Data View" %}</a></p>
+        <p><a class="button_link build-freemix" href="{% url exhibit_edit username=user.username %}">{% trans "Create a Data View" %}</a></p>
         <p>{% blocktrans %}Create a new {{ SITE_NAME }} view of this data, or{% endblocktrans %}</p>
         <p><a class="button_link" href="{% url upload_dataset %}" title="{% blocktrans %}Create a new dataset{% endblocktrans %}">{% trans "Upload More Data" %}</a></p>
       </div>

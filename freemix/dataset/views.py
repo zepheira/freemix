@@ -152,6 +152,11 @@ class DatasetResourceView(OwnerSlugDetailView):
     object_perm="dataset.can_view"
     template_name="dataset/dataset_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(DatasetResourceView, self).get_context_data(**kwargs)
+        context["can_edit"] = self.request.user.has_perm("dataset.can_edit", self.get_object())
+        return context
+
     def delete(self, request, *args, **kwargs):
         ds = self.get_object()
 

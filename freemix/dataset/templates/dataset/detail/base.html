@@ -3,13 +3,14 @@
 {% load i18n %}
 {% load freemix_helpers %}
 {% load compress %}
+{% load canvas %}
 {% block freemix_title %}{% blocktrans %}Data Profile{% endblocktrans %}: {{ object.title }}{% endblock %}
 
 
 {% block freemix_meta %}
     {{ block.super }}
-    <link rel="freemix/profile" href="{% url dataset_profile_json owner=object.owner.username slug=object.slug %}"/>
-    <link rel="freemix/data" href="{% url dataset_data_json owner=object.owner.username slug=object.slug %}"/>
+    <link rel="freemix/dataprofile" href="{% url dataset_profile_json owner=object.owner.username slug=object.slug %}"/>
+    <link rel="exhibit/data" href="{% url dataset_data_json owner=object.owner.username slug=object.slug %}"/>
 {% endblock %}
 
 {% block freemix_css %}
@@ -34,6 +35,8 @@
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}dataset/js/detail.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}canvas/js/new_view_dialog.js"></script>
+
     {% endcompress %}
 {% endblock %}
 
@@ -43,14 +46,13 @@
 <div id="contents" class="ui-helper-hidden">
   <div id="identify" class="ui-helper-clearfix">
     <h1>{% trans "Data Profile" %}: {{ object.title }}</h1>
-    {% ifequal user object.owner %}
+    {% if can_edit %}
     <div class="priority-area">
       <a href="{% url dataset_edit owner=object.owner.username slug=object.slug %}" class="button_link">{% trans "Edit" %}</a>
-      {% comment %}
-      <a href="{% url build_new_freemix username=user.username dataset=profile.get_absolute_url %}" class="button_link">{% trans "Build" %}</a>
-      {% endcomment %}
+
+      <a href="{% url exhibit_canvas_chooser owner=object.owner.username slug=object.slug %}" id="create_exhibit_button" class="button_link">{% trans "Create a View" %}</a>
     </div>
-    {% endifequal %}
+    {% endif %}
     {% with object.exhibits.count as view_count %}
     {% ifnotequal view_count 0 %}
     <p><a href="{% url exhibits_by_dataset owner=object.owner.username slug=object.slug %}">{% trans "See all" %} {{ view_count }} {% trans "data views" %}</a> {%  trans  "based on this data profile." %}</p>
@@ -113,5 +115,4 @@
   <div id="templates">
   </div>
 </div>
-
 {% endblock %}
