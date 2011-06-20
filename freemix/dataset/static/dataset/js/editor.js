@@ -87,10 +87,7 @@
                     if (freemix_url.indexOf("&dataset=") < 0) {
                         $("#publish-success .hyper-upload a.build-freemix").attr("href", freemix_url+"&dataset=" + Freemix.profile.url);
                     }
-                    $("#publish-success .hyper-upload a.build-freemix").bind("click", function(){
-                        $("#create_view_dialog").newViewDialog("show");
-                        return false;
-                    });
+
                     $(".step-menu a span.initial").hide();
                     $(".step-menu span.success").show();
                     publishing = false;
@@ -126,7 +123,6 @@
     }
 
      Freemix.DatasetEditor = function() {
-        $("#create_view_dialog").newViewDialog();
 
         $("#profile-name-button").click(function() {
             Freemix.profile.label = $("#profile-name").val();

@@ -3,7 +3,7 @@
 
 <li class="dataset_summary result_set_item clearfix {% if dataset.published %}public{% else %}private{% endif %}">
 
-    <div class="dataset-name"><a href="{{ dataset.get_absolute_url }}">{{ dataset.title }}</a></div>
+    <div class="dataset-title"><a href="{{ dataset.get_absolute_url }}">{{ dataset.title }}</a></div>
     <div class="dataset-description">
         {% if dataset.description %}
                 {% ifnotequal dataset.description dataset.description|truncatewords:20 %}

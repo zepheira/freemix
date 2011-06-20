@@ -41,7 +41,6 @@
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify-edit.js"></script>    
-    <script type="text/javascript" src="{{STATIC_URL}}canvas/js/new_view_dialog.js"></script>   
     <script type="text/javascript" src="{{STATIC_URL}}dataset/js/editor.js"></script>
     {% endcompress %}
 {% endblock freemix_js%}
@@ -131,9 +130,9 @@
     <div id="publish-label" class="ui-helper-hidden">{% blocktrans %}Please enter a name for your dataset:{% endblocktrans %}<input type="text" id="profile-name"/><input type="button" id="profile-name-button" value="{% trans "Publish" %}"/></div>
     <div id="publish-success" class="ui-helper-hidden">{% blocktrans %}This dataset has been published to{% endblocktrans %}&nbsp;<span id="publish-url"></span>.
       <div class="hyper-upload">
-        <p><a class="button_link build-freemix" href="{% url exhibit_edit username=user.username %}">{% trans "Create a Data View" %}</a></p>
-        <p>{% blocktrans %}Create a new {{ SITE_NAME }} view of this data, or{% endblocktrans %}</p>
-        <p><a class="button_link" href="{% url upload_dataset %}" title="{% blocktrans %}Create a new dataset{% endblocktrans %}">{% trans "Upload More Data" %}</a></p>
+{#        <p><a class="button_link build-freemix" href="{% url exhibit_edit username=user.username %}">{% trans "Create a Data View" %}</a></p>#}
+{#        <p>{% blocktrans %}Create a new {{ SITE_NAME }} view of this data, or{% endblocktrans %}</p>#}
+{#        <p><a class="button_link" href="{% url upload_dataset %}" title="{% blocktrans %}Create a new dataset{% endblocktrans %}">{% trans "Upload More Data" %}</a></p>#}
       </div>
     </div>
     <div id="publish-failure" class="ui-helper-hidden">{% blocktrans %}Publish Failed:{% endblocktrans %}<span id="publish-error"></span></div>
@@ -172,6 +171,5 @@
 
   {% endblock dataset_edit_hidden %}
 </div>
-{% canvas_chooser %}
 {% endblock %}
 

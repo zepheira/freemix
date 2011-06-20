@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from django.contrib.auth.decorators import login_required
 from freemix.freemixprofile import views
 urlpatterns = patterns('',
 
@@ -7,7 +8,7 @@ urlpatterns = patterns('',
        name='exhibit_history'),
 
     url(r'^(?P<username>[a-zA-Z0-9_.-]+)/(?P<slug>[a-zA-Z0-9_.-]+)/editor/$',
-       views.ExhibitEditorView.as_view(),
+       login_required(views.ExhibitEditorView.as_view()),
        name='exhibit_edit'),
 
     url(r'^(?P<username>[a-zA-Z0-9_.-]+)/(?P<slug>[a-zA-Z0-9_.-]+)/$',

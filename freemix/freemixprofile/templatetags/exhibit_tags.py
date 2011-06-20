@@ -2,9 +2,7 @@ from django import template
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.template import Variable
-from freemix.freemixprofile.views import create_view_json, get_metadata
 from freemix.freemixprofile import models
-import json
 
 register = template.Library()
 
@@ -23,45 +21,6 @@ def dataview_list(context, queryset, max_count=10, pageable=True):
 @register.inclusion_tag("exhibit/exhibit_create_dialog.html", takes_context=True)
 def new_dataview(context):
     return {'STATIC_URL': settings.STATIC_URL}
-
-@register.tag
-def new_view_json ( parser, token ):
-    try:
-        tag_name, data_profile, canvas = token.split_contents()
-    except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires a single argument" % token.contents[0]
-    return NewViewJsonNode( data_profile, canvas )
-
-@register.tag
-def view_json ( parser, token ):
-    try:
-        tag_name, username, slug = token.split_contents()
-    except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires a single argument" % token.contents[0]
-    return ViewJsonNode( username, slug )
-
-class NewViewJsonNode( template.Node ):
-    def __init__ (self, data_profile, canvas):
-        self.data_profile = Variable(data_profile)
-        self.canvas = Variable(canvas)
-
-    def render(self, context):
-
-        return render_to_string("exhibit/profile.js", {"json":
-            create_view_json(self.data_profile.resolve(context),
-                self.canvas.resolve(context))})
-
-
-class ViewJsonNode( template.Node ):
-    def __init__ (self, username, slug):
-        self.username = Variable(username)
-        self.slug = Variable(slug)
-
-    def render(self, context):
-
-        return render_to_string("exhibit/profile.js", {"json":
-            json.dumps(get_metadata(self.username.resolve(context),
-                self.slug.resolve(context)))})
 
 # Theme tags
 @register.tag

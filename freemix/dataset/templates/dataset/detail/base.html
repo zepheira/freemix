@@ -45,19 +45,36 @@
 
 <div id="contents" class="ui-helper-hidden">
   <div id="identify" class="ui-helper-clearfix">
-    <h1>{% trans "Data Profile" %}: {{ object.title }}</h1>
-    {% if can_edit %}
-    <div class="priority-area">
-      <a href="{% url dataset_edit owner=object.owner.username slug=object.slug %}" class="button_link">{% trans "Edit" %}</a>
+      <div class="priority-area">
 
-      <a href="{% url exhibit_canvas_chooser owner=object.owner.username slug=object.slug %}" id="create_exhibit_button" class="button_link">{% trans "Create a View" %}</a>
+          {% if can_edit %}
+            <a href="{% url dataset_edit owner=object.owner.username slug=object.slug %}" class="button_link">{% trans "Edit" %}</a>
+          {% endif %}
+      
+          {% if can_build_view %}
+              <a href="{% url exhibit_canvas_chooser owner=object.owner.username slug=object.slug %}" id="create_exhibit_button" class="button_link">{% trans "Create a View" %}</a>
+          {% endif %}
+      </div>
+      
+    <div class="dataset_summary {% if dataset.published %}public{% else %}private{% endif %}">
+      <div class="dataset-title">{{ object.title }}</div>
+      <div class="dataset-description">{{ object.description }}</div>
+      <div class="dataset-visibility">
+          {% if dataset.published %}
+            <span class="public">This dataset is publicly available.</span>
+          {% else %}
+            <span class="private">This dataset is private.</span>
+          {% endif %}
+
+      </div>
+        {% with object.exhibits.count as view_count %}
+        {% ifnotequal view_count 0 %}
+            <p><a href="{% url exhibits_by_dataset owner=object.owner.username slug=object.slug %}">{% trans "See all" %} {{ view_count }} {% trans "data views" %}</a> {%  trans  "based on this data profile." %}</p>
+        {% endifnotequal %}
+        {% endwith %}
     </div>
-    {% endif %}
-    {% with object.exhibits.count as view_count %}
-    {% ifnotequal view_count 0 %}
-    <p><a href="{% url exhibits_by_dataset owner=object.owner.username slug=object.slug %}">{% trans "See all" %} {{ view_count }} {% trans "data views" %}</a> {%  trans  "based on this data profile." %}</p>
-    {% endifnotequal %}
-    {% endwith %}
+
+    <h2>{% trans "Data Profile" %}</h2>
     <table id="identify-table" class="property-list-table">
       <thead class="facet-header ui-widget-header">
         <tr>
