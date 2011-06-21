@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import json
 import logging
 import urllib2
+import uuid
 from django.contrib.auth.models import User
 from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
@@ -115,6 +116,22 @@ class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
         return ("dataset_detail",  (), {
             'owner': self.owner.username,
             'slug': self.slug})
+
+
+def parse_profile_json(owner, contents, published=True):
+    profile = contents.get("data_profile")
+    title = profile.get("label", uuid.uuid4())
+    description = profile.get("description", None)
+    data = contents.get("items", {"items": []})
+
+    ds = Dataset.objects.create(owner=owner,
+                                published=published,
+                                profile={"properties": profile["properties"]},
+                                data = data,
+                                title = title,
+                                description = description)
+    return ds
+
 #------------------------------------------------------------------------------#
 
 TX_STATUS = {
