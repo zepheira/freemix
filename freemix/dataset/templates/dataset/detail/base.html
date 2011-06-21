@@ -56,7 +56,7 @@
           {% endif %}
       </div>
       
-    <div class="dataset_summary {% if dataset.published %}public{% else %}private{% endif %}">
+    <div class="dataset_list_item {% if dataset.published %}public{% else %}private{% endif %}">
       <div class="dataset-title">{{ object.title }}</div>
       <div class="dataset-description">{{ object.description }}</div>
       <div class="dataset-visibility">

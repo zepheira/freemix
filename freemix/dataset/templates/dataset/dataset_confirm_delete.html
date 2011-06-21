@@ -42,7 +42,7 @@ $(document).ready(function() {
         });
 
     $("a.dataset_delete").click(function() {
-        root = $(this).closest(".dataset_summary");
+        root = $(this).closest(".dataset_list_item");
         var url = $(this).attr("href");
         $(".delete_dataset_dialog").find("a.dataset_url").attr("href", url);
         if (root.find(".dataset-usedin").length > 0) {

@@ -3,8 +3,8 @@ from django import template
 
 register = template.Library()
 
-@register.inclusion_tag("dataset/dataset_summary.html", takes_context=True)
-def dataset_summary(context, dataset):
+@register.inclusion_tag("dataset/dataset_list_item.html", takes_context=True)
+def dataset_list_item(context, dataset):
     return {"dataset": dataset, "request": context['request']}
 
 
