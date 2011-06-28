@@ -1,7 +1,7 @@
 from django.conf import settings
 from south.db import db
 from django.db import models
-from freemix.dataprofile.models import *
+from freemix.legacy.dataprofile.models import *
 import json
 from . import ExhibitStorage
 
