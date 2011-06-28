@@ -275,6 +275,11 @@ body.attraction #identify .property-row .name > span {
     padding-left: 20px;
 }
 
+#identify .buttonset {
+    float: right;
+    margin: 1em 0 0 0;
+}
+
 .ui-sortable .property-row .name > span {
     background: transparent;
     padding-left: 0;

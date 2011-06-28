@@ -12,18 +12,16 @@
 {% block subnav %}
 
   <p id="subnav-extra">
-    <a href="{% url profile_detail user.username %}" id="dialog_link" class="ui-state-default ui-corner-all button button-icon-left">
-      <span class="ui-icon ui-icon-cancel"></span> Cancel</a>
+
+
   </p>
 
 {% endblock %}
 
 {% block freemix_meta %}
 {{block.super}}
-{% if publishurl %}
-<link rel="freemix/publish" href="{{ publishurl }}"/>
 <link rel="freemix/dataprofile" href="{{ profileurl }}"/>
-{% endif %}
+<link rel="exhibit/data" href="{{ dataurl }}"/>
 
 {% endblock %}
 
@@ -37,7 +35,7 @@
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.dataTables.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.uuid.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>  
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>  
+    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify-edit.js"></script>    
@@ -74,7 +72,6 @@
     </ul>
 
 
-    <h2 class='editable' id='profile-label'></h2>
     <table id="identify-table" class="property-list-table">
       <thead class="facet-header ui-widget-header">
         <tr>
@@ -120,24 +117,17 @@
       </tbody>
     </table>
     </div>
+        &nbsp;
+    <div id="buttons" class="buttonset ui-helper-clearfix">
+      <span id="save_message"></span>
+      <a href="" id="save_button" class="button_link">{% trans "Save" %}</a>
+      <a href="{{ cancel_url }}" id="cancel_button" class="button_link negative-button">{% trans "Cancel" %}</a>
+    </div>
     {% endblock editor %}
     {% endblock describe %}
     <div class="clear">&nbsp;</div>
   </div>
 
-  <div id="publish" class="ui-helper-clearfix ui-helper-hidden builder-tab">
-    {% block publish %}
-    <div id="publish-label" class="ui-helper-hidden">{% blocktrans %}Please enter a name for your dataset:{% endblocktrans %}<input type="text" id="profile-name"/><input type="button" id="profile-name-button" value="{% trans "Publish" %}"/></div>
-    <div id="publish-success" class="ui-helper-hidden">{% blocktrans %}This dataset has been published to{% endblocktrans %}&nbsp;<span id="publish-url"></span>.
-      <div class="hyper-upload">
-{#        <p><a class="button_link build-freemix" href="{% url exhibit_edit username=user.username %}">{% trans "Create a Data View" %}</a></p>#}
-{#        <p>{% blocktrans %}Create a new {{ SITE_NAME }} view of this data, or{% endblocktrans %}</p>#}
-{#        <p><a class="button_link" href="{% url upload_dataset %}" title="{% blocktrans %}Create a new dataset{% endblocktrans %}">{% trans "Upload More Data" %}</a></p>#}
-      </div>
-    </div>
-    <div id="publish-failure" class="ui-helper-hidden">{% blocktrans %}Publish Failed:{% endblocktrans %}<span id="publish-error"></span></div>
-    {% endblock publish %}
-  </div>
   {% endblock contents %}
 </div>
 
@@ -149,7 +139,7 @@
       <p>
           <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
           {% blocktrans %}
-          You will not be able to recover this record after publishing this dataset. 
+          You will not be able to recover this record after saving this dataset.
           Really delete it?
           {% endblocktrans %}
       </p>
@@ -161,7 +151,7 @@
           {% blocktrans %}
           This property will be permanently deleted and cannot be recovered. Are you sure?
           {% endblocktrans %}
-      </p>}
+      </p>
   </div>
   
   <div id="record-picker-dialog">

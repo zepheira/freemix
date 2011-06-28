@@ -1,5 +1,6 @@
-{% extends "freemix/base.html" %}
+{% extends "dataset/dataset_profile_editor.html" %}
 
-{%  block freemix_body %}
-TODO
+{% block freemix_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}dataset/js/profile_update.js"></script>
 {% endblock %}

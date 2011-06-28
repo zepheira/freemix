@@ -37,13 +37,14 @@ class DataSourceTransactionView(View):
 class ProcessTransactionView(DataSourceTransactionView):
 
     def success(self):
-        template_name="dataset/profile_edit.html"
+        template_name="dataset/dataset_profile_editor.html"
 
 
         response = render_to_response(template_name, {
             "transaction": self.transaction,
-            "publishurl": reverse('dataset_publish', kwargs={'tx_id': self.transaction.tx_id}),
+            "dataurl": reverse('datasource_transaction_result', kwargs={'tx_id': self.transaction.tx_id}),
             "profileurl": reverse('datasource_transaction_result', kwargs={'tx_id': self.transaction.tx_id}),
+            "cancel_url": reverse('upload_dataset', kwargs={})
         }, context_instance=RequestContext(self.request))
 
         return response
@@ -230,3 +231,44 @@ class DatasetDetailEditView(OwnerSlugPermissionMixin, UpdateView):
                 "object": self.object,
                 "is_saved": True
             })
+
+class DatasetProfileEditView(OwnerSlugPermissionMixin, View):
+    object_perm="dataset.can_edit"
+    template_name="dataset/dataset_update.html"
+
+    def get(self, request, *args, **kwargs):
+        dataset = self.get_object()
+
+        response = render(request, self.template_name, {
+            "dataset": dataset,
+            "dataurl": reverse('dataset_data_json', kwargs={'owner': dataset.owner.username,
+                                                                  'slug': dataset.slug}),
+            "profileurl": reverse('dataset_profile_json', kwargs={'owner': dataset.owner.username,
+                                                                  'slug': dataset.slug}),
+            "cancel_url": reverse('dataset_summary', kwargs={'owner': dataset.owner.username,
+                                                                  'slug': dataset.slug}),
+
+        })
+
+        return response
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.raw_post_data)
+            if not data.has_key("properties") or not data.has_key("items"):
+                return HttpResponseServerError("Invalid Request")
+            ds = self.get_object()
+            ds.properties = {"properties": data["properties"]}
+            ds.data = {"items": data["items"]}
+            ds.save()
+            return render(request, "dataset/edit/success.html", {
+                "owner": ds.owner.username,
+                "slug": ds.slug
+            })
+
+        except Exception, ex:
+            return HttpResponseServerError("Invalid Request")
+
+
+    def get_queryset(self):
+        return models.Dataset.objects.all()

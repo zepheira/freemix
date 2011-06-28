@@ -28,3 +28,4 @@ class EditDatasetDetailForm(forms.ModelForm):
     class Meta:
         model = Dataset
         fields = ("title", "description", "published",)
+
