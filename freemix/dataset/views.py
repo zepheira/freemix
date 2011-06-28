@@ -258,7 +258,7 @@ class DatasetProfileEditView(OwnerSlugPermissionMixin, View):
             if not data.has_key("properties") or not data.has_key("items"):
                 return HttpResponseServerError("Invalid Request")
             ds = self.get_object()
-            ds.properties = {"properties": data["properties"]}
+            ds.profile = {"properties": data["properties"]}
             ds.data = {"items": data["items"]}
             ds.save()
             return render(request, "dataset/edit/success.html", {
