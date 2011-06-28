@@ -5,7 +5,9 @@ from south.v2 import DataMigration
 from django.db import models
 
 class Migration(DataMigration):
-
+    depends_on = (
+        ("dataprofile", "0015_migrate_to_dataset"),
+    )
     def forwards(self, orm):
         for f in orm.Freemix.objects.all():
             owner = f.data_profile.user
