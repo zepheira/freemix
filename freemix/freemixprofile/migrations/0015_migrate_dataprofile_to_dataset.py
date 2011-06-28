@@ -11,7 +11,7 @@ class Migration(DataMigration):
     def forwards(self, orm):
         for f in orm.Freemix.objects.all():
             owner = f.data_profile.user
-            slug = f.data_profile.slug
+            slug = f.data_profile.slug.substring(0,50)
 
             ds = orm["dataset.Dataset"].objects.get(owner=owner, slug=slug)
             f.dataset = ds
