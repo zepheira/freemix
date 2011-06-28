@@ -5,9 +5,9 @@
 
     function setupIdentifier(data) {
         if (!Freemix.profile && "data_profile" in data) {
-            Freemix.profile = data.data_profile;
+            Freemix.profile = {"properties": data.data_profile["properties"]};
         } else if ("properties" in data) {
-            Freemix.profile = data;
+            Freemix.profile = {"properties": data["properties"]};
         }
 
         Freemix.property.initializeDataProfile();

@@ -37,7 +37,7 @@ class DataSourceTransactionView(View):
 class ProcessTransactionView(DataSourceTransactionView):
 
     def success(self):
-        template_name="dataset/dataset_profile_editor.html"
+        template_name="dataset/dataset_create.html"
 
 
         response = render_to_response(template_name, {
