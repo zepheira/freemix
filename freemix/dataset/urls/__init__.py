@@ -6,8 +6,9 @@ urlpatterns = patterns('',
     (r'tx/', include('freemix.dataset.urls.transaction')),
     (r'^', include('freemix.dataset.urls.base')),
     (r'^', include('freemix.dataset.urls.viewer')),
-    (r'^', include('freemix.dataset.urls.list')),
     (r'^', include('freemix.dataset.urls.editor')),
+    (r'^', include('freemix.dataset.urls.list')),
+
 )
 
 if "freemix.freemixprofile" in settings.INSTALLED_APPS:

@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from freemix.permissions import PermissionsRegistry
 
@@ -27,14 +26,13 @@ class OwnerListView(ListView):
         return kwargs
 
 
-class OwnerSlugDetailView(DetailView):
-
+class OwnerSlugPermissionMixin:
+    
     def filter_by_perm(self, obj):
         if hasattr(self, "object_perm") and \
             not self.request.user.has_perm(getattr(self, "object_perm"), obj):
                 raise Http404
         return obj
-
 
     def get_object(self, queryset=None):
         if queryset is None:

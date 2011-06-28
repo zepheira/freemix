@@ -1,17 +1,20 @@
 from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError, Http404, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render_to_response, render
 from django.template.context import RequestContext
 from django.views.generic.base import View
-from django.views.generic.detail import DetailView
 from django.utils.translation import ugettext_lazy as _
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView
+from freemix.dataset import forms
+from freemix.permissions import PermissionsRegistry
 from freemix.utils.views import JSONResponse
 from freemix.dataset import models
 import json
 
 # Data Source Transaction Views
-from freemix.views import OwnerListView, OwnerSlugDetailView
+from freemix.views import OwnerListView, OwnerSlugPermissionMixin
 
 class DataSourceTransactionView(View):
     def redirect(self):
@@ -34,7 +37,7 @@ class DataSourceTransactionView(View):
 class ProcessTransactionView(DataSourceTransactionView):
 
     def success(self):
-        template_name="dataset/dataset_edit.html"
+        template_name="dataset/profile_edit.html"
 
 
         response = render_to_response(template_name, {
@@ -146,19 +149,25 @@ dataset_list_by_owner = OwnerListView.as_view(template_name="dataset/dataset_lis
                                                model=models.Dataset,
                                                permission = "dataset.can_view")
 
-class DatasetResourceView(OwnerSlugDetailView):
+#----------------------------------------------------------------------------------------------------------------------#
+# Dataset views
+
+class DatasetView(OwnerSlugPermissionMixin, DetailView):
 
     model = models.Dataset
     object_perm="dataset.can_view"
-    template_name="dataset/dataset_detail.html"
+    template_name= "dataset/dataset_summary.html"
 
     def get_context_data(self, **kwargs):
-        context = super(DatasetResourceView, self).get_context_data(**kwargs)
+        context = super(DatasetView, self).get_context_data(**kwargs)
         context["can_edit"] = self.request.user.has_perm("dataset.can_edit", self.get_object())
-        context["can_delete"] = self.request.user.has_perm("dataset.can_edit", self.get_object())
+        context["can_delete"] = self.request.user.has_perm("dataset.can_delete", self.get_object())
         context["can_build_view"] = self.request.user.is_authenticated()
 
         return context
+
+class DatasetSummaryView(DatasetView):
+    template_name="dataset/dataset_summary.html"
 
     def delete(self, request, *args, **kwargs):
         ds = self.get_object()
@@ -170,3 +179,54 @@ class DatasetResourceView(OwnerSlugDetailView):
             ds.delete()
             return HttpResponse(_("%(file_id)s deleted") % {'file_id': ds.get_absolute_url()})
         return HttpResponseForbidden()
+
+
+class DatasetDetailView(DatasetView):
+    template_name="dataset/dataset_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(DatasetDetailView, self).get_context_data(**kwargs)
+        filter = PermissionsRegistry.get_filter("exhibit.can_view", self.request.user)
+        context["exhibits"] = self.object.exhibits.filter(filter)
+        return context
+
+
+class DatasetCreateFormView(CreateView):
+    form_class = forms.CreateDatasetForm
+    template_name = "dataset/create/dataset_metadata_form.html"
+
+    def get_success_url(self):
+        owner = getattr(self.object.owner, "username", None)
+        return reverse('dataset_create_success',
+                       kwargs={"owner": owner,
+                               "slug": self.object.slug})
+
+    def get_context_data(self, **kwargs):
+        ctx = super(DatasetCreateFormView, self).get_context_data(**kwargs)
+        ctx["tx_id"] = self.kwargs["tx_id"]
+        return ctx
+
+    def get_form_kwargs(self):
+        kwargs = super(DatasetCreateFormView, self).get_form_kwargs()
+        kwargs["owner"] = self.request.user
+        kwargs["datasource"] = get_object_or_404(models.DataSourceTransaction, tx_id=self.kwargs["tx_id"]).source
+        return kwargs
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class DatasetDetailEditView(OwnerSlugPermissionMixin, UpdateView):
+    form_class = forms.EditDatasetDetailForm
+    object_perm="dataset.can_edit"
+    model = models.Dataset
+    template_name = "dataset/edit/dataset_metadata_form.html"
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return render(self.request, "dataset/detail/dataset_metadata.html", {
+                "can_edit": True,
+                "object": self.object,
+                "is_saved": True
+            })

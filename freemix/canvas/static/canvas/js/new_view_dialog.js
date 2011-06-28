@@ -8,12 +8,13 @@
 
                 dialog.load(url, function (responseText, textStatus, XMLHttpRequest) {
                     dialog.dialog({
-                        width: 500,
-                        height: 500,
+                        position: "top",
+                        width: "auto",
+                        height: "auto",
                         modal: true,
                         draggable: false,
                         resizable: false,
-                        title: "Create a View"
+                        title: "Pick a Canvas to Create a Data View"
                     });
                 });
                 return false;

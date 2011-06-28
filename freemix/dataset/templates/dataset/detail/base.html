@@ -2,16 +2,10 @@
 
 {% load i18n %}
 {% load freemix_helpers %}
+{% load exhibit_tags %}
 {% load compress %}
 {% load canvas %}
 {% block freemix_title %}{% blocktrans %}Data Profile{% endblocktrans %}: {{ object.title }}{% endblock %}
-
-
-{% block freemix_meta %}
-    {{ block.super }}
-    <link rel="freemix/dataprofile" href="{% url dataset_profile_json owner=object.owner.username slug=object.slug %}"/>
-    <link rel="exhibit/data" href="{% url dataset_data_json owner=object.owner.username slug=object.slug %}"/>
-{% endblock %}
 
 {% block freemix_css %}
 {{ block.super }}
@@ -20,116 +14,59 @@
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/editor.css"/>
 {% endcompress %}
-<link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
 {% endblock %}
 
-{% block freemix_js%}
-    <script type="text/javascript" src="http://api.simile.zepheira.com/exhibit/2.2.0/exhibit-api.js?autoCreate=false"></script>
-
-    {{block.super}}
-    {% include "js_include/viewer.html" %}
-    {% compress js %}
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.uuid.js"></script>    
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}dataset/js/detail.js"></script>
+{% block freemix_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}utils/js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}dataset/js/detail.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}canvas/js/new_view_dialog.js"></script>
 
-    {% endcompress %}
 {% endblock %}
-
 
 {% block body %}
 
-<div id="contents" class="ui-helper-hidden">
-  <div id="identify" class="ui-helper-clearfix">
+  <div class="ui-helper-clearfix">
       <div class="priority-area">
 
-          {% if can_edit %}
-            <a href="{% url dataset_edit owner=object.owner.username slug=object.slug %}" class="button_link">{% trans "Edit" %}</a>
-          {% endif %}
-      
-          {% if can_build_view %}
-              <a href="{% url exhibit_canvas_chooser owner=object.owner.username slug=object.slug %}" id="create_exhibit_button" class="button_link">{% trans "Create a View" %}</a>
-          {% endif %}
-      </div>
-      
-    <div class="dataset_list_item {% if dataset.published %}public{% else %}private{% endif %}">
-      <div class="dataset-title">{{ object.title }}</div>
-      <div class="dataset-description">{{ object.description }}</div>
-      <div class="dataset-visibility">
-          {% if dataset.published %}
-            <span class="public">This dataset is publicly available.</span>
-          {% else %}
-            <span class="private">This dataset is private.</span>
-          {% endif %}
 
       </div>
-        {% with object.exhibits.count as view_count %}
-        {% ifnotequal view_count 0 %}
-            <p><a href="{% url exhibits_by_dataset owner=object.owner.username slug=object.slug %}">{% trans "See all" %} {{ view_count }} {% trans "data views" %}</a> {%  trans  "based on this data profile." %}</p>
+    <h1>{% trans "Dataset Detail" %}</h1>
+    <div id="dataset_metadata">
+        {% include "dataset/detail/dataset_metadata.html" %}
+    </div>
+  </div>
+    <div class="dataset-left">
+        <div class="dataset-creator">
+          <span class="property-label">{% trans "Loaded by:" %} </span> <a href="{% url profile_detail dataset.owner.username %}">{{ dataset.owner|nicename }}</a>
+        </div>
+        <div class="dataset-created-data"><span class="property-label">{% trans "Loaded on:" %} </span>{{ dataset.created|date:"N j, Y" }}</div>
+        <div class="dataset-modified-data"><span class="property-label">{% trans "Last Modified:" %} </span>{{ dataset.modified|date:"N j, Y" }}</div>
+
+        {% ifnotequal dataset.exhibits.count 0 %}
+        <div class="dataset-usedin">
+          <span class="property-label">{% trans "Basis for:" %}</span>
+          <span class="view-count"><a href="{% url exhibits_by_dataset owner=dataset.owner.username slug=dataset.slug %}">{{ dataset.exhibits.count }} {% trans "Data View" %}{{ dataset.exhibits.count|pluralize }}</a></span>
+        </div>
         {% endifnotequal %}
-        {% endwith %}
+
+    </div>
+    <div class="dataset-right">
+    <div class="dataview_list">
+  <h2>{% blocktrans %}Data Views{% endblocktrans %}</h2>
+  {% dataview_list exhibits.all 3 0 %}
+
+  {% if exhibits.count > 3 %}
+  <div class="see_all">
+    <a href="{% url exhibits_by_dataset owner=object.owner.username slug=object.slug %}">{% trans "See all" %}  {{exhibits.count}} views</a>
+  </div>
+
+  {% endif %}
+  {% if can_build_view %}
+     <a href="{% url exhibit_canvas_chooser owner=object.owner.username slug=object.slug %}" id="create_exhibit_button" class="button_link">{% trans "Create a New View" %}</a>
+  {% endif %}
     </div>
 
-    <h2>{% trans "Data Profile" %}</h2>
-    <table id="identify-table" class="property-list-table">
-      <thead class="facet-header ui-widget-header">
-        <tr>
-          <th>
-        <div>
-          {% trans  "Enabled" %}
-        </div>
-          </th>
-          <th>
-        <div>
-              {% trans "Field Name" %}
-        </div>
-          </th>
-          <th>
-        <div>
-              {% trans "Types"%}
-        </div>
-          </th>
-          <th>
-        <div>
-              {% trans "Value" %}
-                <span class="record-pager">
-                    <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
-                    <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
-                </span>
-
-        </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-
-        <tr class='table-footer'>
-          <td colspan="3"></td>
-          <td>
-            <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
-              <span id="record-selector">
-                  <span class="record-pager">
-                    <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
-                    <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
-                  </span>
-                  <span id="current-record">#p</span> of <span id="record-count">#t</span>&#160;
-              </span>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-  </div>
 </div>
 
-
-<div class="ui-helper-hidden">
-  <div id="templates">
-  </div>
-</div>
 {% endblock %}

@@ -7,12 +7,10 @@ from django.views.generic.base import View
 from django.shortcuts import render_to_response, get_object_or_404, render
 from django.template import RequestContext
 from django.template.loader import render_to_string
-from django.core.urlresolvers import resolve, reverse
+from django.core.urlresolvers import  reverse
 
-from django.contrib.auth.models import User
 from . import models
 from freemix.dataset.models import Dataset
-from freemix.freemixprofile.models import Freemix
 from freemix.permissions import PermissionsRegistry
 from freemix.utils import get_site_url
 

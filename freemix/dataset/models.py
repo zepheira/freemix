@@ -113,7 +113,7 @@ class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
 
     @permalink
     def get_absolute_url(self):
-        return ("dataset_detail",  (), {
+        return ("dataset_summary",  (), {
             'owner': self.owner.username,
             'slug': self.slug})
 
