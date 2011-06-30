@@ -120,16 +120,19 @@ class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
 
 def parse_profile_json(owner, contents, published=True):
     profile = contents.get("data_profile")
-    title = profile.get("label", uuid.uuid4())
+    title = profile.get("label", str(uuid.uuid4()))
     description = profile.get("description", None)
-    data = contents.get("items", {"items": []})
+    data = {"items": contents.get("items", [])}
+    profile = {"properties": profile["properties"]}
 
     ds = Dataset.objects.create(owner=owner,
-                                published=published,
-                                profile={"properties": profile["properties"]},
-                                data = data,
-                                title = title,
-                                description = description)
+                published=published,
+                title=title,
+                description=description,
+                profile=profile,
+                data=data)
+
+
     return ds
 
 #------------------------------------------------------------------------------#
