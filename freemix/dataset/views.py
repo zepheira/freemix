@@ -210,8 +210,18 @@ class DatasetCreateFormView(CreateView):
     def get_form_kwargs(self):
         kwargs = super(DatasetCreateFormView, self).get_form_kwargs()
         kwargs["owner"] = self.request.user
-        kwargs["datasource"] = get_object_or_404(models.DataSourceTransaction, tx_id=self.kwargs["tx_id"]).source
+        source = get_object_or_404(models.DataSourceTransaction, tx_id=self.kwargs["tx_id"]).source
+        kwargs["datasource"] = source
         return kwargs
+
+    def get_initial(self):
+        initial = super(DatasetCreateFormView, self).get_initial()
+        source = get_object_or_404(models.DataSourceTransaction, tx_id=self.kwargs["tx_id"]).source
+        if source:
+            source = source.get_concrete()
+        if hasattr(source, "title"):
+            initial["title"] = getattr(source, "title")
+        return initial
 
     def form_valid(self, form):
         self.object = form.save()
