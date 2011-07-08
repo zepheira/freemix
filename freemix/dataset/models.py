@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class DataSource(TimeStampedModel):
     classname = models.CharField(max_length=32, editable=False, null=True)
 
-    owner = models.ForeignKey(User, related_name="data_sources")
+    owner = models.ForeignKey(User, null=True, blank=True, related_name="data_sources")
 
     uuid = UUIDField()
 
