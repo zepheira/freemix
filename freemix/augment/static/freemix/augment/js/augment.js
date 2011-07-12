@@ -566,12 +566,6 @@
                enableRefresh();
             });
 
-            $("#publish").bind("pre_publish.dataset", function() {
-                if (refreshRequired) {
-                    refresh();
-                }
-            });
-
             $("#contents").bind("post_setup_identifier.dataset", function() {
                 enableRefresh();
             });
