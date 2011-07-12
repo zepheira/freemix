@@ -215,7 +215,7 @@ class DatasetCreateFormView(CreateView):
         return kwargs
 
     def get_initial(self):
-        initial = super(DatasetCreateFormView, self).get_initial()
+        initial = dict(super(DatasetCreateFormView, self).get_initial())
         source = get_object_or_404(models.DataSourceTransaction, tx_id=self.kwargs["tx_id"]).source
         if source:
             source = source.get_concrete()
