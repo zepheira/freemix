@@ -571,7 +571,10 @@
                     refresh();
                 }
             });
-            enableRefresh();
+
+            $("#contents").bind("post_setup_identifier.dataset", function() {
+                enableRefresh();
+            });
         });
 
 })(jQuery, jQuery.freemix);
