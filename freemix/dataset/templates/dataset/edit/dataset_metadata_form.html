@@ -1,5 +1,4 @@
 {%  load i18n %}
-{% load uni_form_tags %}
 <form action="{% url dataset_edit_form owner=form.object.owner slug=form.object.slug %}" method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
