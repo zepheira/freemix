@@ -29,8 +29,11 @@ class DataSource(TimeStampedModel):
             return self
         return self.__getattribute__(self.classname.lower())
 
+    def is_concrete(self):
+        return self.classname == self.__class__.__name__
+
     def __unicode__(self):
-        return self.uuid
+        return self.classname + " " + self.uuid
 
     def create_transaction(self, user):
         tx = DataSourceTransaction(source=self)
@@ -72,6 +75,9 @@ class URLDataSourceMixin(TransformMixin, models.Model):
         r = urllib2.urlopen(self.url)
         return r.read()
 
+    def __unicode__(self):
+        return self.url
+
 
 def make_file_data_source_mixin(storage, upload_to):
     """Generate a mixin for a file based data source allowing for custom storage and file path.
@@ -86,6 +92,9 @@ def make_file_data_source_mixin(storage, upload_to):
 
         def get_transform_body(self):
             return self.file.read()
+
+        def __unicode__(self):
+            return self.file.name
     return FileDataSourceMixin
 
 class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
