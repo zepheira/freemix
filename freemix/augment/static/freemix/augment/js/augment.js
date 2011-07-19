@@ -121,11 +121,11 @@
             return success;
         },
         serialize: function() {
-            extract = root.find("#edit_field_pattern_source_select").val();
-            pattern_type = root.find("#edit_field_pattern_type_select").val();
-            type = Freemix.property.propertyList[extract].type();
-            pattern = root.find("#edit_field_pattern_text").val();
-            result = {
+            var extract = root.find("#edit_field_pattern_source_select").val();
+            var pattern_type = root.find("#edit_field_pattern_type_select").val();
+            var type = Freemix.property.propertyList[extract].type();
+            var pattern = root.find("#edit_field_pattern_text").val();
+            var result = {
                 property: slugify(root.find("#id_name").val()),
                 label: root.find("#id_name").val(),
                 tags: ["property:type=" + type, "property:type=shredded_list"],
@@ -180,27 +180,27 @@
     }
 
     function slugify(name) {
-        slug = name.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'_');
+        var slug = name.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'_');
         while(Freemix.property.propertyList[slug]) {
             slug += "_";
         }
         return slug;
     }
     function showProgressbar() {
-        $("#identify #editor, #subnav").hide();
+        $("#identify #editor, #subnav, #buttons").hide();
         $("#identify #augmenting").fadeIn();
     }
 
     function hideProgressbar() {
         $("#identify #augmenting").hide();
-        $("#identify #editor, #subnav").fadeIn();
+        $("#identify #editor, #subnav, #buttons").fadeIn();
 
     }
 
 
     function mergeData(database, dataset) {
         var props=augmentedProperties();
-        for (inx = 0 ; inx < props.length ; inx++) {
+        for (var inx = 0 ; inx < props.length ; inx++) {
             var p = props[inx];
             $.each(database.getAllItems(), function(inx, id) {
                 database.removeObjects(id,p);
@@ -220,7 +220,7 @@
                 return false;
             }
             var props = augmentedProperties();
-            for (inx = 0 ; inx < props.length ; inx++) {
+            for (var inx = 0 ; inx < props.length ; inx++) {
                 var p = props[inx];
                 var found = false;
                 $.each(data.items, function(inx, item) {
@@ -235,14 +235,14 @@
         }
         showProgressbar();
         var identify = $("#contents").data("identifier");
-
+        var data = $.extend({},
+                Freemix.exhibit.exportDatabase(identify.database),
+                {"data_profile": Freemix.profile});
         $.ajax({
             url: "/augment/transform/",
             type: "POST",
             contentType: "application/json",
-            data: $.toJSON($.extend({},
-                $.exhibit.exportDatabase(identify.database),
-                {"data_profile": Freemix.profile})),
+            data: $.toJSON(data),
             success: function(data, textStatus, XMLHttpRequest) {
                 var failed = data.failed || {};
                 var count = identify.database.getAllItemsCount();
@@ -408,7 +408,7 @@
                 var root = $(this);
                 root.data("property", property);
 
-                tbody = $("tbody", root);
+                var tbody = $("tbody", root);
                 $("h1 span", root).text(property.label());
                 var dt = root.data("dt");
                 dt.fnClearTable();
@@ -530,7 +530,7 @@
             root.submit(function() {
                 if (validate()) {
                     var identify = $("#contents").data("identifier");
-                    prop = Freemix.property.add(form_handler().serialize());
+                    var prop = Freemix.property.add(form_handler().serialize());
                     refreshRequired = true;
                     identify.addProperty(prop);
                     identify.populateRecordDisplay();
@@ -571,5 +571,5 @@
             });
         });
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);
 

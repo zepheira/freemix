@@ -1,7 +1,6 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
-{% load canvas %}
 {% load exhibit_tags %}
 {% load freemix_helpers %}
 {% load compress %}
@@ -22,15 +21,15 @@
     {% include "js_include/jquery_ui.html" %}
     {% include "js_include/viewer.html" %}
     {% compress js %}
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>   
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>   
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>  
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/freemix.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/exhibit.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/property.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/identify.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/widget.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/facet.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/view.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/views/map-view.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.highlight.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.highlight.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/embed_button.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/display.js"></script>
     {% endcompress %}
@@ -38,7 +37,7 @@
     {% include "exhibit/facet_js.html" %}
     {% autoescape off %} 
     <script type="text/javascript">
-        (function(Freemix) {
+        (function($, Freemix) {
             Freemix.profile = {{ metadata }};
 
             $(document).ready(function() {
@@ -46,7 +45,7 @@
                 Freemix.embedWidget('embed');
             });
 
-         })(jQuery.freemix);
+         })(window.Freemix.jQuery, window.Freemix);
     </script>
     {% endautoescape %}
 {% endblock head_scripts %}
@@ -55,8 +54,8 @@
 {% block head_css %}
 {{block.super}}
 {% compress css %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/layout.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/views.css"/>
 {% endcompress %}
 <link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
 <style type="text/css">

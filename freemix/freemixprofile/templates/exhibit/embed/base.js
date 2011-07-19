@@ -20,16 +20,16 @@ FreemixEmbed.scripts = [
     "http://api.simile.zepheira.com/exhibit/2.2.0/extensions/time/time-extension.js",
     "http://www.google.com/jsapi",
     "http://extensions.simile.zepheira.com/piechart/piechart-extension.js",
-    "{%site_url STATIC_URL %}utils/js/lib/jquery-1.5.2.js",
-    "{%site_url STATIC_URL %}utils/js/lib/jquery.bgiframe.min.js",
-    "{%site_url STATIC_URL %}utils/js/lib/jquery.machineTag.js",
-    "{%site_url STATIC_URL %}utils/js/lib/jquery.json.js",
-    "{%site_url STATIC_URL %}utils/js/lib/jquery.highlight.js",
-    "{%site_url STATIC_URL %}utils/js/lib/lightbox.js",
-    "{%site_url STATIC_URL %}utils/js/freemix.js",
-    "{%site_url STATIC_URL %}utils/js/exhibit.js",
-    "{%site_url STATIC_URL %}utils/js/property.js",
-    "{%site_url STATIC_URL %}utils/js/identify.js",
+    "{%site_url STATIC_URL %}freemix/js/lib/jquery.js",
+    "{%site_url STATIC_URL %}freemix/js/lib/jquery.bgiframe.min.js",
+    "{%site_url STATIC_URL %}freemix/js/lib/jquery.machineTag.js",
+    "{%site_url STATIC_URL %}freemix/js/lib/jquery.json.js",
+    "{%site_url STATIC_URL %}freemix/js/lib/jquery.highlight.js",
+    "{%site_url STATIC_URL %}freemix/js/lib/lightbox.js",
+    "{%site_url STATIC_URL %}freemix/js/freemix.js",
+    "{%site_url STATIC_URL %}freemix/js/exhibit.js",
+    "{%site_url STATIC_URL %}freemix/js/property.js",
+    "{%site_url STATIC_URL %}freemix/js/identify.js",
     "{%site_url STATIC_URL %}exhibit/js/widget.js",
     "{%site_url STATIC_URL %}exhibit/js/facet.js",
     "{%site_url STATIC_URL %}exhibit/js/view.js",
@@ -84,8 +84,8 @@ FreemixEmbed.insertStyle = function(src) {
 
 FreemixEmbed.includeDependencies = function() {
     var styles = [
-    "{% site_url STATIC_URL %}utils/css/layout.css",
-    "{% site_url STATIC_URL %}utils/css/views.css",
+    "{% site_url STATIC_URL %}freemix/css/layout.css",
+    "{% site_url STATIC_URL %}freemix/css/views.css",
     "{% site_url STATIC_URL %}exhibit/css/embed.css",
     "{% site_url "/canvas/canvas.css"%}",
     "http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css"
@@ -109,7 +109,7 @@ FreemixEmbed.includeDependencies = function() {
 };
 
 FreemixEmbed.loadFreemix = function() {
-        if (typeof $ != "undefined" && typeof $.freemix != "undefined" && typeof $.freemix.initialize != "undefined" && typeof $.freemix.view != "undefined" && $.freemix.facet != "undefined" && typeof Exhibit != "undefined" && typeof Exhibit.Database != "undefined" && typeof Exhibit.OLMapView != "undefined" && typeof Exhibit.TimelineView != "undefined") {
+        if (typeof $ != "undefined" && typeof window.Freemix != "undefined" && typeof window.Freemix.initialize != "undefined" && typeof window.Freemix.view != "undefined" && window.Freemix.facet != "undefined" && typeof Exhibit != "undefined" && typeof Exhibit.Database != "undefined" && typeof Exhibit.OLMapView != "undefined" && typeof Exhibit.TimelineView != "undefined") {
             $(document).ready(function() {
 
                 var randTmpId = 'embed-shell-' + Math.round(Math.random()*1000);
@@ -118,10 +118,10 @@ FreemixEmbed.loadFreemix = function() {
                 $('#'+randTmpId).append('<div class="embed-watermark">See the <a href="{{permalink}}">original Exhibit</a>, created with and hosted by <a href="{% site_url %}">{{ SITE_NAME }}</a>.</div>');
 
                 var begin = function(next) {
-                    $.freemix.profile = {{ metadata|safe }};
-                    $.freemix.data = {{ data|safe }};
-                    $.freemix.data_profile = {{ data_profile|safe }};
-                    $.freemix.initialize(next);
+                    window.Freemix.profile = {{ metadata|safe }};
+                    window.Freemix.data = {{ data|safe }};
+                    window.Freemix.data_profile = {{ data_profile|safe }};
+                    window.Freemix.initialize(next);
                 };
 
                 var end = function() {

@@ -67,7 +67,9 @@ class RawTransformView(TransformView):
         return self.request.raw_post_data
 
     def post(self, request, *args, **kwargs):
-        data = self.transform(body=self.get_body(), params=self.get_params())
+        body =  self.get_body()
+        print str(body)
+        data = self.transform(body=body, params=self.get_params())
         if data:
             return JSONResponse(data)
         return HttpResponseBadRequest()

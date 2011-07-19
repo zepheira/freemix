@@ -39,7 +39,7 @@
                     setupForm(dialog);
 
                     dialog.find("#id_profile").val($.toJSON(Freemix.profile));
-                    dialog.find("#id_data").val($.toJSON($.exhibit.exportDatabase($.exhibit.database)));
+                    dialog.find("#id_data").val($.toJSON(Freemix.exhibit.exportDatabase(Freemix.exhibit.database)));
 
                     $(".dataset-create-form-cancel").click(function() {dialog.dialog("close");});
                 });
@@ -50,4 +50,4 @@
 
     $(document).ready(setupSaveButton)
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

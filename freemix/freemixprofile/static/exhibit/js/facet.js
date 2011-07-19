@@ -90,4 +90,4 @@
         }
     };
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

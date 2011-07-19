@@ -69,7 +69,7 @@
         },
         // Set the record number.
         setCurrentRecord: function (record_num) {
-                var size = $.exhibit.database.getAllItemsCount();
+                var size = Freemix.exhibit.database.getAllItemsCount();
                 var num = (record_num + size) % size;
                 this.getContent().data("record_num", num);
                 return num;
@@ -106,7 +106,7 @@
             var content = this.getContent();
 
             var record_num = this.getCurrentRecord();
-            var database = $.exhibit.database;
+            var database = Freemix.exhibit.database;
             var num_records = database.getAllItemsCount();
             var recordIds = database.getAllItems();
             var id = recordIds.toArray()[record_num];
@@ -125,7 +125,7 @@
         },
         renderProperty: function(row) {
             var record_num = this.getCurrentRecord();
-            var database = $.exhibit.database;
+            var database = Freemix.exhibit.database;
             var recordIds = database.getAllItems();
             var id = recordIds.toArray()[record_num];
             var property = row.data("property");
@@ -145,4 +145,4 @@
             }
         }
     };
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

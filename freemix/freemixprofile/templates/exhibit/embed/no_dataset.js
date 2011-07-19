@@ -5,7 +5,7 @@ var FreemixMissing = {};
 FreemixMissing.bootstrap = function(next) {
     var ans = document.createElement('script');
     ans.setAttribute('type', 'application/javascript');
-    ans.setAttribute('src', '{% site_url STATIC_URL %}utils/js/lib/jquery-1.5.2.js');
+    ans.setAttribute('src', '{% site_url STATIC_URL %}freemix/js/lib/jquery.js');
     document.getElementsByTagName('head')[0].appendChild(ans);
     setTimeout(next, 100);
 };

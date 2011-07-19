@@ -24,4 +24,4 @@
             $('#embedding-code').highlight();
         });
     };
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

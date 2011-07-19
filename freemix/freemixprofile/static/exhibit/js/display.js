@@ -38,9 +38,9 @@
     function run_init(nextFn) {
         Freemix.property.initializeFreemix();
 
-        var data = $.freemix.data || [$("link[rel='exhibit/data']").attr("href")];
+        var data = Freemix.data || [$("link[rel='exhibit/data']").attr("href")];
 
-        $.exhibit.initializeDatabase(data, function() {
+        Freemix.exhibit.initializeDatabase(data, function() {
             $("#canvas").generateExhibitHTML(Freemix.profile).createExhibit();
         });
 
@@ -68,4 +68,4 @@
     };
 
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

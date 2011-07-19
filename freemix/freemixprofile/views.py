@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from django.core.urlresolvers import  reverse
 
 from . import models
+from freemix.canvas.models import Canvas
 from freemix.dataset.models import Dataset
 from freemix.permissions import PermissionsRegistry
 from freemix.utils import get_site_url
@@ -390,3 +391,16 @@ class EmbeddedExhibitView(View):
             "canvas": canvas_html}, context_instance=RequestContext(request))
         response['Content-Type'] = "application/javascript"
         return response
+
+class CanvasChooserView(View):
+    template_name = "canvas/chooser.html"
+
+    def get(self, request, *args, **kwargs):
+        obj_list = Canvas.objects.filter(enabled=True)
+        ds = get_object_or_404(Dataset, owner__username = kwargs["owner"],slug = kwargs["slug"])
+        return render(request, self.template_name, {
+            "canvases": obj_list,
+            "base_url": reverse("exhibit_create_editor", kwargs={"owner": kwargs["owner"],
+                                                                 "slug":kwargs["slug"]})
+        })
+

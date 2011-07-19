@@ -1,11 +1,11 @@
 /*global jQuery, Exhibit */
 // Global exhibit variable to work around Timeline view bug
 var exhibit;
-(function($) {
+(function($, Freemix) {
 
     $.fn.createExhibit = function() {
         return this.each(function() {
-            exhibit = Exhibit.create($.exhibit.database);
+            exhibit = Exhibit.create(Freemix.exhibit.database);
             exhibit.configureFromDOM(this);
             $('body').trigger('rendered.exhibit');
 
@@ -33,11 +33,11 @@ var exhibit;
 
     }
 
-    $.exhibit = {
+    Freemix.exhibit = {
 
         initializeDatabase: function(data, fDone) {
 
-            var database = $.exhibit.database = createDatabase();
+            var database = Freemix.exhibit.database = createDatabase();
 
             if (data.constructor == Array) {
                 database._loadLinks(data, database, fDone);
@@ -48,10 +48,10 @@ var exhibit;
             return database;
         },
         getPropertyList: function() {
-            return $.exhibit.database.getAllProperties();
+            return Freemix.exhibit.database.getAllProperties();
         },
         createExhibit: function(root) {
-            exhibit = Exhibit.create($.exhibit.database);
+            exhibit = Exhibit.create(Freemix.exhibit.database);
             exhibit.configureFromDOM(root.get(0));
             return exhibit;
         },
@@ -60,7 +60,7 @@ var exhibit;
 
             var expressionCount = expressionCache[expression];
             if (!expressionCount) {
-                var database = $.exhibit.database;
+                var database = Freemix.exhibit.database;
                 var items = database.getAllItems();
 
                 var facet_cache = new Exhibit.FacetUtilities.Cache(database,
@@ -99,4 +99,4 @@ var exhibit;
 
         }
     };
-})(jQuery);
+})(window.Freemix.jQuery, window.Freemix);

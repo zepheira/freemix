@@ -110,7 +110,7 @@
             var maxx = 0;
             var miny = 0;
             var maxy = 0;
-            var database = $.exhibit.database;
+            var database = Freemix.exhibit.database;
             var recordIds = database.getAllItems().toArray();
             for (var i = 0; i < recordIds.length; i++) {
                 var id = recordIds[i];
@@ -191,4 +191,4 @@
         }
     });
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

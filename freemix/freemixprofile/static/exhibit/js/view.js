@@ -130,4 +130,4 @@
             return $(".view-container#" + id, Freemix.getBuilder()).data("model");
         }
      };
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

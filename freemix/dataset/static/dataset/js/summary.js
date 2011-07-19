@@ -3,8 +3,8 @@
 
 
     function setupExhibit(data) {
-        var db = $.exhibit.initializeDatabase([data], function () {
-            new $.freemix.Identify(db);
+        var db = Freemix.exhibit.initializeDatabase([data], function () {
+            new Freemix.Identify(db);
             $("#contents").show();
         });
 
@@ -35,4 +35,4 @@
 
     }
     $(document).ready(setup);
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

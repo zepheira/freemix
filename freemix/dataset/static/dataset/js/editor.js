@@ -12,7 +12,7 @@
 
         Freemix.property.initializeDataProfile();
         var dataURL = $("link[rel='exhibit/data']").attr("href");
-        var db = $.exhibit.initializeDatabase([dataURL], function () {
+        var db = Freemix.exhibit.initializeDatabase([dataURL], function () {
             identify = new Freemix.Identify(db);
 
             if (db.getAllItemsCount()<=1) {
@@ -30,10 +30,10 @@
 
     function deleteRecord() {
         var index = identify.getCurrentRecord();
-        var id = $.exhibit.database.getAllItems().toArray()[index];
-        $.exhibit.database.removeItem(id);
+        var id = Freemix.exhibit.database.getAllItems().toArray()[index];
+        Freemix.exhibit.database.removeItem(id);
 
-        if ($.exhibit.database.getAllItemsCount() <= 1) {
+        if (Freemix.exhibit.database.getAllItemsCount() <= 1) {
             $("button.data-record-delete").hide();
         }
 
@@ -132,4 +132,4 @@
         });
     });
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

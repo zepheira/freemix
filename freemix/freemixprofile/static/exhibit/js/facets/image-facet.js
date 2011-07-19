@@ -6,7 +6,7 @@
     TRANSFORMATION_BASE = "/transform/akara.augmented.json?url=";
 
     function isFacetCandidate(prop) {
-        return (prop.values > 1 && prop.values + prop.missing != $.exhibit.database.getAllItemsCount());
+        return (prop.values > 1 && prop.values + prop.missing != Freemix.exhibit.database.getAllItemsCount());
     }
 
     function simpleSort(a, b) {
@@ -32,7 +32,7 @@
         var properties = [];
         $.each(Freemix.property.enabledProperties(),
         function(name, property) {
-            properties.push($.exhibit.getExpressionCount(property.expression(), property.label()));
+            properties.push(Freemix.exhibit.getExpressionCount(property.expression(), property.label()));
         });
         properties.sort(sorter);
         return properties;
@@ -85,7 +85,7 @@
         },
         generateExhibitHTML: function() {
             var links = [TRANSFORMATION_BASE + this.config.album];
-            $.exhibit.database._loadLinks(links, $.exhibit.database, function() {});
+            Freemix.exhibit.database._loadLinks(links, Freemix.exhibit.database, function() {});
             return "<div ex:role='facet' ex:facetclass='Image' ex:expression='" + this.config.expression +
                 "' ex:facetLabel='" + this.config.name +
                 "' ex:image='.depiction' ex:tooltip='value' ex:height='122px'></div>";
@@ -142,7 +142,7 @@
 
         },
         generateContent: function() {
-            var count = $.exhibit.getExpressionCount(this.config.expression);
+            var count = Freemix.exhibit.getExpressionCount(this.config.expression);
             return $("<div>Type: <em>" + this.config.type + "</em></div>" +
                 "<div>Expression: <em>" + this.config.expression + "</em></div>" +
                 "<div>Album: <em>" + this.config.albumTitle + "</em></div>" +
@@ -151,4 +151,4 @@
         }
     });
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

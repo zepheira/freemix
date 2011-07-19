@@ -202,4 +202,4 @@
     Freemix.property.type.location = $.extend({}, Freemix.property.type.text, {
     });
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

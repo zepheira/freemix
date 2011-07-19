@@ -2,7 +2,7 @@
  (function($, Freemix) {
 
     function isFacetCandidate(prop) {
-        return (prop.values > 1 && prop.values + prop.missing != $.exhibit.database.getAllItemsCount());
+        return (prop.values > 1 && prop.values + prop.missing != Freemix.exhibit.database.getAllItemsCount());
     }
 
     function simpleSort(a, b) {
@@ -28,7 +28,7 @@
         var properties = [];
         $.each(Freemix.property.enabledProperties(),
         function(name, property) {
-            properties.push($.exhibit.getExpressionCount(property.expression(), property.label()));
+            properties.push(Freemix.exhibit.getExpressionCount(property.expression(), property.label()));
         });
         properties.sort(sorter);
         return properties;
@@ -77,11 +77,11 @@
 
         },
         generateContent: function() {
-            var count = $.exhibit.getExpressionCount(this.config.expression);
+            var count = Freemix.exhibit.getExpressionCount(this.config.expression);
             return $("<div>Type: <em>" + this.config.type + "</em></div>" +
                 "<div>Expression: <em>" + this.config.expression + "</em></div>" +
                 "<div>Values: <em>" + count.values + "</em></div>" +
                 "<div>Missing: <em>" + count.missing + "</em></div>");
         }
     });
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

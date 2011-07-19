@@ -1,7 +1,6 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
-{% load canvas %}
 {% load exhibit_tags %}
 {% load compress %}
 
@@ -39,9 +38,9 @@
 
 {% block head_css %}
 {{block.super}}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/layout.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/editor.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/editor.css"/>
 <link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
 <style type="text/css">
       {% canvas_css canvas %}   
@@ -56,24 +55,24 @@
     {% include "js_include/jquery_ui.html" %}
     {% include "js_include/viewer.html" %}
     {% compress js %}
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.jeditable.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/hoverIntent.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.qtip.1.0.0-rc3.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.qtip.themeroller.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.uuid.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.cookie.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/csrf.js"></script>  
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>   
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>   
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>  
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.jeditable.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/hoverIntent.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.qtip.1.0.0-rc3.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.qtip.themeroller.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.uuid.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.cookie.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/csrf.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/freemix.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/exhibit.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/property.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/identify.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/widget.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/facet.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/view.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/views/map-view.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/views/record-pager.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}view_theme/js/jquery.themeswitcher.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify-edit.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/identify-edit.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/editor.js"></script>
     {% endcompress %}
     {% include "exhibit/lens_js.html" %}

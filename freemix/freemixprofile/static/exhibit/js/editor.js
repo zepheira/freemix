@@ -238,9 +238,9 @@
             }
         });
 
-        var data = $.freemix.data || [$("link[rel='exhibit/data']").attr("href")];
+        var data = Freemix.data || [$("link[rel='exhibit/data']").attr("href")];
         
-        var database = $.exhibit.initializeDatabase(data, function() {
+        var database = Freemix.exhibit.initializeDatabase(data, function() {
             $(".view-container", Freemix.getBuilder()).viewContainer();
             $.each(profile.views, function(container, views) {
                 $.each(views, function() {
@@ -334,4 +334,4 @@
 
     $(document).ready(function() {display();});
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

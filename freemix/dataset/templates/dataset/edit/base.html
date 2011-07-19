@@ -1,7 +1,7 @@
 {% extends "dataset/base.html" %}
 
 {% load i18n %}
-{% load canvas %}
+{% load exhibit_tags %}
 {% load compress %}
 
 {% block freemix_title %}{% blocktrans %}Data Profile Editor{% endblocktrans %}{% endblock %}
@@ -30,17 +30,17 @@
     {{block.super}}
     {% include "js_include/viewer.html" %}
     {% compress js %}
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.form.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.jeditable.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.uuid.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.cookie.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/csrf.js"></script>  
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>  
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify-edit.js"></script>    
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.jeditable.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.uuid.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.cookie.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/csrf.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/freemix.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/exhibit.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/property.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/identify.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/identify-edit.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}dataset/js/editor.js"></script>
     {% endcompress %}
 {% endblock freemix_js%}
@@ -50,9 +50,9 @@
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
 {% compress css %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/layout.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/editor.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/editor.css"/>
 {% endcompress %}
 {% endblock %}
 
@@ -62,10 +62,35 @@
 {% block contents %}
 
   <div id="identify" class="ui-helper-clearfix ui-helper-hidden builder-tab">
+  
+    {%  if dataset %}
+        <div class="dataset_list_item {% if dataset.published %}public{% else %}private{% endif %}">
+          <div class="dataset-title">{{ dataset.title }}</div>
+          <div class="dataset-description">{{ dataset.description }}</div>
+          <div class="dataset-visibility">
+              {% if dataset.published %}
+                <span class="public">This dataset is publicly available.</span>
+              {% else %}
+                <span class="private">This dataset is private.</span>
+              {% endif %}
+
+          </div>
+            {% with dataset.exhibits.count as view_count %}
+            {% ifnotequal view_count 0 %}
+                <p><a href="{% url exhibits_by_dataset owner=dataset.owner.username slug=dataset.slug %}">{% trans "There are" %} {{ view_count }} {% trans "data views" %}</a> {%  trans  "based on this data profile." %}</p>
+            {% endifnotequal %}
+            {% endwith %}
+        </div>
+  
+    {% endif %}
     {% block describe %}
     <div id="editor">
     {% block editor %} 
-
+    <div id="buttons" class="buttonset ui-helper-clearfix">
+      <span id="save_message"></span>
+      <a href="" id="save_button" class="button_link">{% trans "Save" %}</a>
+      <a href="{{ cancel_url }}" id="cancel_button" class="button_link negative-button">{% trans "Cancel" %}</a>
+    </div>
     <h1>{% trans "Describe Your Data" %}</h1>
     
     <ul id="describe_messages" class="messages">
@@ -120,11 +145,7 @@
     </table>
     </div>
         &nbsp;
-    <div id="buttons" class="buttonset ui-helper-clearfix">
-      <span id="save_message"></span>
-      <a href="" id="save_button" class="button_link">{% trans "Save" %}</a>
-      <a href="{{ cancel_url }}" id="cancel_button" class="button_link negative-button">{% trans "Cancel" %}</a>
-    </div>
+
     {% endblock editor %}
     {% endblock describe %}
     <div class="clear">&nbsp;</div>

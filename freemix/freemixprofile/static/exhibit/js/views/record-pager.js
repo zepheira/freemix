@@ -17,14 +17,14 @@
 
     function nextRecord(model) {
         var next = getCurrentRecord(model) + 1;
-        next = next % $.exhibit.database.getAllItemsCount();
+        next = next % Freemix.exhibit.database.getAllItemsCount();
         setCurrentRecord(model, next);
     }
 
     function previousRecord(model) {
         var previous = getCurrentRecord(model) - 1;
         if (previous < 0) {
-            previous = $.exhibit.database.getAllItemsCount() - 1;
+            previous = Freemix.exhibit.database.getAllItemsCount() - 1;
         }
         setCurrentRecord(model, previous);
     }
@@ -34,7 +34,7 @@
         var content = model.getContent();
         // Set the record counters.
         var record_num = getCurrentRecord(model);
-        var database = $.exhibit.database;
+        var database = Freemix.exhibit.database;
         var num_records = database.getAllItemsCount();
         var recordIds = database.getAllItems();
         var id = recordIds.toArray()[record_num];
@@ -52,7 +52,7 @@
 
     function renderProperty(model, row) {
         var record_num = getCurrentRecord(model);
-        var database = $.exhibit.database;
+        var database = Freemix.exhibit.database;
         var recordIds = database.getAllItems();
         var id = recordIds.toArray()[record_num];
         var metadata = row.data("metadata");
@@ -152,4 +152,4 @@
             populateRecordDisplay(model);
         });
     };
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

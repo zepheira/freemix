@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load freemix_helpers %}
 {% load compress %}
-{% load canvas %}
+
 {% block freemix_title %}{% blocktrans %}Data Profile{% endblocktrans %}: {{ object.title }}{% endblock %}
 
 
@@ -16,9 +16,9 @@
 {% block freemix_css %}
 {{ block.super }}
 {% compress css %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/layout.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/editor.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/editor.css"/>
 {% endcompress %}
 <link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
 {% endblock %}
@@ -29,11 +29,11 @@
     {{block.super}}
     {% include "js_include/viewer.html" %}
     {% compress js %}
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/lib/jquery.uuid.js"></script>    
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/freemix.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/exhibit.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/property.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}utils/js/identify.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.uuid.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/freemix.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/exhibit.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/property.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/identify.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}dataset/js/summary.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}canvas/js/new_view_dialog.js"></script>
 

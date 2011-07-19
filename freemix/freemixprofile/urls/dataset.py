@@ -2,7 +2,7 @@
 
 from django.conf.urls.defaults import url
 from django.contrib.auth.decorators import login_required
-from freemix.canvas.views import CanvasChooserView
+from freemix.freemixprofile.views import CanvasChooserView
 
 from freemix.freemixprofile.views import exhibits_by_dataset, StockExhibitProfileJSONView, NewExhibitEditorView
 

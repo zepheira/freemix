@@ -3,7 +3,7 @@
 
     function setupSaveButton() {
         $("#save_button").click(function() {
-            var metadata = $.extend({},  $.exhibit.exportDatabase($.exhibit.database), Freemix.profile);
+            var metadata = $.extend({},  Freemix.exhibit.exportDatabase(Freemix.exhibit.database), Freemix.profile);
             $("#save_message").empty().append("Saving...");
             var xhr = $.ajax({
                  type: "POST",
@@ -23,4 +23,4 @@
 
     $(document).ready(setupSaveButton)
 
-})(jQuery, jQuery.freemix);
+})(window.Freemix.jQuery, window.Freemix);

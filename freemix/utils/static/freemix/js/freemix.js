@@ -1,14 +1,18 @@
 /*global jQuery, window, alert, console */
+
+(function (window) {
+var Freemix = window.Freemix || {};
+Freemix.jQuery = window.jQuery;
+window.Freemix = Freemix;
+})(window);
+
+
+
  (function($) {
 
-    $.freemix = {
-        getTemplate: function(template) {
-            return $($("#templates div#" + template).html());
-        }
-    };
-
-
-
+     Freemix.getTemplate = function(template) {
+        return $($("#templates div#" + template).html());
+     };
 
     $.fn.freemixStepTabs = function(option, selector) {
 
@@ -53,4 +57,4 @@
 
 
 
-})(jQuery);
+})(window.Freemix.jQuery);

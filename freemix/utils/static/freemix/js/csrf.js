@@ -4,7 +4,7 @@ $(document).ajaxSend(function(event, xhr, settings) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
-    if (!safeMethod(settings.type)) {
+    if (!safeMethod(settings.type) && !settings.crossDomain) {
         xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
     }
 });

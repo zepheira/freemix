@@ -4,21 +4,21 @@
 {% load freemix_helpers %}
 {% load exhibit_tags %}
 {% load compress %}
-{% load canvas %}
+
 {% block freemix_title %}{% blocktrans %}Data Profile{% endblocktrans %}: {{ object.title }}{% endblock %}
 
 {% block freemix_css %}
 {{ block.super }}
 {% compress css %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/layout.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/views.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}utils/css/editor.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/editor.css"/>
 {% endcompress %}
 {% endblock %}
 
 {% block freemix_js %}
     {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}utils/js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}freemix/js/lib/jquery.form.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}dataset/js/detail.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}canvas/js/new_view_dialog.js"></script>
 
@@ -28,7 +28,6 @@
 
   <div class="ui-helper-clearfix">
       <div class="priority-area">
-
 
       </div>
     <h1>{% trans "Dataset Detail" %}</h1>

@@ -1,5 +1,5 @@
 /*global jQuery */
-(function($, Freemix) {
+(function($) {
 
     function loadEditor(evt) {
         var old = $("#dataset_metadata").html();
@@ -22,4 +22,4 @@
     }
 
     $(document).ready(setup);
-})(jQuery, jQuery.freemix);
+})(jQuery);
