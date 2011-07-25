@@ -167,9 +167,11 @@ class ExhibitDisplayView(ExhibitView):
     def get_context_data(self, **kwargs):
         context = super(ExhibitDisplayView, self).get_context_data(**kwargs)
         context["metadata"] = json.dumps(self.get_object().profile)
-        context["can_edit"] = self.request.user.has_perm("exhibit.can_edit", self.get_object())
-        context["can_delete"] = self.request.user.has_perm("exhibit.can_delete", self.get_object())
         return context
+
+
+class ExhibitDetailView(ExhibitView):
+    template_name = "exhibit/exhibit_detail.html"
 
 
 class EmbeddedExhibitView(View):

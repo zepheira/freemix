@@ -11,7 +11,7 @@ urlpatterns = patterns('',
         name="exhibit_display"),
 
     url(r'^(?P<owner>[a-zA-Z0-9_.-]+)/(?P<slug>[a-zA-Z0-9_.-]+)/detail/$',
-       views.ExhibitDisplayView.as_view(),
+       views.ExhibitDetailView.as_view(),
        name='exhibit_detail'),
 
 )
