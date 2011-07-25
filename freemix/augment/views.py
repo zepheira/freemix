@@ -1,7 +1,21 @@
-from freemix.utils.views import JSONView
 from freemix.transform.views import RawTransformView, AkaraTransformClient
 from freemix.augment import models
 from freemix.augment import conf
+
+from django.views.generic.base import View
+from freemix.views import JSONResponse
+
+
+class JSONView(View):
+
+    template=None
+    def get_dict(self, *args, **kwargs):
+        return {}
+
+    def get(self, *args, **kwargs):
+        content = self.get_dict(*args, **kwargs)
+        return JSONResponse(content, self.template)
+
 
 
 class ListPatternJSONView(JSONView):

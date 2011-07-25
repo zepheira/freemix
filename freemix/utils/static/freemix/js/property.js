@@ -111,8 +111,7 @@
         initializeFreemix: function() {
             var pl = {};
 
-            var localProperties = Freemix.profile.properties;
-            mergeProperties(pl, Freemix.profile.properties);
+            var localProperties = Freemix.data_profile.properties;
             mergeProperties(pl, Freemix.data_profile.properties);
 
             var props = [];
@@ -126,7 +125,6 @@
                     }
                 });
             });
-            Freemix.profile.properties = props;
             this.propertyList = pl;
         },
         propertyHasType: function(property, type) {

@@ -6,10 +6,10 @@ from django.http import  HttpResponseBadRequest
 from django.views.generic.base import View
 import urllib2
 from urllib import urlencode
-from freemix.utils.views import JSONResponse
 from . import conf
 
 import json
+from freemix.views import JSONResponse
 
 logger = logging.getLogger(__name__)
 

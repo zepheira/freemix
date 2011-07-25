@@ -25,7 +25,7 @@
             }
         });
 
-        $this = this;
+        var $this = this;
         $(".left-record-button").unbind().button({"icons": {"primary": "ui-icon-arrowthick-1-w"}, "text": false}).click(function() {
                 $this.previousRecord();
                 $this.populateRecordDisplay();

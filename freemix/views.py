@@ -1,6 +1,9 @@
+import json
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.views.generic.list import ListView
 from freemix.permissions import PermissionsRegistry
 
@@ -41,3 +44,24 @@ class OwnerSlugPermissionMixin:
                                  owner__username=self.kwargs.get("owner"),
                                  slug=self.kwargs.get("slug"))
         return self.filter_by_perm(obj)
+
+
+class JSONResponse(HttpResponse):
+
+    def __init__(self, data, template=None,**extra_context):
+        indent = 2 if settings.DEBUG else None
+
+        if template:
+            context = {"json": json.dumps(data, indent=indent)}
+            if extra_context:
+                context.update(extra_context)
+            content = render_to_string(template, context)
+            mime = "application/javascript"
+        else:
+            content = json.dumps(data, indent=indent)
+            mime = ("text/javascript" if settings.DEBUG
+                                  else "application/json")
+        super(JSONResponse, self).__init__(
+            content = content,
+            mimetype = mime,
+        )

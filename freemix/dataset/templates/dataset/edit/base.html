@@ -28,7 +28,7 @@
 {% block freemix_js %}
     <script type="text/javascript" src="http://api.simile.zepheira.com/exhibit/2.2.0/exhibit-api.js?autoCreate=false"></script>
     {{block.super}}
-    {% include "js_include/viewer.html" %}
+    {% include "freemix/js_include/viewer.html" %}
     {% compress js %}
     <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.form.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.jeditable.js"></script>
@@ -69,17 +69,12 @@
           <div class="dataset-description">{{ dataset.description }}</div>
           <div class="dataset-visibility">
               {% if dataset.published %}
-                <span class="public">This dataset is publicly available.</span>
+                <span class="public">{% trans "This dataset is publicly available." %}</span>
               {% else %}
-                <span class="private">This dataset is private.</span>
+                <span class="private">{% trans "This dataset is private." %}</span>
               {% endif %}
 
           </div>
-            {% with dataset.exhibits.count as view_count %}
-            {% ifnotequal view_count 0 %}
-                <p><a href="{% url exhibits_by_dataset owner=dataset.owner.username slug=dataset.slug %}">{% trans "There are" %} {{ view_count }} {% trans "data views" %}</a> {%  trans  "based on this data profile." %}</p>
-            {% endifnotequal %}
-            {% endwith %}
         </div>
   
     {% endif %}

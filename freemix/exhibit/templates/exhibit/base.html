@@ -1,0 +1,129 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load exhibit_tags %}
+{% load freemix_helpers %}
+{% load compress %}
+
+{% block head_title %}{{ object.title|safe }}{% endblock %}
+
+{% block rtab_id %}id="builder_tab"{% endblock %}
+{% block body_class %}main-attraction{% endblock %}
+{% block head_data %}
+    {{ block.super }}
+    <link rel="exhibit/data" href="{% url dataset_data_json owner=object.dataset.owner.username slug=object.dataset.slug %}"/>
+    <link rel="freemix/dataprofile" href="{% url dataset_profile_json owner=object.dataset.owner.username slug=object.dataset.slug %}"/>
+    <link rel="freemix/exhibit_profile" href="{% url exhibit_profile_json owner=object.owner.username slug=object.slug %}"/>
+
+{% endblock %}
+
+{% block head_scripts %}
+    {% include "freemix/js_include/exhibit.html" %}
+    {{ block.super }}
+    {% include "freemix/js_include/jquery_ui.html" %}
+    {% include "freemix/js_include/viewer.html" %}
+    {% compress js %}
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/freemix.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/exhibit.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/property.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/identify.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/widget.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/facet.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/view.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/views/map-view.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.highlight.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/embed_button.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/display.js"></script>
+    {% endcompress %}
+    {% include "exhibit/lens_js.html" %}
+    {% include "exhibit/facet_js.html" %}
+    {% autoescape off %} 
+    <script type="text/javascript">
+        (function($, Freemix) {
+
+            $(document).ready(function() {
+                Freemix.initialize();
+                Freemix.embedWidget('embed');
+            });
+
+         })(window.Freemix.jQuery, window.Freemix);
+    </script>
+    {% endautoescape %}
+{% endblock head_scripts %}
+    
+    
+{% block head_css %}
+{{block.super}}
+{% compress css %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}exhibit/css/canvas.css"/>
+
+{% endcompress %}
+<link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
+<link rel="stylesheet" type="text/css" href="{{ object.theme.url }}" />
+
+{% endblock %}
+
+{% block body %}
+
+<div class="exhibit_list_item {% if object.published %}public{% else %}private{% endif %}">
+  <div class="exhibit-title">{{ object.title }}</div>
+  <div class="exhibit-description">{{ object.description }}</div>
+  <div class="exhibit-visibility">
+      {% if object.published %}
+        <span class="public">This view is publicly available.</span>
+      {% else %}
+        <span class="private">This view is private.</span>
+      {% endif %}
+
+  </div>
+
+    <a href="{% url exhibit_detail owner=object.owner.username slug=object.slug %}">{% trans "See More Details..." %}</a>
+</div>
+
+<div id="contents" class="freemix-themeable">
+
+    {% if can_edit %}
+
+
+
+        <div id="embed">
+            <div id="embed-info" class="ui-helper-hidden ui-widget-content ui-corner-all">
+                <p><strong>{% blocktrans %}Copy the following and paste it into your page where you'd like your data
+                    view to be placed.{% endblocktrans %}</strong></p>
+                <p id="embedding-code"
+                   style="display: block; line-height: 2.5em; width: 75%; overflow-y: none; overflow-x: auto;margin: 0.5em auto; border: 1px solid #c6c6c6; color: #000; background: #F3F3F3 url({{ STATIC_URL }}exhibit/img/form-shadow.png) repeat-x scroll left top; text-align: left; font-family: monospace; padding: 0.5em; white-space: nowrap;"></p>
+
+                <p class="buttons"><a id="embed-info-close"
+                                      class="ui-state-default ui-corner-all button button-icon-left"><span
+                        class="ui-icon ui-icon-close"></span>{% trans "Close" %}</a></p>
+            </div>
+        <a id="embed-activate" class="ui-state-default ui-corner-all button button-icon-left">
+            <span class="ui-icon ui-icon-circle-triangle-s"></span>{% trans "Embed" %}
+        </a>
+        </div>
+{#        <div class="priority-area ui-helper-clearfix">#}
+
+            <a href="{% url exhibit_edit owner=object.owner.username slug=object.slug %}" class="button_link">{% trans "Edit" %}</a>
+
+{#        </div>#}
+    {% endif %}
+
+  <div id="canvas">
+      {% include object.canvas.location %}
+  </div>                
+  
+</div>
+
+
+<div class="ui-helper-hidden">
+  <div id="templates">
+  </div>
+</div>
+
+<p class="center">{% trans "Created by" %} <a href="{{ object.owner.get_profile.get_absolute_url }}">{{ object.owner|nicename }}</a> {% trans "based on" %} <a href="{{ object.dataset.get_absolute_url }}">{{ object.dataset.title }}</a>.</p>
+{% endblock %}
+
+
+

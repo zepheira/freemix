@@ -9,12 +9,11 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from freemix.dataset import forms
 from freemix.permissions import PermissionsRegistry
-from freemix.utils.views import JSONResponse
 from freemix.dataset import models
 import json
 
 # Data Source Transaction Views
-from freemix.views import OwnerListView, OwnerSlugPermissionMixin
+from freemix.views import OwnerListView, OwnerSlugPermissionMixin, JSONResponse
 
 class DataSourceTransactionView(View):
     def redirect(self):

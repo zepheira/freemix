@@ -11,7 +11,7 @@ urlpatterns = patterns('',
 
 )
 
-if "freemix.freemixprofile" in settings.INSTALLED_APPS:
+if "freemix.exhibit" in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
-        (r'^', include('freemix.freemixprofile.urls.dataset')),
+        (r'^', include('freemix.exhibit.urls.dataset')),
     )

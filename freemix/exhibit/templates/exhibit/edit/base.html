@@ -1,0 +1,132 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load exhibit_tags %}
+{% load compress %}
+
+{% block head_title %}{% blocktrans %}Builder{% endblocktrans %}{% endblock %}
+
+{% block rtab_id %}id="builder_tab"{% endblock %}
+{% block body_class %}attraction{% endblock %}
+
+{% block subnav %}
+
+{% endblock %}
+    
+{% block head_data %}
+    <link rel="exhibit/data" href="{{ data_url }}"/>
+    <link rel="freemix/dataprofile" href="{{ dataset_profile_url }}"/>
+    <link rel="freemix/exhibit_profile" href="{{ exhibit_profile_url }}"/>
+{% endblock %}
+
+{% block head_css %}
+{{block.super}}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/layout.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/views.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/editor.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}exhibit/css/canvas.css"/>
+
+<link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
+
+{% endblock head_css %}
+
+       
+{% block head_scripts %}
+    {% include "freemix/js_include/exhibit.html" %}
+    {{ block.super }}
+    {% include "freemix/js_include/jquery_ui.html" %}
+    {% include "freemix/js_include/viewer.html" %}
+    {% compress js %}
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.jeditable.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/hoverIntent.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.qtip.1.0.0-rc3.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.qtip.themeroller.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.uuid.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.cookie.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/csrf.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/freemix.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/exhibit.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/property.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/identify.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/widget.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/facet.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/view.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/views/map-view.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/views/record-pager.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/lib/jquery.themeswitcher.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/editor.js"></script>
+    {% endcompress %}
+    {% include "exhibit/lens_js.html" %}
+    {% include "exhibit/facet_js.html" %}
+{% endblock head_scripts %}
+
+{% block body %}
+<div id="toolbar">
+    <input type="checkbox" id="preview_toggle" /><label for="preview_toggle">{% trans "Preview" %}</label>
+    <div id="buttons" class="buttonset ui-helper-clearfix">
+
+
+    {%  if exhibit %}
+        <div class="exhibit_list_item {% if exhibit.published %}public{% else %}private{% endif %}">
+          <div class="exhibit-title">{{ exhibit.title }}</div>
+          <div class="exhibit-description">{{ exhibit.description }}</div>
+          <div class="exhibit-visibility">
+              {% if exhibit.published %}
+                <span class="public">{% trans "This view is publicly available." %}</span>
+              {% else %}
+                <span class="private">{% trans "This view is private." %}</span>
+              {% endif %}
+
+          </div>
+        </div>
+
+    {% endif %}
+      <span id="save_message"></span>
+      <a href="" id="save_button" class="button_link">{% trans "Save" %}</a>
+      <a href="{{ cancel_url }}" id="cancel_button" class="button_link negative-button">{% trans "Cancel" %}</a>
+    </div>
+    <div id="theme" >
+        {% theme_list %}
+    </div>
+</div>
+<div id="contents" class="ui-helper-hidden">
+  <div id="build" class="">
+    <div id="canvas">
+        {% include canvas.location %}
+    </div>
+  </div>
+  <div id="preview" class=""></div>
+</div>
+
+
+<div class="ui-helper-hidden">
+  <div id="templates">
+    <div id="canvas-template">
+        {% include canvas.location %}
+    </div>
+
+    {% block builder_templates %}
+    {# facets #}
+    {% include "exhibit/edit/facets/image-facet-editor.html" %}
+    {% include "exhibit/edit/facets/list-facet-editor.html" %}
+    {% include "exhibit/edit/facets/logo-facet-editor.html" %}
+    {% include "exhibit/edit/facets/tagcloud-facet-editor.html" %}
+    {% include "exhibit/edit/facets/text-facet-editor.html" %}
+
+    {# lenses #}
+    {% include "exhibit/edit/lenses/list-view.html" %}
+    {% include "exhibit/edit/lenses/map-view.html" %}
+    {% include "exhibit/edit/lenses/piechart-view.html" %}
+    {% include "exhibit/edit/lenses/record-view.html" %}
+    {% include "exhibit/edit/lenses/scatterplot-view.html" %}
+    {% include "exhibit/edit/lenses/table-view.html" %}
+    {% include "exhibit/edit/lenses/timeline-view.html" %}
+
+    {% endblock %}
+
+  </div>
+  <div id="popup-scratch" class="ui-helper-reset ui-widget"></div>
+</div>
+
+{% endblock body %}

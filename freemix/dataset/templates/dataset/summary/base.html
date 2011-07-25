@@ -27,7 +27,7 @@
     <script type="text/javascript" src="http://api.simile.zepheira.com/exhibit/2.2.0/exhibit-api.js?autoCreate=false"></script>
 
     {{block.super}}
-    {% include "js_include/viewer.html" %}
+    {% include "freemix/js_include/viewer.html" %}
     {% compress js %}
     <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.uuid.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}freemix/js/freemix.js"></script>
@@ -35,7 +35,7 @@
     <script type="text/javascript" src="{{STATIC_URL}}freemix/js/property.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}freemix/js/identify.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}dataset/js/summary.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}canvas/js/new_view_dialog.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/new_exhibit_dialog.js"></script>
 
     {% endcompress %}
 {% endblock %}
@@ -51,7 +51,7 @@
       <div class="dataset-title">{{ object.title }}</div>
       <div class="dataset-description">{{ object.description }}</div>
       <div class="dataset-visibility">
-          {% if dataset.published %}
+          {% if object.published %}
             <span class="public">This dataset is publicly available.</span>
           {% else %}
             <span class="private">This dataset is private.</span>

@@ -1,8 +1,5 @@
 from django.db.models.query_utils import Q
 
-
-
-
 class PermissionsRegistry:
 
     _filter_registry = {}
@@ -68,38 +65,27 @@ PermissionsRegistry.register('datasource.can_delete', check_owner, owner_filter)
 PermissionsRegistry.register('datasourcetransaction.can_view', lambda user_obj, obj: user_obj.id==obj.source.owner.id)
 
 def exhibit_can_view(user, obj):
-    if user.is_authenticated():
-        if user.id==obj.user.id:
-            return True
-        return obj.dataset_available(user)
+    if user.is_authenticated() and check_owner(user,obj):
+        return True
     else:
-        return obj.dataset_available(user)
+        return obj.dataset_available(user) and check_published(user,obj)
 
 def exhibit_view_filter(user):
     if user.is_authenticated():
-        return Q(dataset__owner=user)|Q(dataset__published=True)
-    return Q(dataset__published=True)
+        return (Q(dataset__owner=user)|Q(dataset__published=True))&published_query_filter(user)
+    return Q(dataset__published=True)&published_query_filter(user)
 
 def exhibit_can_edit(user, obj):
-    if user.is_authenticated() and user.id==obj.user.id:
+    if user.is_authenticated() and user.id==obj.owner.id:
         return obj.dataset_available(user)
     return False
 
 def exhibit_edit_filter(user):
     if user.is_authenticated():
-        return Q(user=user)&(Q(dataset__owner=user)|Q(dataset__published=True))
-    return Q(user=None)
+        return Q(owner=user)&(Q(dataset__owner=user)|Q(dataset__published=True))
+    return Q(owner=None)
 
-def exhibit_can_delete(user, obj):
-    if user.is_authenticated():
-        return user.id == obj.user.id
-    return False
-
-def exhibit_delete_filter(user):
-    if user.is_authenticated():
-        return Q(user=user)
-    return Q(user=None)
 
 PermissionsRegistry.register('exhibit.can_view', exhibit_can_view, exhibit_view_filter)
 PermissionsRegistry.register('exhibit.can_edit', exhibit_can_edit, exhibit_edit_filter)
-PermissionsRegistry.register('exhibit.can_delete', exhibit_can_delete, exhibit_delete_filter)
+PermissionsRegistry.register('exhibit.can_delete', check_owner, owner_filter)
