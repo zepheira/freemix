@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load exhibit_tags %}
 {% load compress %}
+{% load freemix_helpers %}
 
 {% block freemix_title %}{% blocktrans %}Data Profile Editor{% endblocktrans %}{% endblock %}
 
@@ -64,35 +65,82 @@
   <div id="identify" class="ui-helper-clearfix ui-helper-hidden builder-tab">
   
     {%  if dataset %}
-        <div class="dataset_list_item {% if dataset.published %}public{% else %}private{% endif %}">
-          <div class="dataset-title">{{ dataset.title }}</div>
-          <div class="dataset-description">{{ dataset.description }}</div>
-          <div class="dataset-visibility">
-              {% if dataset.published %}
-                <span class="public">{% trans "This dataset is publicly available." %}</span>
-              {% else %}
-                <span class="private">{% trans "This dataset is private." %}</span>
-              {% endif %}
 
-          </div>
+    <ul class="dataset_list_items">
+      <li class="dataset_list_item result_set_item clearfix {% if dataset.published %}public{% else %}private{% endif %}">
+
+      <div class="dataset-title">{{ dataset.title }}</div>
+      <div class="dataset-description">
+        {% if dataset.description %}
+        {% ifnotequal dataset.description dataset.description|truncatewords:20 %}
+        <span class="short-description">
+          {{ dataset.description|safe|truncatewords:20 }}
+          <a class="readmore" href="{{ dataset.get_absolute_url }}">read more</a>
+        </span>
+        <span class="long-description ui-helper-hidden">
+          {{ dataset.description|safe }}
+        </span>
+        {%  else %}
+        {{ dataset.description|safe }}
+        {% endifnotequal %}
+	{% endif %}
+      </div>
+      <div class="dataset-left">
+        <div class="dataset-creator">
+          <span class="property-label">{% trans "Loaded by:" %} </span> <a href="{% url profile_detail dataset.owner.username %}">{{ dataset.owner|nicename }}</a>
         </div>
+        <div class="dataset-created-data"><span class="property-label">{% trans "Loaded on:" %} </span>{{ dataset.created|date:"N j, Y" }}</div> 
+        <div class="dataset-modified-data"><span class="property-label">{% trans "Last Modified:" %} </span>{{ dataset.modified|date:"N j, Y" }}</div>
+	
+        {% ifnotequal dataset.exhibits.count 0 %}
+        <div class="dataset-usedin">
+          <span class="property-label">{% trans "Basis for:" %}</span>
+          <span class="view-count"><a href="{% url exhibits_by_dataset owner=dataset.owner.username slug=dataset.slug %}">{{ dataset.exhibits.count }} {% trans "Data View" %}{{ dataset.exhibits.count|pluralize }}</a></span>
+        </div>
+        {% endifnotequal %}
+	
+      </div>
+      
+      {% if request.user.is_authenticated %}
+      
+      <div class="dataset-right">
+	
+	<div class="dataset-links">
+	
+          <span class="action action_inspect_dataset">
+            <a class="dataset_inspect" href="{% url dataset_detail owner=dataset.owner.username slug=dataset.slug %}">{% trans "Inspect" %}</a>
+          </span>
+	  
+          <span class="divider">|</span>
+	  
+          <span class="action action_create_dataset">
+            <a class="dataset_create" href="{% url exhibit_canvas_chooser owner=dataset.owner.username slug=dataset.slug %}">{% trans "Build" %}</a>
+          </span>
+	  	 	  
+	</div>
+      </div>
+      {% endif %}
+
+    </li>
+    </ul>
   
     {% endif %}
     {% block describe %}
     <div id="editor">
     {% block editor %} 
+
+    <h3 class="help">{% trans "Edit Your Data" %}</h3>
+    
     <div id="buttons" class="buttonset ui-helper-clearfix">
       <span id="save_message"></span>
       <a href="" id="save_button" class="button_link">{% trans "Save" %}</a>
       <a href="{{ cancel_url }}" id="cancel_button" class="button_link negative-button">{% trans "Cancel" %}</a>
     </div>
-    <h1>{% trans "Describe Your Data" %}</h1>
-    
-    <ul id="describe_messages" class="messages">
+
+    <ul id="describe_messages" class="messages edit-message">
         {% block describe_messages %}
         {% endblock describe_messages %}
     </ul>
-
 
     <table id="identify-table" class="property-list-table">
       <thead class="facet-header ui-widget-header">

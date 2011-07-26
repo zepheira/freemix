@@ -41,15 +41,16 @@
 
       <div class="dataset-links">
 	
-        <span class="action action_create_dataset">
-          <a class="dataset_create" href="{% url exhibit_canvas_chooser owner=dataset.owner.username slug=dataset.slug %}">{% trans "Build" %}</a>
+        <span class="action action_inspect_dataset">
+          <a class="dataset_inspect" href="{% url dataset_detail owner=dataset.owner.username slug=dataset.slug %}">{% trans "Inspect" %}</a>
         </span>
 
         <span class="divider">|</span>
 
         <span class="action action_create_dataset">
-          <a class="dataset_export" href="{% url dataset_data_json owner=dataset.owner.username slug=dataset.slug %}">{% trans "Export" %}</a>
+          <a class="dataset_create" href="{% url exhibit_canvas_chooser owner=dataset.owner.username slug=dataset.slug %}">{% trans "Build" %}</a>
         </span>
+
 
         {% ifequal request.user.username dataset.owner.username %}
         <span class="divider">|</span>
