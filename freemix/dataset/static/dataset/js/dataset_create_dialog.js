@@ -1,6 +1,25 @@
 /*global jQuery */
 (function($, Freemix) {
 
+
+    function setupForm(dialog) {
+        var form = dialog.find("form");
+
+        form.ajaxForm({
+            "target": dialog,
+            "success": function() {
+                if (dialog.has(".dataset_create_success").length > 0) {
+                    dialog.append("<div>Redirecting...</div>");
+                    window.location = dialog.find("a.dataset_create_success").attr("href");
+                } else {
+                    setupForm(dialog);
+                }
+                return false;
+
+            }
+        });
+    }
+
     function setupSaveButton() {
         var dialog = $('<div style="display:hidden"></div>').appendTo('body');
 
@@ -13,24 +32,6 @@
             autoOpen: false,
             title: "Save a New Dataset"
         });
-
-        function setupForm(dialog) {
-            var form = dialog.find("form");
-
-            form.ajaxForm({
-                "target": dialog,
-                "success": function() {
-                    if (dialog.has(".dataset_create_success").length > 0) {
-                        dialog.append("<div>Redirecting...</div>");
-                        window.location = dialog.find("a.dataset_create_success").attr("href");
-                    } else {
-                        setupForm(dialog);
-                    }
-                    return false;
-
-                }
-            });
-        }
 
         $("#save_button").click(function() {
                 var url = $("link[rel='freemix/saveform']").attr("href");

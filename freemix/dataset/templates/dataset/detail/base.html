@@ -37,15 +37,15 @@
   </div>
     <div class="dataset-left">
         <div class="dataset-creator">
-          <span class="property-label">{% trans "Loaded by:" %} </span> <a href="{% url profile_detail dataset.owner.username %}">{{ dataset.owner|nicename }}</a>
+          <span class="property-label">{% trans "Loaded by:" %} </span> <a href="{% url profile_detail object.owner.username %}">{{ object.owner|nicename }}</a>
         </div>
-        <div class="dataset-created-data"><span class="property-label">{% trans "Loaded on:" %} </span>{{ dataset.created|date:"N j, Y" }}</div>
-        <div class="dataset-modified-data"><span class="property-label">{% trans "Last Modified:" %} </span>{{ dataset.modified|date:"N j, Y" }}</div>
+        <div class="dataset-created-data"><span class="property-label">{% trans "Loaded on:" %} </span>{{ object.created|date:"N j, Y" }}</div>
+        <div class="dataset-modified-data"><span class="property-label">{% trans "Last Modified:" %} </span>{{ object.modified|date:"N j, Y" }}</div>
 
         {% ifnotequal dataset.exhibits.count 0 %}
         <div class="dataset-usedin">
           <span class="property-label">{% trans "Basis for:" %}</span>
-          <span class="view-count"><a href="{% url exhibits_by_dataset owner=dataset.owner.username slug=dataset.slug %}">{{ dataset.exhibits.count }} {% trans "Data View" %}{{ dataset.exhibits.count|pluralize }}</a></span>
+          <span class="view-count"><a href="{% url exhibits_by_dataset owner=object.owner.username slug=object.slug %}">{{ object.exhibits.count }} {% trans "Data View" %}{{ object.exhibits.count|pluralize }}</a></span>
         </div>
         {% endifnotequal %}
 

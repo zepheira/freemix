@@ -28,6 +28,11 @@
         });
     }
 
+    function setupCreateExhibitButton() {
+        var url = $(".dataset_create").attr("href");
+        $(".dataset_create").newExhibitDialog(url);
+    }
+
     function deleteRecord() {
         var index = identify.getCurrentRecord();
         var id = Freemix.exhibit.database.getAllItems().toArray()[index];
@@ -92,6 +97,8 @@
     };
 
     $(document).ready(function() {
+        setupCreateExhibitButton();
+
         $("#delete-property-dialog").dialog({
             resizable: false,
             height:"auto",

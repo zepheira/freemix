@@ -19,8 +19,8 @@
     }
 
     function setup() {
-         var url = $("#create_exhibit_button").attr("href");
-        $("#create_exhibit_button").newExhibitDialog(url);
+         var url = $(".dataset_create").attr("href");
+        $(".dataset_create").newExhibitDialog(url);
 
         var profileURL = $("link[rel='freemix/dataprofile']").attr("href");
         $.ajax({
