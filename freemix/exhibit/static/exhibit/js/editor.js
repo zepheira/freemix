@@ -223,10 +223,14 @@
     function togglePreview() {
         if ($("#preview_toggle").attr("checked")) {
             updatePreview();
+
+            $("#preview_toggle").button("option", "label", "Show Builder");
             $("#build").hide();
             $("#preview").show();
         } else {
             updateBuilder();
+
+            $("#preview_toggle").button("option", "label", "Show Preview");
             $("#preview").hide();
             $("#build").show();
         }
@@ -251,6 +255,7 @@
 
     function display() {
 
+        setup_ui();
 
         var profile_url = $("link[rel='freemix/exhibit_profile']").attr("href");
         $.ajax({
@@ -266,7 +271,6 @@
                     dataType: "json",
                     success: function(dp) {
                         Freemix.data_profile=dp;
-                        setup_ui();
                         build_db();
                     }
                 });
