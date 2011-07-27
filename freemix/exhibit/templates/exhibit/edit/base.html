@@ -1,6 +1,7 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
+{% load freemix_helpers %}
 {% load exhibit_tags %}
 {% load compress %}
 
@@ -62,34 +63,78 @@
 {% endblock head_scripts %}
 
 {% block body %}
-<div id="toolbar">
-    <input type="checkbox" id="preview_toggle" /><label for="preview_toggle">{% trans "Show Preview" %}</label>
-    <div id="buttons" class="buttonset ui-helper-clearfix">
 
+{% if exhibit %}
+<div class="exhibit_edit">
+  <ul class="exhibit_list_items">
+    <li class="exhibit_list_item result_set_item clearfix {% if exhibit.published %}public{% else %}private{% endif %}">
+      
+      <div class="exhibit-title"><a href="{{  exhibit.get_absolute_url }}">{{exhibit.title}}</a></div>
 
-    {%  if exhibit %}
-        <div class="exhibit_list_item {% if exhibit.published %}public{% else %}private{% endif %}">
-          <div class="exhibit-title">{{ exhibit.title }}</div>
-          <div class="exhibit-description">{{ exhibit.description }}</div>
-          <div class="exhibit-visibility">
-              {% if exhibit.published %}
-                <span class="public">{% trans "This view is publicly available." %}</span>
-              {% else %}
-                <span class="private">{% trans "This view is private." %}</span>
-              {% endif %}
+      {% if exhibit.description %}
+      {% ifnotequal exhibit.description exhibit.description|truncatewords:20 %}
+      <span class="short-description">
+        {{ exhibit.description|safe|truncatewords:20 }}
+        <a class="readmore" href="{{ exhibit.get_absolute_url }}">read more</a>
+      </span>
+      <span class="long-description ui-helper-hidden">
+        {{ exhibit.description|safe }}
+      </span>
+      {%  else %}
+      {{ exhibit.description|safe }}
+      {% endifnotequal %}
+      {% endif %}
 
-          </div>
+      <div class="exhibit-left">
+        <div class="exhibit-creator">
+          <span class="property-label">{% trans "Created by:"%} </span> <a href="{% url profile_detail exhibit.owner.username %}">{{exhibit.owner|nicename}}</a>
         </div>
+        <div class="exhibit-created-data"><span class="property-label">{% trans "Created on:"%} </span>{{exhibit.created|date:"N j, Y"}}</div>
+        <div class="exhibit-modified-data"><span class="property-label">{% trans "Last Modified:"%} </span>{{exhibit.modified|date:"N j, Y"}}</div>
+        <div class="exhibit-dataset-title"><a href="{{exhibit.dataset.get_absolute_url }}" title="{{exhibit.dataset.title}}">{% blocktrans %}Original data set{% endblocktrans %}</a></div>
+	
+      </div>
+      
+      <div class="exhibit-right">
+	
+	<div class="exhibit-links">
+	  
+          {% if can_inspect %}
+          <span class="action action_inspect_exhibit">
+            <a class="exhibit_inspect" href="{% url exhibit_detail owner=exhibit.owner.username slug=exhibit.slug %}">{% trans "Inspect" %}</a>
+          </span>
+	  {% endif %}
+	  	  
+          <span class="divider">|</span>
+          <span class="action action_preview_exhibit">
+	    <input type="checkbox" id="preview_toggle" /><label for="preview_toggle">{% trans "Preview" %}</label>
+	  </span>
 
-    {% endif %}
-      <span id="save_message"></span>
-      <a href="" id="save_button" class="button_link">{% trans "Save" %}</a>
-      <a href="{{ cancel_url }}" id="cancel_button" class="button_link negative-button">{% trans "Cancel" %}</a>
-    </div>
-    <div id="theme" >
-        {% theme_list %}
-    </div>
+          <span class="divider">|</span>
+
+          <span class="action action_save_exhibit">
+	    <span id="save_message"></span>
+	    <a href="" id="save_button">{% trans "Save" %}</a>
+	  </span>
+
+          <span class="divider">|</span>
+          <span class="action action_cancel_exhibit">
+	    <a href="{{ cancel_url }}" id="cancel_button">{% trans "Cancel" %}</a>
+	  </span>
+
+	</div>
+      </div>
+    </li>
+  </ul>
 </div>
+{% endif %}
+
+
+
+<div id="theme" >
+  {% theme_list %}
+</div>
+
 <div id="contents" class="ui-helper-hidden">
   <div id="build" class="">
     <div id="canvas">
