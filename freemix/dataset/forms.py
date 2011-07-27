@@ -20,7 +20,8 @@ class CreateDatasetForm(forms.ModelForm):
         fields = ("title", "description", "published", "profile", "data")
         widgets= {
             "profile": forms.HiddenInput(),
-            "data": forms.HiddenInput()
+            "data": forms.HiddenInput(),
+            "published": forms.RadioSelect(choices=((True, "Public"), (False, "Private")))
         }
 
 
@@ -29,3 +30,6 @@ class EditDatasetDetailForm(forms.ModelForm):
         model = Dataset
         fields = ("title", "description", "published",)
 
+        widgets= {
+            "published": forms.RadioSelect(choices=((True, "Public"), (False, "Private")))
+        }

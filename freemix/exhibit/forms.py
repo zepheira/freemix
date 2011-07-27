@@ -31,4 +31,6 @@ class UpdateExhibitDetailForm(forms.ModelForm):
     class Meta:
         model = Exhibit
         fields = ("title", "description", "published",)
-
+        widgets = {
+            "published": forms.RadioSelect(choices=((True, "Public"), (False, "Private")))
+        }
