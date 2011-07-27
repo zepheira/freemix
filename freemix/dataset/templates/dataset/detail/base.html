@@ -61,7 +61,7 @@
   </div>
 
   {% endif %}
-  {% if can_build_view %}
+  {% if can_build %}
      <a href="{% url exhibit_canvas_chooser owner=object.owner.username slug=object.slug %}" id="create_exhibit_button" class="button_link">{% trans "Create a New View" %}</a>
   {% endif %}
     </div>

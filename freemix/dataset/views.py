@@ -159,11 +159,16 @@ class DatasetView(OwnerSlugPermissionMixin, DetailView):
     template_name= "dataset/dataset_summary.html"
 
     def get_context_data(self, **kwargs):
-        context = super(DatasetView, self).get_context_data(**kwargs)
-        context["can_edit"] = self.request.user.has_perm("dataset.can_edit", self.get_object())
-        context["can_delete"] = self.request.user.has_perm("dataset.can_delete", self.get_object())
-        context["can_build_view"] = self.request.user.is_authenticated()
+        context = dict(super(DatasetView, self).get_context_data(**kwargs))
+        dataset = self.get_object()
+        user = self.request.user
+        filter = PermissionsRegistry.get_filter("dataset.can_view", user)
 
+        context["can_view"] = user.has_perm("dataset.can_view", dataset),
+        context["can_build"] = user.has_perm("dataset.can_build", dataset)
+        context["can_edit"] = user.has_perm("dataset.can_edit", dataset)
+        context["can_delete"] = user.has_perm("dataset.can_delete", dataset)
+        context["exhibits"] = dataset.exhibits.filter(filter)
         return context
 
 class DatasetSummaryView(DatasetView):
@@ -173,7 +178,7 @@ class DatasetSummaryView(DatasetView):
         ds = self.get_object()
 
         if request.user.has_perm("dataset.can_delete", ds):
-            for exhibit in ds.exhibits.filter(~Q(user__username=self.kwargs["owner"])):
+            for exhibit in ds.exhibits.filter(~Q(owner__username=self.kwargs["owner"])):
                 exhibit.dataset = None
                 exhibit.save()
             ds.delete()
@@ -183,12 +188,6 @@ class DatasetSummaryView(DatasetView):
 
 class DatasetDetailView(DatasetView):
     template_name="dataset/dataset_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(DatasetDetailView, self).get_context_data(**kwargs)
-        filter = PermissionsRegistry.get_filter("exhibit.can_view", self.request.user)
-        context["exhibits"] = self.object.exhibits.filter(filter)
-        return context
 
 
 class DatasetCreateFormView(CreateView):
@@ -247,8 +246,7 @@ class DatasetProfileEditView(OwnerSlugPermissionMixin, View):
 
     def get(self, request, *args, **kwargs):
         dataset = self.get_object()
-
-        response = render(request, self.template_name, {
+        context = {
             "dataset": dataset,
             "dataurl": reverse('dataset_data_json', kwargs={'owner': dataset.owner.username,
                                                                   'slug': dataset.slug}),
@@ -256,8 +254,18 @@ class DatasetProfileEditView(OwnerSlugPermissionMixin, View):
                                                                   'slug': dataset.slug}),
             "cancel_url": reverse('dataset_summary', kwargs={'owner': dataset.owner.username,
                                                                   'slug': dataset.slug}),
+        }
 
-        })
+        user = self.request.user
+        filter = PermissionsRegistry.get_filter("dataset.can_view", user)
+
+        context["can_view"] = user.has_perm("dataset.can_view", dataset),
+        context["can_build"] = user.has_perm("dataset.can_build", dataset)
+        context["can_edit"] = user.has_perm("dataset.can_edit", dataset)
+        context["can_delete"] = user.has_perm("dataset.can_delete", dataset)
+        context["exhibits"] = dataset.exhibits.filter(filter)
+
+        response = render(request, self.template_name, context)
 
         return response
 

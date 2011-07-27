@@ -1,11 +1,29 @@
 from django import template
+from freemix.permissions import PermissionsRegistry
 
 
 register = template.Library()
 
 @register.inclusion_tag("dataset/dataset_list_item.html", takes_context=True)
 def dataset_list_item(context, dataset):
-    return {"dataset": dataset, "request": context['request']}
+    request = context["request"]
+    user = request.user
+
+    can_edit = user.has_perm("dataset.can_edit", dataset)
+    can_delete = user.has_perm("dataset.can_delete", dataset)
+    can_view = user.has_perm("dataset.can_view", dataset)
+    can_build = user.has_perm("dataset.can_build", dataset)
+
+    return {"dataset": dataset,
+            "dataset_url": dataset.get_absolute_url(),
+            "exhibits": dataset.exhibits.filter(PermissionsRegistry.get_filter("exhibit.can_view", user)),
+            "request": request,
+            "can_view": can_view,
+            "can_edit": can_edit,
+            "can_delete": can_delete,
+            "can_build": can_build
+            }
+
 
 
 @register.inclusion_tag("dataset/dataset_list.html", takes_context=True)

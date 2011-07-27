@@ -56,9 +56,15 @@ def published_query_filter(user):
         return Q(published=True)|owner_filter(user)
     return Q(published=True)
 
+def dataset_can_build(user, obj):
+    if user.is_authenticated():
+        return check_published(user, obj)
+    return False
+
 PermissionsRegistry.register('dataset.can_view', check_published, published_query_filter)
 PermissionsRegistry.register('dataset.can_edit', check_owner, owner_filter)
 PermissionsRegistry.register('dataset.can_delete', check_owner, owner_filter)
+PermissionsRegistry.register('dataset.can_build', dataset_can_build, published_query_filter)
 PermissionsRegistry.register('datasource.can_view', check_owner, owner_filter)
 PermissionsRegistry.register('datasource.can_edit', check_owner, owner_filter)
 PermissionsRegistry.register('datasource.can_delete', check_owner, owner_filter)
@@ -72,8 +78,9 @@ def exhibit_can_view(user, obj):
 
 def exhibit_view_filter(user):
     if user.is_authenticated():
-        return (Q(dataset__owner=user)|Q(dataset__published=True))&published_query_filter(user)
-    return Q(dataset__published=True)&published_query_filter(user)
+        # The user is the owner of the exhibit, or has access to the dataset and the exhibit is published
+        return owner_filter(user)|((Q(dataset__owner=user)|Q(dataset__published=True))&Q(published=True))
+    return Q(dataset__published=True)&Q(published=True)
 
 def exhibit_can_edit(user, obj):
     if user.is_authenticated() and user.id==obj.owner.id:
