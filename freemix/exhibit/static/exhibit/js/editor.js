@@ -225,14 +225,14 @@
             updatePreview();
 
             $("#preview_toggle").button("option", "label", "Show Builder");
-            $("#build").hide();
+            $("#build, #theme").hide();
             $("#preview").show();
         } else {
             updateBuilder();
 
             $("#preview_toggle").button("option", "label", "Show Preview");
             $("#preview").hide();
-            $("#build").show();
+            $("#build,#theme").show();
         }
 
     }
