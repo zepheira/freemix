@@ -109,20 +109,7 @@
 	  <div class="dataset-right">
 	    
 	    <div class="dataset-links">
-	      
-	      {% if can_view %}
-              <span class="action action_inspect_dataset">
-		<a class="dataset_inspect" href="{% url dataset_detail owner=dataset.owner.username slug=dataset.slug %}">{% trans "Inspect" %}</a>
-              </span>
-	      {% endif %}
-	      
-	      {% if can_build %}
-              <span class="divider">|</span>
-              <span class="action action_create_dataset">
-		<a class="dataset_create" href="{% url exhibit_canvas_chooser owner=dataset.owner.username slug=dataset.slug %}">{% trans "Build" %}</a>
-              </span>
-              {% endif %}
-	      
+	      	      
               <span class="divider">|</span>
               <span class="action action_save_dataset">
 		<span id="save_message"></span>

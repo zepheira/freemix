@@ -99,12 +99,6 @@
 	
 	<div class="exhibit-links">
 	  
-          {% if can_inspect %}
-          <span class="action action_inspect_exhibit">
-            <a class="exhibit_inspect" href="{% url exhibit_detail owner=exhibit.owner.username slug=exhibit.slug %}">{% trans "Inspect" %}</a>
-          </span>
-	  {% endif %}
-	  	  
           <span class="divider">|</span>
           <span class="action action_preview_exhibit">
 	    <input type="checkbox" id="preview_toggle" /><label for="preview_toggle">{% trans "Preview" %}</label>
