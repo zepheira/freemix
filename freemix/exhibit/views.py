@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.core.urlresolvers import  reverse
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from freemix.exhibit import models, forms, conf
@@ -58,6 +58,20 @@ class ExhibitCreateFormView(CreateView):
             return HttpResponseForbidden()
         self.object = form.save()
         return HttpResponseRedirect(self.get_success_url())
+
+class ExhibitDetailEditView(OwnerSlugPermissionMixin, UpdateView):
+    form_class = forms.UpdateExhibitDetailForm
+    object_perm="exhibit.can_edit"
+    model = models.Exhibit
+    template_name = "exhibit/edit/exhibit_metadata_form.html"
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return render(self.request, "exhibit/detail/exhibit_metadata.html", {
+                "can_edit": True,
+                "object": self.object,
+                "is_saved": True
+            })
 
 
 class ExhibitCreateView(View):

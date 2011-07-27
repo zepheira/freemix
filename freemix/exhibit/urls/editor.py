@@ -10,9 +10,9 @@ urlpatterns = patterns('',
        login_required(views.ExhibitProfileUpdateView.as_view()),
        name='exhibit_edit'),
 
-#    url(r'^(?P<owner>[a-zA-Z0-9_.-]+)/(?P<slug>[a-zA-Z0-9_.-]+)/detail/edit/$',
-#        login_required(ExhibitDetailEditView.as_view()),
-#        name="exhibit_edit_form"),
+    url(r'^(?P<owner>[a-zA-Z0-9_.-]+)/(?P<slug>[a-zA-Z0-9_.-]+)/detail/edit/$',
+        login_required(views.ExhibitDetailEditView.as_view()),
+        name="exhibit_edit_form"),
 
     url(r'^(?P<owner>[a-zA-Z0-9_.-]+)/(?P<slug>[a-zA-Z0-9_.-]+)/editor/create_success/$',
         TemplateView.as_view(template_name="exhibit/create/success.html"),
