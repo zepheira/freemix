@@ -64,81 +64,112 @@
 <div id="contents" class="ui-helper-hidden">
 {% block contents %}
 
-  <div id="identify" class="ui-helper-clearfix ui-helper-hidden builder-tab">
+<div id="identify" class="ui-helper-clearfix ui-helper-hidden builder-tab">
   
-    {%  if dataset %}
-
-    <ul class="dataset_list_items">
-      <li class="dataset_list_item result_set_item clearfix {% if dataset.published %}public{% else %}private{% endif %}">
-
-      <div class="dataset-title">{{ dataset.title }}</div>
-      <div class="dataset-description">
-        {% if dataset.description %}
-        {% ifnotequal dataset.description dataset.description|truncatewords:20 %}
-        <span class="short-description">
-          {{ dataset.description|safe|truncatewords:20 }}
-          <a class="readmore" href="{{ dataset.get_absolute_url }}">read more</a>
-        </span>
-        <span class="long-description ui-helper-hidden">
-          {{ dataset.description|safe }}
-        </span>
-        {%  else %}
-        {{ dataset.description|safe }}
-        {% endifnotequal %}
-	{% endif %}
-      </div>
-      <div class="dataset-left">
-        <div class="dataset-creator">
-          <span class="property-label">{% trans "Loaded by:" %} </span> <a href="{% url profile_detail dataset.owner.username %}">{{ dataset.owner|nicename }}</a>
-        </div>
-        <div class="dataset-created-data"><span class="property-label">{% trans "Loaded on:" %} </span>{{ dataset.created|date:"N j, Y" }}</div> 
-        <div class="dataset-modified-data"><span class="property-label">{% trans "Last Modified:" %} </span>{{ dataset.modified|date:"N j, Y" }}</div>
-	
-        {% ifnotequal exhibits.count 0 %}
-        <div class="dataset-usedin">
-          <span class="property-label">{% trans "Basis for:" %}</span>
-          <span class="view-count"><a href="{% url exhibits_by_dataset owner=dataset.owner.username slug=dataset.slug %}">{{ exhibits.count }} {% trans "Data View" %}{{ exhibits.count|pluralize }}</a></span>
-        </div>
-        {% endifnotequal %}
-	
-      </div>
-      
-      {% if request.user.is_authenticated %}
-      
-      <div class="dataset-right">
-	
-	<div class="dataset-links">
-	       {% if can_view %}
-          <span class="action action_inspect_dataset">
-            <a class="dataset_inspect" href="{% url dataset_detail owner=dataset.owner.username slug=dataset.slug %}">{% trans "Inspect" %}</a>
-          </span>
+  {%  if dataset %}
+  
+    <div class="dataset_edit">
+      <ul class="dataset_list_items">
+	<li class="dataset_list_item result_set_item clearfix {% if dataset.published %}public{% else %}private{% endif %}">
+	  
+	  <div class="dataset-title">{{ dataset.title }}</div>
+	  <div class="dataset-description">
+            {% if dataset.description %}
+            {% ifnotequal dataset.description dataset.description|truncatewords:20 %}
+            <span class="short-description">
+              {{ dataset.description|safe|truncatewords:20 }}
+              <a class="readmore" href="{{ dataset.get_absolute_url }}">read more</a>
+            </span>
+            <span class="long-description ui-helper-hidden">
+              {{ dataset.description|safe }}
+            </span>
+            {%  else %}
+            {{ dataset.description|safe }}
+            {% endifnotequal %}
+	    {% endif %}
+	  </div>
+	  <div class="dataset-left">
+            <div class="dataset-creator">
+              <span class="property-label">{% trans "Loaded by:" %} </span> <a href="{% url profile_detail dataset.owner.username %}">{{ dataset.owner|nicename }}</a>
+            </div>
+            <div class="dataset-created-data"><span class="property-label">{% trans "Loaded on:" %} </span>{{ dataset.created|date:"N j, Y" }}</div> 
+            <div class="dataset-modified-data"><span class="property-label">{% trans "Last Modified:" %} </span>{{ dataset.modified|date:"N j, Y" }}</div>
+	    
+            {% ifnotequal exhibits.count 0 %}
+            <div class="dataset-usedin">
+              <span class="property-label">{% trans "Basis for:" %}</span>
+              <span class="view-count"><a href="{% url exhibits_by_dataset owner=dataset.owner.username slug=dataset.slug %}">{{ exhibits.count }} {% trans "Data View" %}{{ exhibits.count|pluralize }}</a></span>
+            </div>
+            {% endifnotequal %}
+	    
+	  </div>
+	  
+	  {% if request.user.is_authenticated %}
+	  
+	  <div class="dataset-right">
+	    
+	    <div class="dataset-links">
+	      
+	      {% if can_view %}
+              <span class="action action_inspect_dataset">
+		<a class="dataset_inspect" href="{% url dataset_detail owner=dataset.owner.username slug=dataset.slug %}">{% trans "Inspect" %}</a>
+              </span>
 	      {% endif %}
-          <span class="divider">|</span>
+	      
 	      {% if can_build %}
-          <span class="action action_create_dataset">
-            <a class="dataset_create" href="{% url exhibit_canvas_chooser owner=dataset.owner.username slug=dataset.slug %}">{% trans "Build" %}</a>
-          </span>
-          {% endif %}
-	  	 	  
-	</div>
+              <span class="divider">|</span>
+              <span class="action action_create_dataset">
+		<a class="dataset_create" href="{% url exhibit_canvas_chooser owner=dataset.owner.username slug=dataset.slug %}">{% trans "Build" %}</a>
+              </span>
+              {% endif %}
+	      
+              <span class="divider">|</span>
+              <span class="action action_save_dataset">
+		<span id="save_message"></span>
+		<a href="" id="save_button">{% trans "Save" %}</a>
+	      </span>
+	      
+              <span class="divider">|</span>
+              <span class="action action_cancel_dataset">
+		<a href="{{ cancel_url }}" id="cancel_button">{% trans "Cancel" %}</a>
+	      </span>
+	      
+	    </div>
+	  </div>
+	  {% endif %}
+	  
+	</li>
+      </ul>
+    </div>  
+    {% else %}
+    <div class="dataset_edit">
+      <ul class="dataset_list_items">
+	<li class="dataset_list_item result_set_item clearfix public">
+
+	  <div class="dataset-title">New Recollection Dataset</div>
+
+	  <div class="dataset-right">
+	    <div class="dataset-links">
+	      
+              <span class="action action_save_exhibit">
+		<span id="save_message"></span>
+		<a href="" id="save_button">{% trans "Save" %}</a>
+	      </span>
+	      
+              <span class="divider">|</span>
+              <span class="action action_cancel_exhibit">
+		<a href="{{ cancel_url }}" id="cancel_button">{% trans "Cancel" %}</a>
+	      </span>
+	      
+	    </div>
+	</li>
+      </ul>
       </div>
       {% endif %}
 
-    </li>
-    </ul>
-  
-    {% endif %}
     {% block describe %}
     <div id="editor">
     {% block editor %} 
-
-    <h3 class="help">{% trans "Edit Your Data" %}</h3>
-    
-    <div id="buttons" class="buttonset ui-helper-clearfix">
-      <span id="save_message"></span>
-      <a href="" id="save_button" class="button_link">{% trans "Save" %}</a>
-      <a href="{{ cancel_url }}" id="cancel_button" class="button_link negative-button">{% trans "Cancel" %}</a>
-    </div>
 
     <ul id="describe_messages" class="messages edit-message">
         {% block describe_messages %}

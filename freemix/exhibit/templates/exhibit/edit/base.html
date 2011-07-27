@@ -127,6 +127,37 @@
     </li>
   </ul>
 </div>
+{% else %}
+<div class="exhibit_edit">
+  <ul class="exhibit_list_items">
+    <li class="exhibit_list_item result_set_item clearfix">
+
+      <div class="exhibit-title">View based on '{{dataset.title}}'</div>
+
+      <div class="exhibit-right">
+	
+	<div class="exhibit-links">
+	  	  	  
+          <span class="action action_preview_exhibit">
+	    <input type="checkbox" id="preview_toggle" /><label for="preview_toggle">{% trans "Preview" %}</label>
+	  </span>
+
+          <span class="divider">|</span>
+
+          <span class="action action_save_exhibit">
+	    <span id="save_message"></span>
+	    <a href="" id="save_button">{% trans "Save" %}</a>
+	  </span>
+
+          <span class="divider">|</span>
+          <span class="action action_cancel_exhibit">
+	    <a href="{{ cancel_url }}" id="cancel_button">{% trans "Cancel" %}</a>
+	  </span>
+
+	</div>
+    </li>
+  </ul>
+</div>
 {% endif %}
 
 

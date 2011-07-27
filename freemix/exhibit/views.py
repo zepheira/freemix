@@ -100,6 +100,7 @@ class ExhibitCreateView(View):
             "save_form_url": reverse('exhibit_create_form', kwargs=self.dataset_args),
             "data_url":data_url,
             "canvas": canvas,
+            "dataset": self.dataset,
             "owner": request.user.username
         })
 
@@ -135,6 +136,7 @@ class ExhibitProfileUpdateView(View):
             "data_url": data_url,
             "canvas": canvas,
             "owner": request.user.username,
+            "dataset": self.dataset,
             "exhibit": self.exhibit
         }
 
