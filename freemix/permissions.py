@@ -62,6 +62,7 @@ def dataset_can_build(user, obj):
     return False
 
 PermissionsRegistry.register('dataset.can_view', check_published, published_query_filter)
+PermissionsRegistry.register('dataset.can_inspect', check_published, published_query_filter)
 PermissionsRegistry.register('dataset.can_edit', check_owner, owner_filter)
 PermissionsRegistry.register('dataset.can_delete', check_owner, owner_filter)
 PermissionsRegistry.register('dataset.can_build', dataset_can_build, published_query_filter)
@@ -94,5 +95,6 @@ def exhibit_edit_filter(user):
 
 
 PermissionsRegistry.register('exhibit.can_view', exhibit_can_view, exhibit_view_filter)
+PermissionsRegistry.register('exhibit.can_inspect', exhibit_can_view, exhibit_view_filter)
 PermissionsRegistry.register('exhibit.can_edit', exhibit_can_edit, exhibit_edit_filter)
 PermissionsRegistry.register('exhibit.can_delete', check_owner, owner_filter)

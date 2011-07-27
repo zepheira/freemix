@@ -10,7 +10,21 @@ register = template.Library()
 def exhibit_list_item(context, exhibit):
     request = context['request']
     visible = exhibit.dataset_available(request.user)
-    return {"exhibit": exhibit, "request": request, "visible": visible}
+    user = request.user
+
+    can_edit = user.has_perm("exhibit.can_edit", exhibit)
+    can_delete = user.has_perm("exhibit.can_delete", exhibit)
+    can_view = user.has_perm("exhibit.can_view", exhibit)
+    can_inspect = user.has_perm("exhibit.can_inspect", exhibit)
+
+    return {"exhibit": exhibit, 
+            "request": request,
+            "visible": visible,
+            "dataset_available": visible,
+            "can_edit": can_edit,
+            "can_delete": can_delete,
+            "can_view": can_view,
+            "can_inspect": can_inspect}
 
 @register.inclusion_tag("exhibit/exhibit_list.html", takes_context=True)
 def exhibit_list(context, exhibits, max_count=10, pageable=True):

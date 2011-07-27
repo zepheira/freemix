@@ -165,6 +165,8 @@ class DatasetView(OwnerSlugPermissionMixin, DetailView):
         filter = PermissionsRegistry.get_filter("dataset.can_view", user)
 
         context["can_view"] = user.has_perm("dataset.can_view", dataset),
+        context["can_inspect"] = user.has_perm("dataset.can_inspect", dataset),
+
         context["can_build"] = user.has_perm("dataset.can_build", dataset)
         context["can_edit"] = user.has_perm("dataset.can_edit", dataset)
         context["can_delete"] = user.has_perm("dataset.can_delete", dataset)
@@ -188,6 +190,7 @@ class DatasetSummaryView(DatasetView):
 
 class DatasetDetailView(DatasetView):
     template_name="dataset/dataset_detail.html"
+    object_perm = "dataset.can_inspect"
 
 
 class DatasetCreateFormView(CreateView):
@@ -260,6 +263,8 @@ class DatasetProfileEditView(OwnerSlugPermissionMixin, View):
         filter = PermissionsRegistry.get_filter("dataset.can_view", user)
 
         context["can_view"] = user.has_perm("dataset.can_view", dataset),
+        context["can_inspect"] = user.has_perm("dataset.can_inspect", dataset),
+
         context["can_build"] = user.has_perm("dataset.can_build", dataset)
         context["can_edit"] = user.has_perm("dataset.can_edit", dataset)
         context["can_delete"] = user.has_perm("dataset.can_delete", dataset)

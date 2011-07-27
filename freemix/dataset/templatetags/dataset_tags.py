@@ -12,6 +12,8 @@ def dataset_list_item(context, dataset):
     can_edit = user.has_perm("dataset.can_edit", dataset)
     can_delete = user.has_perm("dataset.can_delete", dataset)
     can_view = user.has_perm("dataset.can_view", dataset)
+    can_inspect = user.has_perm("dataset.can_inspect", dataset)
+
     can_build = user.has_perm("dataset.can_build", dataset)
 
     return {"dataset": dataset,
@@ -21,7 +23,8 @@ def dataset_list_item(context, dataset):
             "can_view": can_view,
             "can_edit": can_edit,
             "can_delete": can_delete,
-            "can_build": can_build
+            "can_build": can_build,
+            "can_inspect": can_inspect
             }
 
 

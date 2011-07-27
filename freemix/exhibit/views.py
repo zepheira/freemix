@@ -114,7 +114,7 @@ class ExhibitProfileUpdateView(View):
         if not self.check_permissions():
             raise Http404()
 
-        return render(request, self.template_name, {
+        context = {
             "exhibit_profile_url": profile_url,
             "dataset_profile_url": dataset_profile_url,
             "cancel_url": self.exhibit.get_absolute_url(),
@@ -122,7 +122,18 @@ class ExhibitProfileUpdateView(View):
             "canvas": canvas,
             "owner": request.user.username,
             "exhibit": self.exhibit
-        })
+        }
+
+        user = self.request.user
+        exhibit = self.exhibit
+
+        context["dataset_available"] = exhibit.dataset_available(user)
+        context["can_view"] = user.has_perm("exhibit.can_view", exhibit)
+        context["can_inspect"] = user.has_perm("exhibit.can_inspect", exhibit)
+
+        context["can_edit"] = user.has_perm("exhibit.can_edit", exhibit)
+        context["can_delete"] = user.has_perm("exhibit.can_delete", exhibit)
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         self.setup()
@@ -150,9 +161,16 @@ class ExhibitView(OwnerSlugPermissionMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ExhibitView, self).get_context_data(**kwargs)
-        context["dataset_available"] = self.get_object().dataset_available(self.request.user)
-        context["can_edit"] = self.request.user.has_perm("exhibit.can_edit", self.get_object())
-        context["can_delete"] = self.request.user.has_perm("exhibit.can_delete", self.get_object())
+        user = self.request.user
+        exhibit = self.get_object()
+
+        context["exhibit"] = exhibit
+        context["dataset_available"] = exhibit.dataset_available(user)
+        context["can_view"] = user.has_perm("exhibit.can_view", exhibit)
+        context["can_inspect"] = user.has_perm("exhibit.can_inspect", exhibit)
+
+        context["can_edit"] = user.has_perm("exhibit.can_edit", exhibit)
+        context["can_delete"] = user.has_perm("exhibit.can_delete", exhibit)
         return context
 
 class ExhibitDisplayView(ExhibitView):
@@ -172,6 +190,7 @@ class ExhibitDisplayView(ExhibitView):
 
 class ExhibitDetailView(ExhibitView):
     template_name = "exhibit/exhibit_detail.html"
+    object_perm = "exhibit.can_inspect"
 
 
 class EmbeddedExhibitView(View):
