@@ -47,7 +47,7 @@ class Exhibit(TitleSlugDescriptionModel, TimeStampedModel):
 
     profile = JSONField()
     
-    dataset = models.ForeignKey(Dataset, related_name="exhibits")
+    dataset = models.ForeignKey(Dataset, null=True, blank=True, related_name="exhibits")
 
     canvas = models.ForeignKey(Canvas)
 
