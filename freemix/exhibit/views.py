@@ -208,6 +208,20 @@ class ExhibitDetailView(ExhibitView):
     template_name = "exhibit/exhibit_detail.html"
     object_perm = "exhibit.can_inspect"
 
+    def get_context_data(self, **kwargs):
+        context = super(ExhibitDetailView, self).get_context_data(**kwargs)
+        user = self.request.user
+        can_embed = user.has_perm("exhibit.can_embed", self.get_object())
+        context["can_embed"] = can_embed
+        context["can_share"] = user.has_perm("exhibit.can_share", self.get_object())
+        if can_embed:
+            context["exhibit_embed_url"] = get_site_url(reverse('exhibit_embed_js',
+                                                    kwargs={
+                                                        "owner": self.get_object().owner,
+                                                        "slug": self.get_object().slug
+                                                    }))
+        
+        return context
 
 class EmbeddedExhibitView(View):
     """Generate the javascript necessary to embed an exhibit on an external site
