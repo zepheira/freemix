@@ -52,9 +52,24 @@
         $("#detail_edit_button").live("click", loadEditor);
     }
 
+    function setupEmbed() {
+        if ($("#embed").length) {
+            $('#embed-info-close').click(function() {
+                $('#embed-info').slideUp();
+            });
+            $('.exhibit_embed').click(function(e) {
+                e.preventDefault();
+                $('#embed-info').slideDown();
+                $('#embedding-code').get(0).focus();
+                $('#embedding-code').highlight();
+                return false;
+            });
+        }
+    }
 
     function setup() {
         setupEditDetails();
+        setupEmbed();
     }
 
     $(document).ready(setup);
