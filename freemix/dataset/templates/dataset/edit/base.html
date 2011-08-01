@@ -158,10 +158,12 @@
     <div id="editor">
     {% block editor %} 
 
-    <ul id="describe_messages" class="messages edit-message">
+    <div id="systemMsg">
+      <ul id="describe_messages" class="messages edit-message">
         {% block describe_messages %}
-        {% endblock describe_messages %}
-    </ul>
+	{% endblock describe_messages %}
+      </ul>
+    </div>
 
     <table id="identify-table" class="property-list-table">
       <thead class="facet-header ui-widget-header">

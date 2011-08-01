@@ -1,18 +1,24 @@
 {% load i18n %}
 
 <div class="delete_dataset_dialog ui-helper-hidden">
+
     <div class="delete_dataset_form">
-    <div class="delete_dataset_view_reminder">
+      <div class="delete_dataset_view_reminder">
         <p>{% blocktrans %}Deleting this <a href="" class="dataset_url">dataset</a> will delete{% endblocktrans %}
-            <span class="delete_view_count"></span></p>
+          <span class="delete_view_count"></span>
+	</p>
+      </div>
+      
+      <p>{% blocktrans %}Really delete this <a href="" class="dataset_url">dataset</a>?{% endblocktrans %}</p>
     </div>
-    <p>{% blocktrans %}Really delete this <a href="" class="dataset_url">dataset</a>?{% endblocktrans %}</p>
+
     <div class="button_group">
-        <a href="#" class='button_link ok-button' title='OK'>OK</a>
-        <a href="#" class='button_link negative-button cancel-button' title='Cancel'>Cancel</a>
+      <a href="#" class='button_link ok-button' title='OK'>OK</a>
+      <a href="#" class='button_link negative-button cancel-button' title='Cancel'>Cancel</a>
     </div>
-    </div>
+
     <div class='delete_dataset_failed'>Delete Failed<span class='cancel-button button ui-state-default ui-corner-all' title='OK'>OK</span></div>
+
 </div>
 
 <script type="text/javascript">
