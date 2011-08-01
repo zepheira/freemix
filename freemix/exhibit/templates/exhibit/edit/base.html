@@ -73,15 +73,17 @@
 
       {% if exhibit.description %}
       {% ifnotequal exhibit.description exhibit.description|truncatewords:20 %}
-      <span class="short-description">
+      <div class="exhibit-description exhibit-short-description">
         {{ exhibit.description|safe|truncatewords:20 }}
         <a class="readmore" href="{{ exhibit.get_absolute_url }}">read more</a>
-      </span>
-      <span class="long-description ui-helper-hidden">
+      </div>
+      <div class="exhibit-description exhibit-long-description ui-helper-hidden">
         {{ exhibit.description|safe }}
-      </span>
+      </div>
       {%  else %}
-      {{ exhibit.description|safe }}
+      <div class="exhibit-description">
+	{{ exhibit.description|safe }}
+      </div>
       {% endifnotequal %}
       {% endif %}
 
