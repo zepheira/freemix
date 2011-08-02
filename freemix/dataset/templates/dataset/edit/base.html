@@ -168,47 +168,50 @@
     <table id="identify-table" class="property-list-table">
       <thead class="facet-header ui-widget-header">
         <tr>
-          <th width="5%">
+          <th class="header-enabled">
               {% trans "Enabled" %}
           </th>
-          <th width="35%">
+          <th class="header-name">
               {% trans "Field Name" %}
+
+              <button class="data-property-add" title="Add a Field">{% trans "Add" %}</button>
           </th>
-          <th width="10%">
+          <th class="header-types">
               {% trans "Type"%}
           </th>
-          <th width="50%" colspan=2>
+          <th class="header-value" colspan="2">
               {% trans "Value" %}
 
-            <div class="record-pager">
+              <div class="record-pager">
+
+		<span id="current-record">#p</span> of <span id="record-count">#t</span>&#160;
+
                 <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
                 <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
+
+                <span class="toolbar-divider">|</span>
+
+                <button class="data-record-delete ui-corner-bottom ui-corner-top" title="Delete this Record">{% trans "Delete Record" %}</button>
+
+                <button class="data-refresh ui-corner-bottom ui-corner-top" title="Augment Data">{% trans "Augment Data" %}</button>
             </div>
           </th> 
         </tr>
       </thead>
+
       <tbody>
         
         <tr class='table-footer'>
             <td colspan="5">
-            <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
-            
-            {% block record_controls %}
-              <button class="data-record-delete">{% trans "Delete This Record" %}</button>
-              <span id="record-selector">
-                  <span class="record-pager">
-                    <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
-                    <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
-                  </span>
-                  <span id="current-record">#p</span> of <span id="record-count">#t</span>&#160;
-              </span>
-            {% endblock %}  
+            <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">            
             </div>
           </td>
         </tr>
 
       </tbody>
+
     </table>
+
     </div>
         &nbsp;
 
@@ -225,13 +228,11 @@
   {% block dataset_edit_hidden %}
 
   <div id="delete-record-dialog" title="{% trans "Delete This Record" %}">
-      <p>
-          <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-          {% blocktrans %}
-          You will not be able to recover this record after saving this dataset.
-          Really delete it?
-          {% endblocktrans %}
-      </p>
+      <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+      {% blocktrans %}
+      You will not be able to recover this record after saving this dataset.
+      Really delete it?
+      {% endblocktrans %}
   </div>
 
   <div id="delete-property-dialog" title="Delete Property">

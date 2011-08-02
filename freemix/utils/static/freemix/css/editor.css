@@ -59,8 +59,12 @@
 }
 
 .data-record-delete, .data-refresh, .data-property-add {
-    float: left;
-    margin-left: 10px;
+    float: right;
+    margin-right: 10px;
+}
+
+.data-property-add {
+ font-size: 75%;
 }
 
 .view-set {
@@ -102,15 +106,14 @@
 }
 
 #add-facet-table {
+    width: 100%;
     padding: 0;
     border-spacing: 0 0;
-    width: 100%;
     border: 1px solid #666;
     border-collapse: collapse;
 }
 
-#add-facet-table thead,
-#identify-table thead {
+#add-facet-table thead, #identify-table thead {
     border: 1px solid #a9a9a9;
 }
 
@@ -132,6 +135,10 @@
     font-weight: normal;
     padding: 0.1em 0.5em;
 }
+
+th.header-value, th.header-types, th.header-name {
+    border-left: 1px solid #666;
+ }
 
 #add-facet-table td {
     border-bottom: 1px solid #666;
@@ -219,21 +226,27 @@
     margin: 0.5em 0 0;
 }
 
-.property-list-table td.types {
-    width: 10%;
-}
-
 .property-list-table td.inner {
     width: 0.5em;
     text-align: center;
 }
 
+/* cell widths */
+
+.property-list-table td.types {
+    width: 10%;
+}
+
+.property-list-table td.value, .property-list-table td.delete {
+  background-color: #F5F5F5;
+}
+
 .property-list-table td.name {
-    width: 35%;
+    width: 25%;
 }
 
 .property-list-table td.enabled, .property-list-table td.visible {
-    width: 5%;
+    width: 10%;
     text-align: center;
 }
 
