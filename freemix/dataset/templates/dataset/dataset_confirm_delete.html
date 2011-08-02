@@ -3,11 +3,18 @@
 <div class="delete_dataset_dialog ui-helper-hidden">
 
     <div class="delete_dataset_form">
-      <div class="delete_dataset_view_reminder">
-        <p>{% blocktrans %}Deleting this <a href="" class="dataset_url">dataset</a> will delete{% endblocktrans %}
-          <span class="delete_view_count"></span>. Are you sure you want to delete this?
+        <p>
+            {% blocktrans %}
+                Are you sure you want to delete this <a href="" class="dataset_url">dataset</a>?
+            {% endblocktrans %}
+
+            <span class="delete_dataset_view_reminder">
+                {% blocktrans %}
+                    You will also delete <span class="delete_view_count"></span>.
+                {% endblocktrans %}
+            </span>
+
 	</p>
-      </div>
     </div>
 
     <div class="button_group">
