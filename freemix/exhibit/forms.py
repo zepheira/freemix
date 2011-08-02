@@ -7,14 +7,15 @@ class CreateExhibitForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.owner = kwargs.pop('owner')
         self.dataset = kwargs.pop('dataset')
+        self.canvas = kwargs.pop('canvas')
         super(CreateExhibitForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
         instance = super(CreateExhibitForm, self).save(commit=False)
         instance.owner = self.owner
         instance.dataset = self.dataset
+        instance.canvas = self.canvas
         instance.theme = Theme.objects.get(slug=instance.profile.get("theme", conf.DEFAULT_EXHIBIT_THEME))
-        instance.canvas = Canvas.objects.get(slug=instance.profile.get("canvas", conf.DEFAULT_EXHIBIT_CANVAS))
 
         instance.save()
         return instance

@@ -115,7 +115,6 @@
 
     Freemix.syncMetadata = function(model) {
         var metadata = {};
-        metadata.canvas = model.canvas;
         metadata.theme = model.theme;
 
         metadata.facets = {};

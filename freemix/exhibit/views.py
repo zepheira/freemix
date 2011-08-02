@@ -14,6 +14,7 @@ from django.views.generic.list import ListView
 
 from freemix.exhibit import models, forms, conf
 from freemix.dataset.models import Dataset
+from freemix.exhibit.models import Canvas
 from freemix.permissions import PermissionsRegistry
 from freemix.utils import get_site_url
 
@@ -37,6 +38,7 @@ class ExhibitCreateFormView(CreateView):
         ctx = super(ExhibitCreateFormView, self).get_context_data(**kwargs)
         ctx["owner"] = self.kwargs["owner"]
         ctx["slug"] = self.kwargs["slug"]
+        ctx["canvas"] = self.kwargs["canvas"]
         return ctx
 
     def get_form_kwargs(self):
@@ -44,6 +46,7 @@ class ExhibitCreateFormView(CreateView):
         kwargs["owner"] = self.request.user
         dataset = get_object_or_404(Dataset, owner__username=self.kwargs["owner"], slug=self.kwargs["slug"])
         kwargs["dataset"] = dataset
+        kwargs["canvas"] = get_object_or_404(Canvas, slug=self.kwargs["canvas"])
         return kwargs
 
     def get_initial(self):
@@ -84,20 +87,26 @@ class ExhibitCreateView(View):
     def get(self, request, *args, **kwargs):
         self.dataset_args = {"owner": self.kwargs["owner"], "slug": self.kwargs["slug"]}
         self.dataset = get_object_or_404(Dataset,owner__username=self.kwargs["owner"], slug=self.kwargs["slug"])
+        if not self.check_permissions():
+            raise Http404()
 
         profile_url = reverse("exhibit_profile_template", kwargs=self.dataset_args)
         dataset_profile_url = reverse("dataset_profile_json", kwargs=self.dataset_args)
         data_url = reverse("dataset_data_json", kwargs=self.dataset_args)
-        canvas = get_object_or_404(models.Canvas, slug=self.request.GET.get("canvas", conf.DEFAULT_EXHIBIT_CANVAS))
-
-        if not self.check_permissions():
-            raise Http404()
+        canvas = get_object_or_404(models.Canvas,
+                                   slug=self.request.GET.get("canvas", conf.DEFAULT_EXHIBIT_CANVAS))
+        save_form_url = reverse("exhibit_create_form", kwargs={
+            "owner": self.dataset.owner,
+            "slug": self.dataset.slug,
+            "canvas": canvas.slug
+        })
+        
 
         return render(request, self.template_name, {
             "exhibit_profile_url": profile_url,
             "dataset_profile_url": dataset_profile_url,
             "cancel_url": self.dataset.get_absolute_url(),
-            "save_form_url": reverse('exhibit_create_form', kwargs=self.dataset_args),
+            "save_form_url": save_form_url,
             "data_url":data_url,
             "canvas": canvas,
             "dataset": self.dataset,
@@ -298,7 +307,6 @@ class StockExhibitProfileJSONView(View):
     def get(self, request, *args, **kwargs):
         owner = kwargs["owner"]
         slug = kwargs["slug"]
-        canvas = request.GET.get("canvas", conf.DEFAULT_EXHIBIT_CANVAS)
 
         ds = get_object_or_404(models.Dataset, owner__username=owner, slug=slug)
         user = self.request.user
@@ -308,7 +316,6 @@ class StockExhibitProfileJSONView(View):
 
         return JSONResponse({
             "theme": conf.DEFAULT_EXHIBIT_THEME,
-            "canvas": canvas,
             "facets": {},
             "views": {
                 "views": [{

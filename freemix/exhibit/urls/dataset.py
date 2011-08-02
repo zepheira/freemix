@@ -19,7 +19,7 @@ urlpatterns = (
         name='exhibit_canvas_chooser'
     ),    
 
-    url(r'^(?P<owner>[a-zA-Z0-9_.-]+)/(?P<slug>[a-zA-Z0-9_.-]+)/view/create/$',
+    url(r'^(?P<owner>[a-zA-Z0-9_.-]+)/(?P<slug>[a-zA-Z0-9_.-]+)/view/create/(?P<canvas>[a-zA-Z0-9_.-]+)/$',
         login_required(views.ExhibitCreateFormView.as_view()),
         name="exhibit_create_form"),
 
