@@ -47,7 +47,7 @@
         </span>
 
       {% if can_build %}
-        <span class="divider">|</span>
+        <span class="divider action_create_dataset">|</span>
 
         <span class="action action_create_dataset">
           <a class="dataset_create" href="{% url exhibit_canvas_chooser owner=dataset.owner.username slug=dataset.slug %}">{% trans "Build" %}</a>
@@ -55,7 +55,7 @@
        {% endif %}
 
         {% if can_edit %}
-        <span class="divider">|</span>
+        <span class="divider action_edit_dataset">|</span>
 
         <span class="action action_edit_dataset">
           <a class="dataset_edit" href="{% url dataset_edit owner=dataset.owner.username slug=dataset.slug %}">{% trans "Edit" %}</a>
@@ -63,9 +63,9 @@
          {% endif %}
 
         {% if can_delete %}
-        <span class="divider">|</span>
+        <span class="divider action_delete_dataset">|</span>
 
-        <span class="action action_edit_dataset">
+        <span class="action action_delete_dataset">
             <a class="dataset_delete" href="{{ dataset.get_absolute_url }}">{% trans "Delete" %}</a>
         </span>
         {% endif %}

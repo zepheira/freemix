@@ -13,7 +13,7 @@
         <div class="exhibit-right">
 
           <div class="exhibit-links">
-            <span class="action action_edit_exhibit">
+            <span class="action action_delete_exhibit">
               <a class="exhibit_delete" href="{{  exhibit.get_absolute_url }}">{% trans "Delete" %}</a>
             </span>
           </div>
@@ -55,7 +55,7 @@
 	{% endif %}
 
         {% if can_edit %}
-        <span class="divider">|</span>
+        <span class="divider action_edit_exhibit">|</span>
 
         <span class="action action_edit_exhibit">
           <a class="exhibit_edit" href="{% url exhibit_edit owner=exhibit.owner.username slug=exhibit.slug %}">{% trans "Edit" %}</a>
@@ -63,9 +63,9 @@
 	{% endif %}
 
         {% if can_delete %}
-        <span class="divider">|</span>
+        <span class="divider action_delete_exhibit">|</span>
 
-        <span class="action action_edit_exhibit">
+        <span class="action action_delete_exhibit">
           <a class="exhibit_delete" href="{{  exhibit.get_absolute_url }}">{% trans "Delete" %}</a>
         </span>
 	{% endif %}
