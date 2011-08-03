@@ -36,20 +36,15 @@
       {{ exhibit.description|safe }}
     </div>
     {% endifnotequal %}
-       {% endif %}
-    <div class="exhibit-left">
-        <div class="exhibit-creator">
-                <span class="property-label">{% trans "Created by:"%} </span> <a href="{% url profile_detail exhibit.owner.username %}">{{exhibit.owner|nicename}}</a>
-        </div>
-        <div class="exhibit-created-data"><span class="property-label">{% trans "Created on:"%} </span>{{exhibit.created|date:"N j, Y"}}</div>
-        <div class="exhibit-modified-data"><span class="property-label">{% trans "Last Modified:"%} </span>{{exhibit.modified|date:"N j, Y"}}</div>
-        <div class="exhibit-dataset-title"><a href="{{exhibit.dataset.get_absolute_url }}" title="{{exhibit.dataset.title}}">{% blocktrans %}Original data set{% endblocktrans %}</a></div>
+    {% endif %}
 
+    <div class="exhibit-metadata exhibit-left">
+      {% trans "Created by"%} <span class="exhibit-creator"><a href="{% url profile_detail exhibit.owner.username %}">{{exhibit.owner|nicename}}</a></span> {% trans "on" %} <span class="exhibit-created-data">{{exhibit.created|date:"N j, Y"}}</span> {% trans "and based on the" %} <span class="exhibit-dataset-title"><a href="{{exhibit.dataset.get_absolute_url }}" title="{{exhibit.dataset.title}}">{{exhibit.dataset.title}}</a></span> {% trans "data set" %}.
     </div>
 
     {% if request.user.is_authenticated and request.user.username == exhibit.owner.username %}
 
-    <div class="exhibit-right">
+    <div class="exhibit-actions exhibit-right">
 
       <div class="exhibit-links">
 

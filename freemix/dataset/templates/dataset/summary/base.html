@@ -46,16 +46,16 @@
 <div id="contents" class="ui-helper-hidden">
   <div id="identify" class="ui-helper-clearfix">
 
-
+    <div class="dataset_summary">
     <ul class="dataset_list_items">
       <li class="dataset_list_item result_set_item clearfix {% if dataset.published %}public{% else %}private{% endif %}">
 
       <div class="dataset-title">{{ dataset.title }}</div>
       <div class="dataset-description">
         {% if dataset.description %}
-        {% ifnotequal dataset.description dataset.description|truncatewords:20 %}
+        {% ifnotequal dataset.description dataset.description|truncatewords:100 %}
         <span class="short-description">
-          {{ dataset.description|safe|truncatewords:20 }}
+          {{ dataset.description|safe|truncatewords:100 }}
           <a class="readmore" href="{{ dataset.get_absolute_url }}">read more</a>
         </span>
         <span class="long-description ui-helper-hidden">
@@ -66,25 +66,18 @@
         {% endifnotequal %}
 	{% endif %}
       </div>
-      <div class="dataset-left">
-        <div class="dataset-creator">
-          <span class="property-label">{% trans "Loaded by:" %} </span> <a href="{% url profile_detail dataset.owner.username %}">{{ dataset.owner|nicename }}</a>
-        </div>
-        <div class="dataset-created-data"><span class="property-label">{% trans "Loaded on:" %} </span>{{ dataset.created|date:"N j, Y" }}</div> 
-        <div class="dataset-modified-data"><span class="property-label">{% trans "Last Modified:" %} </span>{{ dataset.modified|date:"N j, Y" }}</div>
-	
-        {% ifnotequal dataset.exhibits.count 0 %}
-        <div class="dataset-usedin">
-          <span class="property-label">{% trans "Basis for:" %}</span>
-          <span class="view-count"><a href="{% url exhibits_by_dataset owner=dataset.owner.username slug=dataset.slug %}">{{ dataset.exhibits.count }} {% trans "Data View" %}{{ dataset.exhibits.count|pluralize }}</a></span>
-        </div>
-        {% endifnotequal %}
-	
+
+      <div class="dataset-metadata dataset-left">
+	{% trans "Originally loaded by" %} <span class="dataset-owner"><a href="{% url profile_detail dataset.owner.username %}">{{ dataset.owner|nicename }}</a></span> {% trans "on" %} <span class="dataset-created-data">{{ dataset.created|date:"N j, Y" }}</span>
+	{% ifnotequal exhibits.count 0 %}
+	{% trans "and is the basis for" %} <span class="view-count"><a href="{% url exhibits_by_dataset owner=dataset.owner.username slug=dataset.slug %}">{{ exhibits.count }} {% trans "View" %}{{ exhibits.count|pluralize }}</a></span>
+	{% endifnotequal %}
+	.
       </div>
       
       {% if request.user.is_authenticated %}
       
-      <div class="dataset-right">
+      <div class="dataset-actions dataset-right">
 	
 	<div class="dataset-links">
 	
@@ -114,6 +107,7 @@
 
     </li>
     </ul>
+    </div>
 
     <table id="identify-table" class="property-list-table">
       <thead class="facet-header ui-widget-header">
