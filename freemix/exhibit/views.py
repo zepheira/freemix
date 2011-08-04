@@ -207,11 +207,6 @@ class ExhibitDisplayView(ExhibitView):
             return HttpResponse(_("%s deleted") % exhibit.get_absolute_url())
         return HttpResponseForbidden()
 
-    def get_context_data(self, **kwargs):
-        context = super(ExhibitDisplayView, self).get_context_data(**kwargs)
-        context["metadata"] = json.dumps(self.get_object().profile)
-        return context
-
 
 class ExhibitDetailView(ExhibitView):
     template_name = "exhibit/exhibit_detail.html"

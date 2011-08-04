@@ -110,7 +110,7 @@ class DataSourceTransactionResultView(View):
         if not self.request.user.has_perm('datasourcetransaction.can_view', tx):
             raise Http404
 
-        return JSONResponse(json.loads(tx.result))
+        return JSONResponse(tx.result)
 
 
 #----------------------------------------------------------------------------------------------------------------------#

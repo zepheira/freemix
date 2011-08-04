@@ -61,7 +61,8 @@ class TransformMixin(models.Model):
         return None
 
     def refresh(self):
-        return json.dumps(self.transform(body=self.get_transform_body(), params=self.get_transform_params()))
+        return self.transform(body=self.get_transform_body(), params=self.get_transform_params())
+
 
 
 class URLDataSourceMixin(TransformMixin, models.Model):
@@ -155,6 +156,7 @@ TX_STATUS = {
     "cancelled": 6
 }
 
+
 TRANSACTION_LIFESPAN = getattr(settings, "TRANSACTION_EXPIRATION_INTERVAL",
                                           timedelta(hours=24))
 
@@ -172,7 +174,7 @@ class DataSourceTransaction(TimeStampedModel):
 
     source = models.ForeignKey(DataSource, related_name="transactions")
 
-    result = models.TextField(null=True, blank=True)
+    result = JSONField(null=True, blank=True)
 
 
     def is_expired(self):
@@ -184,6 +186,15 @@ class DataSourceTransaction(TimeStampedModel):
             "tx_id": self.tx_id
         })
 
+    def validate(self):
+        if not len(self.result.get("items", [])):
+            self.status = TX_STATUS["failure"]
+            self.result = {"message": "No Data"}
+            return False
+
+        self.status = TX_STATUS["success"]
+        return True
+
     def run(self):
         if self.status != TX_STATUS["pending"]:
             raise
@@ -191,16 +202,16 @@ class DataSourceTransaction(TimeStampedModel):
         with db_tx.commit_manually():
             self.status=TX_STATUS["running"]
             self.save()
-    #            db_tx.commit()
 
             try:
-                self.result = self.source.get_concrete().refresh()
-                self.status=TX_STATUS["success"]
+                source = self.source.get_concrete()
+                self.result = source.refresh()
+                self.validate()
             except Exception as ex:
 
                 logger.error("Error for transaction %s: %s"%(self.tx_id, ex.message))
                 self.status=TX_STATUS["failure"]
-                self.result = json.dumps({"exception":ex.message})
+                self.result = {"message": "Error transforming data: %s"%ex.message}
 
             self.save()
 
