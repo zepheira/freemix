@@ -56,9 +56,9 @@
         var recordIds = database.getAllItems();
         var id = recordIds.toArray()[record_num];
         var metadata = row.data("metadata");
-	var value = database.getObjects(id, metadata.property).toArray();
-	var property = Freemix.property.propertyList[metadata.property];
-	var result = property.getValueHtml(value);
+        var value = database.getObjects(id, metadata.property).toArray();
+        var property = Freemix.property.propertyList[metadata.property];
+        var result = property.getValueHtml(value);
         row.find(".value").empty().append(result);
     }
 
@@ -101,8 +101,8 @@
     $.fn.recordPager =  function(row_callback) {
         return this.each(function() {
 
-            model= $(this).data("model");
-            root = model.getContent();
+            var model= $(this).data("model");
+            var root = model.getContent();
             var table = root.find(".record-box .property-list-table tbody");
             table.empty();
 
@@ -148,7 +148,7 @@
                 populateRecordDisplay(model);
             }).parent().buttonset();
             root.find(".right-record-button").addClass("ui-corner-right");
-            root.find(".left-record-button").addClass("ui-corner-left")
+            root.find(".left-record-button").addClass("ui-corner-left");
             populateRecordDisplay(model);
         });
     };

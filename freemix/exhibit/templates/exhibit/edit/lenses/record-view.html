@@ -20,6 +20,8 @@
                             <button class="left-record-button" title="{% trans "Previous Record" %}">{% trans "Previous Record" %}</button>
                             <button class="right-record-button" title="{% trans "Previous Record" %}">{% trans "Next Record" %}</button>
                         </span>
+                          <span id="current-record">#p</span> of <span id="record-count">#t</span>
+
 		      </th>
                       {% endblock %}
                     </tr>
@@ -37,7 +39,7 @@
                                     <button class="right-record-button" title="{% trans "Previous Record" %}">{% trans "Next Record" %}</button>
                                 </span>
                                 <span id="current-record">#p</span> of <span id="record-count">#t</span>
-                            </span>                        
+                            </span>
                         </div>
                     </td>
                 </tr>
