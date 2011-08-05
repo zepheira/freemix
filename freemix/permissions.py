@@ -102,6 +102,5 @@ def exhibit_embed_filter(user, obj):
 PermissionsRegistry.register('exhibit.can_view', exhibit_can_view, exhibit_view_filter)
 PermissionsRegistry.register('exhibit.can_inspect', exhibit_can_view, exhibit_view_filter)
 PermissionsRegistry.register('exhibit.can_embed', exhibit_can_embed , exhibit_embed_filter)
-PermissionsRegistry.register('exhibit.can_share', check_owner , owner_filter)
 PermissionsRegistry.register('exhibit.can_edit', exhibit_can_edit, exhibit_edit_filter)
 PermissionsRegistry.register('exhibit.can_delete', check_owner, owner_filter)

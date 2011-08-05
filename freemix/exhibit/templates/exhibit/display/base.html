@@ -32,7 +32,6 @@
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/view.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/views/map-view.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.highlight.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/embed_button.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/display.js"></script>
     {% endcompress %}
     {% include "exhibit/lens_js.html" %}
@@ -43,7 +42,6 @@
 
             $(document).ready(function() {
                 Freemix.initialize();
-                Freemix.embedWidget('embed');
             });
 
          })(window.Freemix.jQuery, window.Freemix);
@@ -61,7 +59,7 @@
 
 {% endcompress %}
 <link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
-<link rel="stylesheet" type="text/css" href="{{ object.theme.url }}" />
+<link rel="stylesheet" type="text/css" href="{{ exhibit.theme.url }}" />
 
 {% endblock %}
 
@@ -118,7 +116,7 @@
 <div id="contents" class="freemix-themeable">
 
   <div id="canvas">
-      {% include object.canvas.location %}
+      {% include exhibit.canvas.location %}
   </div>                
   
 </div>
@@ -128,7 +126,7 @@
   </div>
 </div>
 
-<p class="center">{% trans "Created by" %} <a href="{{ object.owner.get_profile.get_absolute_url }}">{{ object.owner|nicename }}</a> {% trans "based on" %} <a href="{{ object.dataset.get_absolute_url }}">{{ object.dataset.title }}</a>.</p>
+<p class="center">{% trans "Created by" %} <a href="{{ exhibit.owner.get_profile.get_absolute_url }}">{{ exhibit.owner|nicename }}</a> {% trans "based on" %} <a href="{{ exhibit.dataset.get_absolute_url }}">{{ exhibit.dataset.title }}</a>.</p>
 {% endblock %}
 
 
