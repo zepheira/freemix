@@ -4,13 +4,16 @@
 {% block template_id %}id="scatterplot-view-template"{% endblock %}
 
 {% block required-settings %}
-<div class="required-setting ui-state-error" rel="property-xaxis">
-<span style="float: left; margin-right: 0.3em;" class="ui-icon ui-icon-alert"></span>
-Set a <strong>X</strong> coordinate for this view to display properly.
+<div id="systemMsg">
+  <ul class="messages required-setting" rel="property-xaxis">
+    <li class="warningMsg">Set a <strong>X</strong> coordinate for this view to display properly.</li>
+  </ul>
 </div>
-<div class="required-setting ui-state-error" rel="property-yaxis">
-<span style="float: left; margin-right: 0.3em;" class="ui-icon ui-icon-alert"></span>
-Set a <strong>Y</strong> coordinate for this view to display properly.
+
+<div id="systemMsg">
+  <ul class="messages required-setting" rel="property-yaxis">
+    <li class="warningMsg">Set a <strong>Y</strong> coordinate for this view to display properly.</li>
+  </ul>
 </div>
 {% endblock %}
 

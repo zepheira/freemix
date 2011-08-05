@@ -42,9 +42,10 @@
 {% endblock %}
 
 {% block required-settings %}
-<div class="required-setting ui-state-error" rel="property-start">
-<span style="float: left; margin-right: 0.3em;" class="ui-icon ui-icon-alert"></span>
-Set a <strong>Start</strong> date for this view to display properly.
+<div id="systemMsg">
+  <ul class="messages required-setting" rel="property-start">
+    <li class="warningMsg">Set a <strong>Start</strong> date for this view to display properly.</li>
+  </ul>
 </div>
 {% endblock %}
 

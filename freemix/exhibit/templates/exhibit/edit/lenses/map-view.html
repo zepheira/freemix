@@ -4,9 +4,17 @@
 {% block template_id %}id="map-view-template"{% endblock %}
 
 {% block required-settings %}
-<div class="required-setting ui-state-error" rel="property-latlng">
-<span style="float: left; margin-right: 0.3em;" class="ui-icon ui-icon-alert"></span>
-Set a <strong>Lat,Lng</strong> for this view to display properly.
+<div id="systemMsg">
+  <ul class="messages required-setting" rel="property-latlng">
+    <li class="warningMsg">
+      {% if can_edit_dataset %}
+      Set a <strong>Lat,Lng</strong> for this view to display properly.
+      {% else %}
+      There are no <strong>Datetime</strong> fields currently defined in the source <a href="{{dataset.get_absolute_url }}" title="{{dataset.title}}">{{exhibit.dataset.title}}</a> data set. 
+      <a href="{% url dataset_edit owner=dataset.owner slug=dataset.slug %}" id="detail_edit_button">{% trans "Edit" %}</a> this data set and set the <strong>Lat,Lng</strong> indicator accordingly to use this view.
+      {% endif %}
+    </li>    
+  </ul>
 </div>
 {% endblock %}
 

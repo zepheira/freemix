@@ -1,3 +1,4 @@
+
 .record-box {
     margin: 0 auto;
     width: 100%;
@@ -49,6 +50,7 @@
 .record-pager {
     float: right;
 }
+
 .record-pager button {
     font-size: 0.7em;
 }
@@ -222,7 +224,7 @@
     width: 100%;
 }
 
-.property-list-table .facet-header tr th {
+.property-list-table tr th {
     vertical-align: middle;
 }
 
@@ -239,7 +241,7 @@
     text-align: center;
 }
 
-th.header-value, th.header-types, th.header-name {
+th.header-value, th.header-types, th.header-name, th.header-property, th.header-visible, th.header-title {
     border-left: 1px solid #666;
  }
 
