@@ -8,7 +8,7 @@
 
                 dialog.load(url, function (responseText, textStatus, XMLHttpRequest) {
                     dialog.dialog({
-                        position: "top",
+                        position: ["top", "center"],
                         width: "auto",
                         height: "auto",
                         modal: true,

@@ -40,7 +40,8 @@
         dialog = $('<div style="display:hidden"></div>').appendTo('body');
 
         dialog.dialog({
-            width: 500,
+            width: 400,
+	    position: "center",
             height: "auto",
             modal: true,
             draggable: false,
