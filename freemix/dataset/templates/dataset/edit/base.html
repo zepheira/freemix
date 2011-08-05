@@ -163,32 +163,27 @@
       <thead class="facet-header ui-widget-header">
         <tr>
           <th class="header-enabled">
-              {% trans "Enabled" %}
+              <span class="col-header">{% trans "Enabled" %}</span>
           </th>
           <th class="header-name">
-              {% trans "Field Name" %}
-
+            <span class="col-header">{% trans "Field Name" %}</span>
               <button class="data-property-add" title="Add a Field">{% trans "Add" %}</button>
           </th>
           <th class="header-types">
-              {% trans "Type"%}
+              <span class="col-header">{% trans "Type"%}</span>
           </th>
           <th class="header-value" colspan="2">
-              {% trans "Value" %}
+             <span class="col-header">{% trans "Value" %}</span>
 
-              <div class="record-pager">
-
-		<span id="current-record">#p</span> of <span id="record-count">#t</span>&#160;
-
-                <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
-                <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
-
-                <span class="toolbar-divider">|</span>
-
-                <button class="data-record-delete ui-corner-bottom ui-corner-top" title="Delete this Record">{% trans "Delete Record" %}</button>
-
-                <button class="data-refresh ui-corner-bottom ui-corner-top" title="Augment Data">{% trans "Augment Data" %}</button>
-            </div>
+             <div class="record-pager">
+	       <span id="current-record">#p</span> of <span id="record-count">#t</span>&#160;
+               <button class="left-record-button" title="Previous Record">{% trans "Previous Record" %}</button>
+               <button class="right-record-button" title="Next Record">{% trans "Next Record" %}</button>
+	       &nbsp;
+               <button class="data-record-delete ui-corner-bottom ui-corner-top" title="Delete this Record">{% trans "Delete Record" %}</button>
+	       &nbsp;
+               <button class="data-refresh ui-corner-bottom ui-corner-top" title="Augment Data">{% trans "Augment Data" %}</button>
+             </div>
           </th> 
         </tr>
       </thead>

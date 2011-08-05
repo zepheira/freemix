@@ -48,7 +48,6 @@
 
 .record-pager {
     float: right;
-    text-align: center;    
 }
 .record-pager button {
     font-size: 0.7em;
@@ -58,13 +57,14 @@
     font-size: 0.7em;
 }
 
-.data-record-delete, .data-refresh, .data-property-add {
+.data-property-add {
     float: right;
     margin-right: 10px;
+    font-size: 70%;
 }
 
-.data-property-add {
- font-size: 75%;
+
+.data-record-delete, .data-refresh {
 }
 
 .view-set {
@@ -136,10 +136,6 @@
     padding: 0.1em 0.5em;
 }
 
-th.header-value, th.header-types, th.header-name {
-    border-left: 1px solid #666;
- }
-
 #add-facet-table td {
     border-bottom: 1px solid #666;
     padding: 0.1em 0.5em;
@@ -183,6 +179,7 @@ th.header-value, th.header-types, th.header-name {
     margin: 3px 0;
 }
 
+
 .freemix-themeable .facet-content.ui-widget-content {
     border-top: 0;
 }
@@ -217,9 +214,20 @@ th.header-value, th.header-types, th.header-name {
     position: relative;
 }
 
+
+/* dataset table */
+
 .property-list-table {
     margin-top: 10px; 
     width: 100%;
+}
+
+.property-list-table .facet-header tr th {
+    vertical-align: middle;
+}
+
+
+.property-list-table tr th {
 }
 
 .property-list-table thead select {
@@ -230,6 +238,16 @@ th.header-value, th.header-types, th.header-name {
     width: 0.5em;
     text-align: center;
 }
+
+th.header-value, th.header-types, th.header-name {
+    border-left: 1px solid #666;
+ }
+
+th.header-value .col-header, th.header-name .col-header {
+    margin: 5px 0px;
+    position: absolute;
+ }
+
 
 /* cell widths */
 
