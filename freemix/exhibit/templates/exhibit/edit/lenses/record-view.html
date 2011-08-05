@@ -5,23 +5,23 @@
             {% block required-settings %}
             {% endblock %}
             <table class="property-list-table">
-                <thead class="ui-widget-header">
+                <thead>
                     <tr>
                       {% block property-list-headers %}
-                      <th class="header-visible visible">
-                          <span class="col-header">{% trans "Visible" %}</span>
+                      <th class="visible">
+                          {% trans "Visible" %}
 		      </th>
-                      <th class="header-property">
-                          <span class="col-header">{% trans "Property" %}</span>
+                      <th>
+                          {% trans "Property" %}
 		      </th>
-                      <th class="header-value">
-                        <span class="col-header">{% trans "Value" %}></span>
-
-                        <div class="record-pager">
+                      <th>
+                          {% trans "Value" %}
+                        <span class="record-pager">
+                            <button class="left-record-button" title="{% trans "Previous Record" %}">{% trans "Previous Record" %}</button>
+                            <button class="right-record-button" title="{% trans "Previous Record" %}">{% trans "Next Record" %}</button>
+                        </span>
                           <span id="current-record">#p</span> of <span id="record-count">#t</span>
-                          <button class="left-record-button" title="{% trans "Previous Record" %}">{% trans "Previous Record" %}</button>
-                          <button class="right-record-button" title="{% trans "Previous Record" %}">{% trans "Next Record" %}</button>
-                        </div>
+
 		      </th>
                       {% endblock %}
                     </tr>
@@ -32,8 +32,15 @@
             
                     <td {% block footer-filler-colspan %}colspan="1"{% endblock %}></td>
                     <td colspan="2">
-                      <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
-                      </div>
+                        <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
+                            <span id="record-selector">
+                                <span class="record-pager">
+                                    <button class="left-record-button" title="{% trans "Previous Record" %}">{% trans "Previous Record" %}</button>
+                                    <button class="right-record-button" title="{% trans "Previous Record" %}">{% trans "Next Record" %}</button>
+                                </span>
+                                <span id="current-record">#p</span> of <span id="record-count">#t</span>
+                            </span>
+                        </div>
                     </td>
                 </tr>
                 </tfoot>
