@@ -110,7 +110,9 @@ class ExhibitCreateView(View):
             "data_url":data_url,
             "canvas": canvas,
             "dataset": self.dataset,
-            "owner": request.user.username
+            "owner": request.user.username,
+            "can_edit_dataset": request.user.has_perm("dataset.can_edit", self.dataset)
+
         })
 
 
@@ -153,6 +155,7 @@ class ExhibitProfileUpdateView(View):
         exhibit = self.exhibit
 
         context["dataset_available"] = exhibit.dataset_available(user)
+        context["can_edit_dataset"] = user.has_perm("dataset.can_edit", self.dataset)
         context["can_view"] = user.has_perm("exhibit.can_view", exhibit)
         context["can_inspect"] = user.has_perm("exhibit.can_inspect", exhibit)
 
