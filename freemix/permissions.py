@@ -1,3 +1,4 @@
+from django.db.models.expressions import F
 from django.db.models.query_utils import Q
 
 class PermissionsRegistry:
@@ -75,12 +76,12 @@ def exhibit_can_view(user, obj):
     if user.is_authenticated() and check_owner(user,obj):
         return True
     else:
-        return obj.dataset_available(user) and check_published(user,obj)
+        return obj.dataset_available(obj.owner) and check_published(user,obj)
 
 def exhibit_view_filter(user):
     if user.is_authenticated():
         # The user is the owner of the exhibit, or has access to the dataset and the exhibit is published
-        return owner_filter(user)|((Q(dataset__owner=user)|Q(dataset__published=True))&Q(published=True))
+        return owner_filter(user)|((Q(dataset__owner=F("owner"))|Q(dataset__published=True))&Q(published=True))
     return Q(dataset__published=True)&Q(published=True)
 
 def exhibit_can_edit(user, obj):
@@ -104,3 +105,4 @@ PermissionsRegistry.register('exhibit.can_inspect', exhibit_can_view, exhibit_vi
 PermissionsRegistry.register('exhibit.can_embed', exhibit_can_embed , exhibit_embed_filter)
 PermissionsRegistry.register('exhibit.can_edit', exhibit_can_edit, exhibit_edit_filter)
 PermissionsRegistry.register('exhibit.can_delete', check_owner, owner_filter)
+PermissionsRegistry.register('exhibit.can_share', check_owner , owner_filter)

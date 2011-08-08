@@ -288,7 +288,7 @@
         if (!this._augment_failed) return false;
         if (!this._augment_failed[property.name()]) return false;
         var id = this.getCurrentId();
-        f = $.grep(this._augment_failed[property.name()], function(item, inx) {
+        var f = $.grep(this._augment_failed[property.name()], function(item, inx) {
             return item.id == id;
         });
 

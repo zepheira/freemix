@@ -1,0 +1,26 @@
+ {% load i18n %}
+ {% load freemix_helpers %}
+ {% url shared_exhibit_display slug=key.slug as display_url %}
+<li class="shared_key_list_item result_set_item clearfix">
+    <div class="shared-key-label">
+        <a href="{{ display_url }}">
+            {% if key.label %}
+                {{ key.label }}
+            {% else %}
+                {{ key.slug }}
+            {% endif %}
+        </a>
+    </div>
+    <p class="shared-key-url">
+        {% site_url display_url %}
+    </p>
+    <div class="shared-key-right">
+        <div class="shared-key-actions shared-key-right">
+            <div class="shared-key-links">
+                <span class="action action_delete_key">
+                    <a class="shared_key_delete" href="{{ display_url }}">{% trans "Delete" %}</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</li>
