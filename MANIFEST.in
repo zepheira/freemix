@@ -7,13 +7,15 @@ graft requirements
 graft freemix/locale
 graft test
 graft docs
-graft akara
 
 recursive-include freemix/*/templates *
 recursive-include freemix/*/static *
 
-recursive-include freemix/apps/*/templates *
-recursive-include freemix/apps/*/static *
+recursive-include freemix/exhibit/*/templates *
+recursive-include freemix/exhibit/*/static *
+
+recursive-include freemix/dataset/*/templates *
+recursive-include freemix/dataset/*/static *
 
 prune freemix/site_media
 prune docs/_build
