@@ -11,8 +11,8 @@ from django.conf import settings
 from django.db import models, transaction as db_tx
 from django_extensions.db.fields.json import JSONField
 from django_extensions.db.models import TimeStampedModel, TitleSlugDescriptionModel
-from freemix.transform.conf import AKARA_TRANSFORM_URL
-from freemix.transform.views import AkaraTransformClient
+from freemix.dataset.transform import AKARA_TRANSFORM_URL
+from freemix.dataset.transform import AkaraTransformClient
 
 logger = logging.getLogger(__name__)
 

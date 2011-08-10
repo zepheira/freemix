@@ -1,4 +1,4 @@
-from freemix.transform.views import RawTransformView, AkaraTransformClient
+from freemix.dataset.transform import RawTransformView, AkaraTransformClient
 from freemix.augment import models
 from freemix.augment import conf
 

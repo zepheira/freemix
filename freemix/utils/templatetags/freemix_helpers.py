@@ -1,4 +1,5 @@
 from django import template
+from freemix.permissions import PermissionsRegistry
 from freemix.utils import get_site_url
 from freemix import __version__
 
@@ -27,3 +28,8 @@ def site_url(path="/"):
 @register.simple_tag
 def freemix_version():
     return __version__
+
+
+@register.filter
+def permission_filter(queryset, permission, user):
+    return queryset.filter(PermissionsRegistry.get_filter(permission, user))

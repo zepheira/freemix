@@ -6,12 +6,21 @@ from django.http import  HttpResponseBadRequest
 from django.views.generic.base import View
 import urllib2
 from urllib import urlencode
-from . import conf
 
 import json
 from freemix.views import JSONResponse
 
+
+from django.conf import settings
+from urlparse import urljoin
+
+
 logger = logging.getLogger(__name__)
+
+
+AKARA_URL_PREFIX = getattr(settings, "AKARA_URL_PREFIX", "http://transformer.zepheira.com:8883")
+AKARA_TRANSFORM_URL = getattr(settings, "AKARA_TRANSFORM_URL", urljoin(AKARA_URL_PREFIX, "freemix.json"))
+
 
 class AkaraTransformClient(object):
     def __init__(self, url, credentials=None):
@@ -46,7 +55,7 @@ class TransformView(View):
     response as well.
     """
 
-    transform = AkaraTransformClient(conf.AKARA_TRANSFORM_URL)
+    transform = AkaraTransformClient(AKARA_TRANSFORM_URL)
 
     def dispatch(self, request, *args, **kwargs):
         # Extract client provide transaction ID and append it to the response
