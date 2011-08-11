@@ -72,19 +72,9 @@
       <div class="exhibit-title">{{exhibit.title}}</div>
 
       {% if exhibit.description %}
-      {% ifnotequal exhibit.description exhibit.description|truncatewords:100 %}
-      <div class="exhibit-description exhibit-short-description">
-        {{ exhibit.description|safe|truncatewords:100 }}
-        <a class="readmore" href="{{ exhibit.get_absolute_url }}">read more</a>
-      </div>
-      <div class="exhibit-description exhibit-long-description ui-helper-hidden">
-        {{ exhibit.description|safe }}
-      </div>
-      {%  else %}
       <div class="exhibit-description">
 	{{ exhibit.description|safe }}
       </div>
-      {% endifnotequal %}
       {% endif %}
 
       <div class="exhibit-left exhibit-metadata">

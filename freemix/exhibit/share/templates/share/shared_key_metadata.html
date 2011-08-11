@@ -11,9 +11,14 @@
             {% endif %}
         </a>
     </div>
-    <p class="shared-key-url">
+    <div class="shared-key-url">
         {% site_url display_url %}
-    </p>
+    </div>
+
+   <div class="shared-key-metadata shared-key-left">
+      {% trans "Created by"%} <span class="exhibit-creator"><a href="{% url profile_detail exhibit.owner.username %}">{{exhibit.owner|nicename}}</a></span> {% trans "on" %} <span class="exhibit-created-data">{{exhibit.created|date:"N j, Y"}}</span>.
+   </div>
+
     <div class="shared-key-right">
         <div class="shared-key-actions shared-key-right">
             <div class="shared-key-links">

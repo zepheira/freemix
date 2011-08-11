@@ -70,28 +70,18 @@
 
 <div class="exhibit_display">
   <ul class="exhibit_list_items">
-    <li class="exhibit_list_item result_set_item clearfix public">
+    <li class="exhibit_list_item result_set_item clearfix public shared-key">
 
-      <div class="exhibit-title"><a href="{{  exhibit.get_absolute_url }}">{{exhibit.title}}</a></div>
+      <div class="exhibit-title">{{exhibit.title}}</div>
 
       {% if exhibit.description %}
-      {% ifnotequal exhibit.description exhibit.description|truncatewords:20 %}
-      <div class="exhibit-description exhibit-short-description">
-        {{ exhibit.description|safe|truncatewords:20 }}
-        <a class="readmore" href="{{ exhibit.get_absolute_url }}">read more</a>
-      </div>
-      <div class="exhibit-description exhibit-long-description ui-helper-hidden">
-        {{ exhibit.description|safe }}
-      </div>
-      {%  else %}
       <div class="exhibit-description">
 	{{ exhibit.description|safe }}
       </div>
-      {% endifnotequal %}
       {% endif %}
 
       <div class="exhibit-left exhibit-metadata">
-        {% trans "This view was created by"%} <span class="exhibit-creator"><a href="{% url profile_detail exhibit.owner.username %}">{{exhibit.owner|nicename}}</a></span> {% trans "on"%} <span class="exhibit-created-data">{{exhibit.created|date:"N j, Y"}}</span>{% if exhibit.created|date == exhibit.modified|date %}{% trans ". " %}{% else %}{% trans "and last modified"%}<span class="exhibit-modified-data">{{exhibit.modified|date:"N j, Y"}}</span>{% trans ". " %}{% endif %}{% trans "This view was built from the " %}<span class="exhibit-dataset-title"><a href="{{exhibit.dataset.get_absolute_url }}" title="{{exhibit.dataset.title}}">{{exhibit.dataset.title}}</a></span> {% trans "data set." %}
+        {% trans "This view was shared by"%} <span class="exhibit-creator">{{exhibit.owner|nicename}}</span>.
       </div>
 
     </li>
