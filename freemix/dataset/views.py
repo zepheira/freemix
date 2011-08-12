@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError, Http404, HttpResponseForbidden
@@ -36,14 +37,29 @@ class DataSourceTransactionView(View):
 class ProcessTransactionView(DataSourceTransactionView):
 
     def success(self):
-        template_name="dataset/dataset_create.html"
-
-
+        source = self.transaction.source
+        save_url = None
+        if source.dataset:
+            template_name="dataset/dataset_update.html"
+            dataset = source.dataset
+            profile_url = reverse('dataset_profile_json', kwargs={'owner': dataset.owner.username,
+                                                                  'slug': dataset.slug})
+            cancel_url = reverse('dataset_summary', kwargs={'owner': dataset.owner.username,
+                                                              'slug': dataset.slug})
+            save_url = reverse('dataset_edit', kwargs={'owner': source.dataset.owner.username,
+                                           'slug': source.dataset.slug})
+        else:
+            template_name="dataset/dataset_create.html"
+            save_url = reverse('datasource_transaction', kwargs={"tx_id": self.transaction.tx_id})
+            profile_url = reverse('datasource_transaction_result', kwargs={'tx_id': self.transaction.tx_id})
+            cancel_url = reverse('upload_dataset', kwargs={})
         response = render_to_response(template_name, {
             "transaction": self.transaction,
+            "dataset": source.dataset,
+            "save_url": save_url,
             "dataurl": reverse('datasource_transaction_result', kwargs={'tx_id': self.transaction.tx_id}),
-            "profileurl": reverse('datasource_transaction_result', kwargs={'tx_id': self.transaction.tx_id}),
-            "cancel_url": reverse('upload_dataset', kwargs={})
+            "profileurl": profile_url,
+            "cancel_url": cancel_url
         }, context_instance=RequestContext(self.request))
 
         return response
@@ -67,38 +83,6 @@ class ProcessTransactionView(DataSourceTransactionView):
 
     def scheduled(self):
         return self.pending()
-
-
-class TransactionStatusView(DataSourceTransactionView):
-    def success(self):
-        return JSONResponse({
-            "status": "success",
-            "create_dataset_url": reverse('dataset_create',
-                kwargs={'tx_id': self.transaction.tx_id}),
-            "result_url": reverse('datasource_transaction_result',
-                kwargs={'tx_id': self.transaction.tx_id})
-        })
-
-
-    def failure(self):
-        return JSONResponse({
-            "status": "failure",
-            "result_url": reverse('datasource_transaction_result',
-                kwargs={'tx_id': self.transaction.tx_id})
-        })
-
-
-    def cancelled(self):
-        return JSONResponse({"status": "cancelled"})
-
-    def running(self):
-        return JSONResponse({"status": "running"})
-
-    def pending(self):
-        return JSONResponse({"status": "pending"})
-
-    def scheduled(self):
-        return JSONResponse({"status": "scheduled"})
 
 
 class DataSourceTransactionResultView(View):
@@ -170,6 +154,12 @@ class DatasetView(OwnerSlugPermissionMixin, DetailView):
         context["can_build"] = user.has_perm("dataset.can_build", dataset)
         context["can_edit"] = user.has_perm("dataset.can_edit", dataset)
         context["can_delete"] = user.has_perm("dataset.can_delete", dataset)
+
+        try:
+            source = dataset.source
+            context["can_refresh"] = user.has_perm("datasource.can_edit", source)
+        except ObjectDoesNotExist, ex:
+            pass
         context["exhibits"] = dataset.exhibits.filter(filter)
         return context
 
@@ -222,6 +212,7 @@ class DatasetCreateFormView(CreateView):
             source = source.get_concrete()
         if hasattr(source, "title"):
             initial["title"] = getattr(source, "title")
+
         return initial
 
     def form_valid(self, form):
@@ -249,14 +240,13 @@ class DatasetProfileEditView(OwnerSlugPermissionMixin, View):
 
     def get(self, request, *args, **kwargs):
         dataset = self.get_object()
+        ds_kwargs = {'owner': dataset.owner.username, 'slug': dataset.slug}
         context = {
             "dataset": dataset,
-            "dataurl": reverse('dataset_data_json', kwargs={'owner': dataset.owner.username,
-                                                                  'slug': dataset.slug}),
-            "profileurl": reverse('dataset_profile_json', kwargs={'owner': dataset.owner.username,
-                                                                  'slug': dataset.slug}),
-            "cancel_url": reverse('dataset_summary', kwargs={'owner': dataset.owner.username,
-                                                                  'slug': dataset.slug}),
+            "dataurl": reverse('dataset_data_json', kwargs=ds_kwargs),
+            "profileurl": reverse('dataset_profile_json', kwargs=ds_kwargs),
+            "cancel_url": reverse('dataset_summary', kwargs=ds_kwargs),
+            "save_url": reverse('dataset_edit', kwargs=ds_kwargs),
         }
 
         user = self.request.user
@@ -294,3 +284,91 @@ class DatasetProfileEditView(OwnerSlugPermissionMixin, View):
 
     def get_queryset(self):
         return models.Dataset.objects.all()
+
+
+# Data Source Views
+
+class CreateDataSourceView(CreateView):
+    model_class = None
+    form_class = None
+    template_name = None
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super(CreateDataSourceView, self).get_form_kwargs(**kwargs)
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        self.tx = self.object.create_transaction(self.request.user)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return self.tx.get_absolute_url()
+
+
+
+class DataSourceFormRegistry:
+    _registry = {}
+
+    @classmethod
+    def register(cls, model_class, form_class, form_template):
+        key = model_class.__name__
+        cls._registry[key] = (model_class, form_class, form_template)
+
+    @classmethod
+    def create_view(cls, model_class):
+        key = model_class.__name__
+        entry = cls._registry.get(key)
+        return CreateDataSourceView.as_view(model_class=entry[0],
+                                            form_class=entry[1],
+                                            template_name=entry[2])
+    @classmethod
+    def get_form(cls, instance):
+        key = instance.__class__.__name__
+        if not cls._registry.has_key(key):
+            return None
+        return cls._registry[key][1]
+
+    @classmethod
+    def get_form_template(cls, instance):
+        key = instance.__class__.__name__
+        if not cls._registry.has_key(key):
+            return None
+        return cls._registry[key][2]
+
+
+class UpdateDataSourceView(UpdateView):
+
+    def get_object(self, queryset=None):
+        slug = self.kwargs["slug"]
+        owner = self.kwargs["owner"]
+
+        ds = get_object_or_404(models.Dataset, slug=slug, owner__username=owner)
+        if not self.request.user.has_perm("dataset.can_edit", ds):
+            raise Http404()
+        try:
+            source = ds.source
+        except ObjectDoesNotExist, ex:
+            raise Http404
+        return source.get_concrete()
+
+    def get_form_class(self):
+        source = self.get_object()
+        return DataSourceFormRegistry.get_form(source)
+
+    def get_template_names(self):
+        return [DataSourceFormRegistry.get_form_template(self.get_object()),]
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        self.tx = self.object.create_transaction(self.request.user)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return self.tx.get_absolute_url()
+

@@ -11,8 +11,11 @@ class CreateDatasetForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(CreateDatasetForm, self).save(commit=False)
         instance.owner = self.owner
-        instance.source = self.datasource
+
         instance.save()
+
+        self.datasource.dataset = instance
+        self.datasource.save()
         return instance
 
     class Meta:

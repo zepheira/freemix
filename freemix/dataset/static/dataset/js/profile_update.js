@@ -5,12 +5,13 @@
         $("#save_button").click(function() {
             var metadata = $.extend({},  Freemix.exhibit.exportDatabase(Freemix.exhibit.database), Freemix.profile);
             $("#save_message").empty().append("Saving...");
+            var url = $(this).attr("href");
             var xhr = $.ajax({
                  type: "POST",
+                 url: url,
                  data: $.toJSON(metadata),
                  success: function(data) {
-                    var url = $(String(data)).attr("href");
-                    window.location = url;
+                    window.location = $(String(data)).attr("href");
                  },
                  error: function (r, textStatus, error) {
                      $("#save_message").empty().append("Save Failed");

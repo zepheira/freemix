@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
 
@@ -62,9 +63,11 @@ def dataset_can_build(user, obj):
         return check_published(user, obj)
     return False
 
+
 PermissionsRegistry.register('dataset.can_view', check_published, published_query_filter)
 PermissionsRegistry.register('dataset.can_inspect', check_published, published_query_filter)
 PermissionsRegistry.register('dataset.can_edit', check_owner, owner_filter)
+
 PermissionsRegistry.register('dataset.can_delete', check_owner, owner_filter)
 PermissionsRegistry.register('dataset.can_build', dataset_can_build, published_query_filter)
 PermissionsRegistry.register('datasource.can_view', check_owner, owner_filter)

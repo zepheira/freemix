@@ -17,10 +17,42 @@ from freemix.dataset.transform import AkaraTransformClient
 logger = logging.getLogger(__name__)
 
 
+
+class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
+    owner = models.ForeignKey(User, null=True, related_name="datasets")
+
+    published = models.BooleanField(default=True)
+
+    profile = JSONField(default='{"properties": []}')
+
+    data = JSONField(default='{"items": []}')
+
+    class Meta:
+        unique_together=("slug", "owner")
+        verbose_name_plural = "Data Sets"
+        verbose_name = "Data Set"
+        ordering = ('-modified', )
+
+    def __unicode__( self ):
+        return self.title
+
+    def natural_key(self):
+        return [self.owner,self.title]
+
+    @permalink
+    def get_absolute_url(self):
+        return ("dataset_summary",  (), {
+            'owner': self.owner.username,
+            'slug': self.slug})
+
+
+
 class DataSource(TimeStampedModel):
     classname = models.CharField(max_length=32, editable=False, null=True)
 
     owner = models.ForeignKey(User, null=True, blank=True, related_name="data_sources")
+
+    dataset = models.OneToOneField(Dataset, null=True, blank=True, related_name="source")
 
     uuid = UUIDField()
 
@@ -97,36 +129,6 @@ def make_file_data_source_mixin(storage, upload_to):
         def __unicode__(self):
             return self.file.name
     return FileDataSourceMixin
-
-class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
-    owner = models.ForeignKey(User, null=True, related_name="datasets")
-
-    source = models.ForeignKey(DataSource, null=True,blank=True, related_name="datasets")
-
-    published = models.BooleanField(default=True)
-
-    profile = JSONField(default='{"properties": []}')
-
-    data = JSONField(default='{"items": []}')
-
-    class Meta:
-        unique_together=("slug", "owner")
-        verbose_name_plural = "Data Sets"
-        verbose_name = "Data Set"
-        ordering = ('-modified', )
-
-    def __unicode__( self ):
-        return self.title
-
-    def natural_key(self):
-        return [self.owner,self.title]
-
-    @permalink
-    def get_absolute_url(self):
-        return ("dataset_summary",  (), {
-            'owner': self.owner.username,
-            'slug': self.slug})
-
 
 def parse_profile_json(owner, contents, published=True):
     profile = contents.get("data_profile")
