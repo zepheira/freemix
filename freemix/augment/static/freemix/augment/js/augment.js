@@ -346,9 +346,9 @@
 
         if (this.isAugmented() && $(response).text() == "No Value" ) {
             if (refreshRequired) {
-                response = $("<em>Please click 'Refresh Augmented Data' to attempt to generate augmented data. </em>");
+                response = $("<div id=\"systemMsg\"><ul class=\"messages\"><li class=\"warningMsg\">Click the 'Augment' button to generate data for this field.</li></ul></div>");
             } else {
-                response = $("<em>No " + this.type() + " data has been generated for this record.</em>");
+                response = $("div id=\"systemMsg\"><ul class=\"messages\"><li class=\"validationMsg\">No " + this.type() + " data has been generated for this record.</li></ul></div>");
             }
         }
         return response;
