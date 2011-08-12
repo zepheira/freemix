@@ -52,11 +52,9 @@
 }
 
 .record-pager button {
-    font-size: 0.7em;
 }
 
 .record-controls button {
-    font-size: 0.7em;
 }
 
 .data-property-add {
@@ -575,16 +573,17 @@ ul.field_options {
 ul.field_options li {
     display: inline;
     list-style-type: none;
+width: 113px;
 }
 
 ul.field_options li span.field_type_text {
     color: black;
     font-weight: bold;
     font-size: 110%;
-    left: -100px;
     position: relative;
     text-align: center;
-    top: -10px;
+    top: -30px;
+    left: 10px;
 }
 
 #div_id_type li img {

@@ -1,5 +1,5 @@
 {% load i18n %}
-<div {% block template_id %}{% endblock %}>
+<div class="record-view" {% block template_id %}{% endblock %}>
         {% block view_header %}{% endblock %}        
         <div class="record-box">
             {% block required-settings %}
@@ -19,8 +19,8 @@
 
 			<div class="record-pager">
                           <span id="current-record">#p</span> of <span id="record-count">#t</span>
-                          <button class="left-record-button" title="{% trans "Previous Record" %}">{% trans "Previous Record" %}</button>
-                          <button class="right-record-button" title="{% trans "Previous Record" %}">{% trans "Next Record" %}</button>
+                          <button class="left-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
+                          <button class="right-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
                         </div>
 			
 		      </th>

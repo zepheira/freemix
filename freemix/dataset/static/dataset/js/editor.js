@@ -65,9 +65,16 @@
             }
         });
 
+	/*
         $("button.data-record-delete").button({
-            "icons": {"primary": "ui-icon-trash"}
+		"icons": {"primary": "ui-icon-trash"}
         }).click(function(e) {
+            $("#delete-record-dialog").dialog("open");
+            return false;
+        });
+	*/
+
+        $("button.data-record-delete").button().click(function(e) {
             $("#delete-record-dialog").dialog("open");
             return false;
         });
