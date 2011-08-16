@@ -210,6 +210,19 @@ class ExhibitDisplayView(ExhibitView):
             return HttpResponse(_("%s deleted") % exhibit.get_absolute_url())
         return HttpResponseForbidden()
 
+    def get_context_data(self, **kwargs):
+        context = super(ExhibitDisplayView, self).get_context_data(**kwargs)
+        user = self.request.user
+        can_embed = user.has_perm("exhibit.can_embed", self.get_object())
+        context["can_embed"] = can_embed
+        if can_embed:
+            context["exhibit_embed_url"] = get_site_url(reverse('exhibit_embed_js',
+                                                    kwargs={
+                                                        "owner": self.get_object().owner,
+                                                        "slug": self.get_object().slug
+                                                    }))
+        return context
+
 
 class ExhibitDetailView(ExhibitView):
     template_name = "exhibit/exhibit_detail.html"
@@ -227,8 +240,8 @@ class ExhibitDetailView(ExhibitView):
                                                         "owner": self.get_object().owner,
                                                         "slug": self.get_object().slug
                                                     }))
-        
         return context
+
 
 class EmbeddedExhibitView(View):
     """Generate the javascript necessary to embed an exhibit on an external site
