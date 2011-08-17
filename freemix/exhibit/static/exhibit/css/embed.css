@@ -38,3 +38,12 @@ p.embed-lightbox-control {
     padding: 0 0 5px 0;
     text-align: right;
 }
+
+div.clear {
+display: none;
+}
+
+#titles {
+margin-bottom: -30px;
+
+}
