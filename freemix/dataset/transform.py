@@ -7,7 +7,7 @@ from django.views.generic.base import View
 import urllib2
 from urllib import urlencode
 
-import json
+from django.utils import simplejson as json
 from freemix.views import JSONResponse
 
 

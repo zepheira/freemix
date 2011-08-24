@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-import json
 import logging
 import urllib2
 import uuid

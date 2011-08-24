@@ -1,4 +1,3 @@
-import json
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
