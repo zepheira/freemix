@@ -7,7 +7,7 @@ from django.views.generic.base import View, RedirectView
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
-from freemix.dataset import forms
+from freemix.dataset import forms, conf
 from freemix.permissions import PermissionsRegistry
 from freemix.dataset import models
 from django.utils import simplejson as json
@@ -298,8 +298,6 @@ class RedirectUpdateDataSourceView(RedirectView):
             raise Http404()
         return reverse("datasource_update", kwargs={"uuid": ds.source.uuid})
 
-
-
 # Data Source Transaction Views
 class DataSourceTransactionView(View):
     def redirect(self):
@@ -393,20 +391,39 @@ class FileDataSourceDownloadView(View):
 
     Currently this depends on nginx's X-Accel-Redirect functionality
     (http://wiki.nginx.org/XSendfile)
+
+    TODO: Make this pluggable
     """
+    def nginx_response(self, source):
+        response = HttpResponse()
+        url = '/fileuploads/%s'%(source.file.name)
+        response["Content-Type"] = "application/binary"
+        response["X-Accel-Redirect"] = url
+        return response
+
+    def naive_response(self,source):
+        contents = source.file.read()
+        response = HttpResponse(contents)
+        response["Content-Type"] = "application/binary"
+
+        return response
+
     def get(self, request, *args, **kwargs):
         uuid = kwargs["uuid"]
         filename = kwargs["filename"]
 
         source = get_object_or_404(models.DataSource, uuid=uuid)
+        source = source.get_concrete()
+        if not hasattr(source, "file"):
+            raise Http404
 
         if not self.request.user.has_perm('datasource.can_edit', source):
             raise Http404
 
-        response = HttpResponse()
-        url = '/fileuploads/%s/%s'%(uuid, filename)
-        response["Content-Type"] = ""
-        response["X-Accel-Redirect"] = url
+        if conf.FILE_DOWNLOAD_NGINX_OPTIMIZATION:
+            response = self.nginx_response(source)
+        else:
+            response = self.naive_response(source)
 
         response["Content-Disposition"] = 'attachment; filename=%s'%filename
 
