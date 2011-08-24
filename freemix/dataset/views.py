@@ -405,7 +405,9 @@ class FileDataSourceDownloadView(View):
 
         response = HttpResponse()
         url = '/fileuploads/%s/%s'%(uuid, filename)
-        response['Content-Type'] = ""
-
+        response["Content-Type"] = ""
         response["X-Accel-Redirect"] = url
+
+        response["Content-Disposition"] = 'attachment; filename=%s'%filename
+
         return response
