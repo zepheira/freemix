@@ -30,7 +30,7 @@
             draggable: false,
             resizable: false,
             autoOpen: false,
-            title: "Create a New Shared Key"
+            title: "Create a New Shared Link"
         });
 
         $("a.exhibit_share").click(function() {

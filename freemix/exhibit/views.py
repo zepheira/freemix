@@ -215,6 +215,8 @@ class ExhibitDisplayView(ExhibitView):
         user = self.request.user
         can_embed = user.has_perm("exhibit.can_embed", self.get_object())
         context["can_embed"] = can_embed
+        context["can_share"] = user.has_perm("exhibit.can_share", self.get_object())
+
         if can_embed:
             context["exhibit_embed_url"] = get_site_url(reverse('exhibit_embed_js',
                                                     kwargs={

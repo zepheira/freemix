@@ -35,6 +35,12 @@
     <script type="text/javascript" src="{{STATIC_URL}}exhibit/js/display.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}exhibit/js/detail.js"></script>
     {% endcompress %}
+
+    {% if can_share %}
+    {% compress js %}<script type="text/javascript" src="{{ STATIC_URL }}share/js/share_dialog.js"></script>{% endcompress %}
+    {% endif %}
+
+
     {% include "exhibit/lens_js.html" %}
     {% include "exhibit/facet_js.html" %}
     {% autoescape off %} 
@@ -91,7 +97,13 @@
             <a class="exhibit_inspect" href="{% url exhibit_detail owner=exhibit.owner.username slug=exhibit.slug %}">{% trans "Inspect" %}</a>
           </span>
 	  {% endif %}
+        {% if can_share %}
+        <span class="divider">|</span>
 
+        <span class="action action_share_exhibit">
+          <a class="exhibit_share" href="{% url shared_key_create_form owner=exhibit.owner slug=exhibit.slug %}">{% trans "Share" %}</a>
+        </span>
+        {% endif %}
           {% if can_embed %} 
           <span class="divider">|</span>
 	  
