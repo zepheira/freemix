@@ -1,1 +1,12 @@
-{% load i18n %}{% load freemix_helpers %}{% url shared_exhibit_display slug=params.slug as display_url %}<a class="create_success" href="{% site_url display_url%}">{% trans "Shared Key Creation Successful" %}</a>
+{% load i18n %}
+{% load freemix_helpers %}
+{% url shared_exhibit_display slug=params.slug as display_url %}
+{%  blocktrans %}
+    <strong><p>Your shared link has been successfully created.  </p>
+        <p><a href="{{ display_url }}">Click here to view it</a>,
+    or copy and distribute the link below to share it.</p></strong>
+{% endblocktrans %}
+<div>
+<input type="text" value="{% site_url display_url %}" class="shared-key-url" readonly="readonly"/>
+</div>
+

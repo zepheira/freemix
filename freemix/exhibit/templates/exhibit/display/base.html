@@ -37,7 +37,10 @@
     {% endcompress %}
 
     {% if can_share %}
-    {% compress js %}<script type="text/javascript" src="{{ STATIC_URL }}share/js/share_dialog.js"></script>{% endcompress %}
+    {% compress js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}freemix/js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}share/js/share_dialog.js"></script>
+    {% endcompress %}
     {% endif %}
 
 

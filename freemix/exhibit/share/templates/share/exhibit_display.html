@@ -37,19 +37,10 @@
     {% endcompress %}
     {% include "exhibit/lens_js.html" %}
     {% include "exhibit/facet_js.html" %}
-    {% autoescape off %}
-    <script type="text/javascript">
-        (function($, Freemix) {
-
-            $(document).ready(function() {
-                Freemix.initialize();
-            });
-
-         })(window.Freemix.jQuery, window.Freemix);
-    </script>
+    {% compress js %}
+    <script type="text/javascript" src="{{STATIC_URL}}share/js/shared_exhibit.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}scripts/hide_items.js"></script>
-
-    {% endautoescape %}
+    {% endcompress %}
 {% endblock head_scripts %}
 
 
@@ -79,7 +70,10 @@
 	{{ exhibit.description|safe }}
       </div>
       {% endif %}
+        {% url shared_exhibit_display slug=object.slug as display_url %}
 
+    <strong><p>Copy and distribute the link below to share this view.</p></strong>
+        <input type="text" value="{% site_url display_url %}" class="shared-key-url" readonly="readonly"/>
       <div class="exhibit-left exhibit-metadata">
         {% trans "This view was shared by"%} <span class="exhibit-creator">{{exhibit.owner|nicename}}</span>.
       </div>

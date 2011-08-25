@@ -34,6 +34,7 @@ class SharedExhibitDisplayView(DetailView):
         context = super(SharedExhibitDisplayView, self).get_context_data(**kwargs)
         exhibit = self.get_object().exhibit
         context["exhibit"] = exhibit
+        context["object"] = self.get_object()
         context["can_view"] = True
         context["dataset_available"] = exhibit.dataset_available(exhibit.owner)
         return context

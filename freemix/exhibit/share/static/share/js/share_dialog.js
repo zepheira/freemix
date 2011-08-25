@@ -8,10 +8,7 @@
         form.ajaxForm({
             "target": dialog,
             "success": function() {
-                if (dialog.has(".create_success").length > 0) {
-                    dialog.append("<div>Redirecting...</div>");
-                    window.location = dialog.find("a.create_success").attr("href");
-                } else {
+                if (dialog.has("form").length > 0) {
                     setupForm(dialog);
                 }
                 return false;
@@ -45,6 +42,10 @@
             });
 
     }
+
+    $(".shared-key-url").live("click", function() {
+        $(this).select();
+    });
 
     $(document).ready(setupSaveButton)
 
