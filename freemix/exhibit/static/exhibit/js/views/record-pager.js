@@ -139,22 +139,7 @@
                 axis: 'y'
             });
 
-            /* 
-	       root.find(".left-record-button").button({"icons": {"primary": "ui-icon-arrowthick-1-w"}, "text": false}).click(function() {
-                previousRecord(model);
-                populateRecordDisplay(model);
-            });
-            root.find(".right-record-button").button({"icons": {"secondary": "ui-icon-arrowthick-1-e"}, "text": false}).click(function() {
-                nextRecord(model);
-                populateRecordDisplay(model);
-            }).parent().buttonset();
-            root.find(".right-record-button").addClass("ui-corner-right");
-            root.find(".left-record-button").addClass("ui-corner-left");
-	    */
-
-	    /* render display of button icons via css */
-
-	    root.find(".left-record-button").button().click(function() {
+            root.find(".left-record-button").button().click(function() {
                 previousRecord(model);
                 populateRecordDisplay(model);
             });
