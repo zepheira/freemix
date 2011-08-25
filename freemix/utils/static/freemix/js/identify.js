@@ -29,11 +29,11 @@
 
         /* handle display in css */
 
-        $(".left-record-button", this).unbind().button().click(function() {
+        $(".left-record-button", table).unbind().button().click(function() {
                 $this.previousRecord();
                 $this.populateRecordDisplay();
         }).parent().buttonset().end().addClass("ui-corner-left");
-        $(".right-record-button", this).unbind().button().click(function() {
+        $(".right-record-button", table).unbind().button().click(function() {
                 $this.nextRecord();
                 $this.populateRecordDisplay();
         }).addClass("ui-corner-right");
