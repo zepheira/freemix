@@ -7,7 +7,7 @@ from django.db import models
 class Migration(DataMigration):
 
     depends_on = (
-        ("dataset", "0001_initial_models"),
+        ("dataset", "0005_delete_dataset_source"),
     )
     def forwards(self, orm):
         for p in orm.DataProfile.objects.all():
@@ -98,16 +98,16 @@ class Migration(DataMigration):
             'profile': ('django.db.models.fields.TextField', [], {'default': '\'{"properties": []}\''}),
             'published': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
-            'source': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'datasets'", 'null': 'True', 'to': "orm['dataset.DataSource']"}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
         'dataset.datasource': {
             'Meta': {'object_name': 'DataSource'},
             'classname': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'dataset': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['dataset.Dataset']", 'unique': 'True', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'data_sources'", 'to': "orm['auth.User']"}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'data_sources'", 'null': 'True', 'to': "orm['auth.User']"}),
             'uuid': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'})
         },
         'dataset.datasourcetransaction': {
