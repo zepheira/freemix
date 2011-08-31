@@ -21,8 +21,7 @@ class Migration(DataMigration):
                 description=p.description,
                 id=p.id,
                 slug=p.slug,
-                owner=p.user,
-                source=None
+                owner=p.user
 
             ).save()
 
