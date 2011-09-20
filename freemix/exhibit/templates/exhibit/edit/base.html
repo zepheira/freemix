@@ -74,15 +74,15 @@
       {% if exhibit.description %}
       {% ifnotequal exhibit.description exhibit.description|truncatewords:100 %}
       <div class="exhibit-description exhibit-short-description">
-        {{ exhibit.description|safe|truncatewords:100 }}
+        {{ exhibit.description|truncatewords:100 }}
         <a class="readmore" href="{{ exhibit.get_absolute_url }}">read more</a>
       </div>
       <div class="exhibit-description exhibit-long-description ui-helper-hidden">
-        {{ exhibit.description|safe }}
+        {{ exhibit.description }}
       </div>
       {%  else %}
       <div class="exhibit-description">
-	{{ exhibit.description|safe }}
+	{{ exhibit.description }}
       </div>
       {% endifnotequal %}
       {% endif %}

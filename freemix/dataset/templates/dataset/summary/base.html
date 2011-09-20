@@ -55,14 +55,14 @@
         {% if dataset.description %}
         {% ifnotequal dataset.description dataset.description|truncatewords:100 %}
         <span class="short-description">
-          {{ dataset.description|safe|truncatewords:100 }}
+          {{ dataset.description|truncatewords:100 }}
           <a class="readmore" href="{{ dataset.get_absolute_url }}">read more</a>
         </span>
         <span class="long-description ui-helper-hidden">
-          {{ dataset.description|safe }}
+          {{ dataset.description }}
         </span>
         {%  else %}
-        {{ dataset.description|safe }}
+        {{ dataset.description }}
         {% endifnotequal %}
 	{% endif %}
       </div>
