@@ -299,7 +299,7 @@ class EmbeddedExhibitView(View):
         data = profile.data
 
         response = render(request, self.template_name, {
-            "data": json.dumps(data),
+            "data": json.dumps(data, use_decimal=True),
             "title": exhibit.title,
             "description": exhibit.description,
             "metadata": json.dumps(metadata),
