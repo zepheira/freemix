@@ -11,10 +11,13 @@
             {% endif %}
         </a>
     </div>
+
+    <div class="shared-key-prose">{% trans "Copy the following link to share with others." %}</div>
+
     <input type="text" value="{% site_url display_url %}" class="shared-key-url" readonly="readonly"/>
 
    <div class="shared-key-metadata shared-key-left">
-      {% trans "Created by"%} <span class="exhibit-creator"><a href="{% url profile_detail exhibit.owner.username %}">{{exhibit.owner|nicename}}</a></span> {% trans "on" %} <span class="exhibit-created-data">{{exhibit.created|date:"N j, Y"}}</span>.
+     {% trans "Created by"%} <span class="exhibit-creator"><a href="{% url profile_detail exhibit.owner.username %}">{{exhibit.owner|nicename}}</a></span>.
    </div>
 
     <div class="shared-key-right">

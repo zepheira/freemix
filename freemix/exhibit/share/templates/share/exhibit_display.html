@@ -61,7 +61,7 @@
 
 <div class="exhibit_display">
   <ul class="exhibit_list_items">
-    <li class="exhibit_list_item result_set_item clearfix public shared-key">
+    <li class="exhibit_list_item result_set_item clearfix shared-key {% if exhibit.published %}public{% else %}private{% endif %}">
 
       <div class="exhibit-title">{{exhibit.title}}</div>
 
@@ -70,14 +70,13 @@
 	{{ exhibit.description|safe }}
       </div>
       {% endif %}
-        {% url shared_exhibit_display slug=object.slug as display_url %}
 
-    <strong><p>Copy and distribute the link below to share this view.</p></strong>
-        <input type="text" value="{% site_url display_url %}" class="shared-key-url" readonly="readonly"/>
+      {% url shared_exhibit_display slug=object.slug as display_url %}
+
       <div class="exhibit-left exhibit-metadata">
         {% trans "This view was shared by"%} <span class="exhibit-creator">{{exhibit.owner|nicename}}</span>.
       </div>
-
+	
     </li>
   </ul>
 </div>
