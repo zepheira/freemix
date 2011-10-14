@@ -115,8 +115,8 @@ FreemixEmbed.loadFreemix = function() {
 
                 var randTmpId = 'embed-shell-' + Math.round(Math.random()*1000);
                 var title_html = "<div id='titles' class='colhead'>" +
-                                "<h1 id='title' title='Title'>{{ title|safe }}</h1>" +
-                                "<h2 id='subtitle' title='Subtitle'>{{ description|safe }}</h2>" +
+                                "<h1 id='title' title='Title'>{{ title }}</h1>" +
+                                "<h2 id='subtitle' title='Subtitle'>{{ description }}</h2>" +
                                 "</div>";
                 $('#{{where}}').after('<div id="' + randTmpId + '" class="freemix-themeable container_12">' +
                         '<div class="ui-widget-content ui-helper-clearfix"><div class="freemix-themeable">' +

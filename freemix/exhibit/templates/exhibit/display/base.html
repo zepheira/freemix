@@ -6,7 +6,7 @@
 {% load compress %}
 {% load dataset_tags %}
 
-{% block head_title %}{{ object.title|safe }}{% endblock %}
+{% block head_title %}{{ object.title }}{% endblock %}
 
 {% block rtab_id %}id="builder_tab"{% endblock %}
 {% block body_class %}main-attraction{% endblock %}
@@ -84,7 +84,7 @@
 
       {% if exhibit.description %}
       <div class="exhibit-description">
-	{{ exhibit.description|safe }}
+	{{ exhibit.description }}
       </div>
       {% endif %}
 
