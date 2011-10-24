@@ -18,7 +18,7 @@ from freemix.exhibit.models import Canvas
 from freemix.permissions import PermissionsRegistry
 from freemix.utils import get_site_url
 
-import json
+from django.utils import simplejson as json
 import uuid
 from freemix.views import JSONResponse, OwnerListView, OwnerSlugPermissionMixin
 
