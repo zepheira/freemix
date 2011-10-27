@@ -1,6 +1,7 @@
 /*global jQuery */
 (function($, Freemix) {
 
+
     $.fn.generateExhibitHTML = function(model) {
         return this.each(function() {
             var root = $(this);

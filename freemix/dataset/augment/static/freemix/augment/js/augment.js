@@ -360,8 +360,9 @@
         if (!property.isAugmented()) {
             return this._renderTypeForAugment(row, column);
         }
-        return $("<div>" + property.type() + "</div>").appendTo(column);
-
+        var type = property.type();
+        var label = Freemix.property.type[type].label || type;
+        return $("<div>" + label + "</div>").appendTo(column);
     };
 
     Freemix.Identify.prototype._addPropertyForAugment = Freemix.Identify.prototype.addProperty;
@@ -508,7 +509,7 @@
 
 
             $(".field_type#location", root).data("handler", new CompositeProperty());
-            $(".field_type#datetime", root).data("handler", new CompositeProperty());
+            $(".field_type#date", root).data("handler", new CompositeProperty());
             $(".field_type#pattern", root).data("handler", new PatternProperty());
 
             $(".field_type", root).click(function(event) {

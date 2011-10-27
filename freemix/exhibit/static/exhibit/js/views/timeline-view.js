@@ -21,7 +21,7 @@
      // Display the view's UI.
      function display() {
          var content = this.getContent();
-         root = Freemix.getTemplate("timeline-view-template");
+         var root = Freemix.getTemplate("timeline-view-template");
          content.empty();
          root.appendTo(content);
 
@@ -43,7 +43,7 @@
          }
 
          // Read record data into selects.
-         $.each(Freemix.property.getPropertiesWithType("datetime"),
+         $.each(Freemix.property.getPropertiesWithType("date"),
          function() {
              var value = $start.val();
              $start.append('<option value="' + this.name() + '">' + this.label() + '</option>');
@@ -54,7 +54,7 @@
          });
 
 	 $end.append('<option value="">(none)</option>');
-         $.each(Freemix.property.getPropertiesWithType("datetime"),
+         $.each(Freemix.property.getPropertiesWithType("date"),
          function() {
              var value = $end.val();
              $end.append('<option value="' + this.name() + '">' + this.label() + '</option>');
@@ -78,7 +78,7 @@
                      name: 'colorKey'
                  });
 
-                 if (Freemix.property.propertyHasType(metadata.property, "datetime")) {
+                 if (Freemix.property.propertyHasType(metadata.property, "date")) {
                      $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
                          radio: true,
                          checked: model.config.endDate === metadata.property,
@@ -93,7 +93,7 @@
                      $('<td class="inner"><input type="radio" disabled="true" /></td>').insertAfter(row.find("td.visible"));
                  }
 
-                 if (Freemix.property.propertyHasType(metadata.property, "datetime")) {
+                 if (Freemix.property.propertyHasType(metadata.property, "date")) {
                      $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
                          radio: true,
                          checked: model.config.startDate === metadata.property,

@@ -10,10 +10,11 @@
         });
     }
 
+    var context;
     Freemix.property = {
         add: function(config) {
             Freemix.profile.properties.push(config);
-            prop = this.createProperty(config);
+            var prop = this.createProperty(config);
             this.propertyList[config.property] = prop;
             return prop;
         },
@@ -61,6 +62,13 @@
                 return Freemix.property.type[this.type()].getExhibitHtml(this);
             },
             getValueHtml: function(value) {
+
+                if (!context) {
+                   context = new Exhibit.UIContext();
+                }
+
+
+//
                 var valfun = Freemix.property.type[this.type()].getValueHtml;
                 var p = this;
                 var response;
@@ -69,12 +77,14 @@
                     response =  $("<em>No Value</em>");
 
                 } else if (value.length > 1) {
-                    response = $("<ul></ul>");
-                    $.each(value, function(k, v) {
-                        response.append("<li>" + valfun(p,v) + "</li>");
+                    var set = new Exhibit.Set(value);
+                    context.formatList(set, set.size(), this.type(), function(n) {
+                        response = $(n);
                     });
                 } else {
-                    response = valfun(p, value);
+                    context.format(value, this.type(), function(n) {
+                        response = $(n);
+                    });
                 }
 
                 return response;
@@ -177,6 +187,7 @@
     };
 
     Freemix.property.type.url = {
+        label: "URL",
         getValueHtml: function(metadata, value) {
             return "<a href='" + value + "' target='_blank'>" + value + "</a>";
         },
@@ -195,9 +206,14 @@
     } ;
 
 
-    Freemix.property.type.datetime = $.extend({}, Freemix.property.type.text,{
+    Freemix.property.type.date = $.extend({}, Freemix.property.type.text,{
+        label: "date/time"
     });
     Freemix.property.type.location = $.extend({}, Freemix.property.type.text, {
+    });
+
+    Freemix.property.type.number = $.extend({}, Freemix.property.type.text, {
+
     });
 
 })(window.Freemix.jQuery, window.Freemix);

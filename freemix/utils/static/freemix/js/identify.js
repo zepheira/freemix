@@ -141,7 +141,9 @@
 
         renderType: function(row, column) {
             var property = row.data("property");
-            return $("<div>" + property.type() + "</div>").appendTo(column);
+            var type = property.type();
+            var label = Freemix.property.type[type].label || type;
+            return $("<div>" + label + "</div>").appendTo(column);
         },
         propertyChanged: function(property) {
             if (Freemix.profile.localProperties) {
