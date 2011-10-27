@@ -178,9 +178,7 @@
     };
 
     Freemix.property.type.text = {
-        getValueHtml: function(metadata, value) {
-            return "<span>" + value + "</span>";
-        },
+
         getExhibitHtml: function(metadata) {
            return "<span ex:content='" + metadata.expression() + "'/>";
         }
@@ -188,18 +186,14 @@
 
     Freemix.property.type.url = {
         label: "URL",
-        getValueHtml: function(metadata, value) {
-            return "<a href='" + value + "' target='_blank'>" + value + "</a>";
-        },
+
         getExhibitHtml: function(metadata) {
             return "<a ex:href-content='" +  metadata.expression() + "' target='_blank'><span ex:content='" +  metadata.expression() + "'></span></a>";
         }
     };
 
     Freemix.property.type.image = {
-        getValueHtml: function(metadata, value) {
-            return "<a class=\"dialog-thumb lightbox\" href='" + value + "'><img src='" + value + "'/></a>";
-        },
+
         getExhibitHtml: function(metadata) {
             return "<a class=\"dialog-thumb lightbox\" ex:href-content='" + metadata.expression() + "'><img ex:src-content='" + metadata.expression() + "'/></a>";
         }
@@ -210,6 +204,7 @@
         label: "date/time"
     });
     Freemix.property.type.location = $.extend({}, Freemix.property.type.text, {
+
     });
 
     Freemix.property.type.number = $.extend({}, Freemix.property.type.text, {

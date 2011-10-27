@@ -15,6 +15,22 @@ from freemix.dataset.transform import AkaraTransformClient
 
 logger = logging.getLogger(__name__)
 
+# At some point, we need to migrate the freemix profile to use the exhibit
+# format for properties, but for now, maintain a separate field
+def synchronize_properties_cache(profile):
+    result = {}
+    for prop in profile["properties"]:
+        type = "text"
+        for tag in prop["tags"]:
+            if tag.startswith("property:type=") and not tag=="property:type=shredded_list":
+                type = tag[len("property:type="):]
+
+        result[prop["property"]] = {
+            "label": prop["label"],
+            "valueType": type
+
+        }
+    return {"properties": result}
 
 
 class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
@@ -23,6 +39,8 @@ class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
     published = models.BooleanField(default=True)
 
     profile = JSONField(default='{"properties": []}')
+
+    properties_cache = JSONField(default='{"properties": {}}')
 
     data = JSONField(default='{"items": []}')
 
@@ -43,6 +61,8 @@ class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
         return ("dataset_summary",  (), {
             'owner': self.owner.username,
             'slug': self.slug})
+
+
 
 
 
