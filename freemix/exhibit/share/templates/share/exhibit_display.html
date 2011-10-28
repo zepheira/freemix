@@ -13,6 +13,8 @@
 {% block head_data %}
     {{ block.super }}
     <link rel="exhibit/data" href="{% url shared_dataset_data_json slug=object.slug %}"/>
+    <link rel="exhibit/data" href="{% url shared_dataset_properties_cache_json slug=object.slug %}"/>
+
     <link rel="freemix/dataprofile" href="{% url shared_dataset_profile_json slug=object.slug %}"/>
     <link rel="freemix/exhibit_profile" href="{% url shared_exhibit_profile_json slug=object.slug %}"/>
 

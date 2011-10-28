@@ -15,6 +15,10 @@ urlpatterns = patterns('',
         views.SharedDatasetProfileJSONView.as_view(),
         name="shared_dataset_profile_json"),
 
+    url(r"^(?P<slug>[a-zA-Z0-9_.-]+)/properties.json$",
+        views.SharedDatasetPropertiesCacheJSONView.as_view(),
+        name="shared_dataset_properties_cache_json"),
+
     url(r"^(?P<slug>[a-zA-Z0-9_.-]+)/profile.json$",
         views.SharedExhibitProfileJSONView.as_view(),
         name="shared_exhibit_profile_json"),

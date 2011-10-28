@@ -192,7 +192,7 @@
             }
         });
 
-        var data = Freemix.data || [$("link[rel='exhibit/data']").attr("href")];
+        var data = Freemix.data || $.map($("link[rel='exhibit/data']"), function(el) {return $(el).attr("href");});
         
         var database = Freemix.exhibit.initializeDatabase(data, function() {
             $(".view-container", Freemix.getBuilder()).viewContainer();

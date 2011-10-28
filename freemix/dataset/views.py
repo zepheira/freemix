@@ -20,6 +20,9 @@ from freemix.views import OwnerListView, OwnerSlugPermissionMixin, JSONResponse
 
 class DataProfileJSONView(View):
 
+    def get_doc(self, ds):
+        return ds.profile
+
     def get(self, request, *args, **kwargs):
         owner = kwargs["owner"]
         slug = kwargs["slug"]
@@ -30,21 +33,17 @@ class DataProfileJSONView(View):
         if not user.has_perm("dataset.can_view", ds):
             raise Http404
 
-        return JSONResponse(ds.profile)
+        return JSONResponse(self.get_doc(ds))
 
 
-class DataJSONView(View):
-    def get(self, request, *args, **kwargs):
-        owner = kwargs["owner"]
-        slug = kwargs["slug"]
+class DataJSONView(DataProfileJSONView):
+    def get_doc(self, ds):
+        return ds.data
 
-        ds = get_object_or_404(models.Dataset, owner__username=owner, slug=slug)
-        user = self.request.user
 
-        if not user.has_perm("dataset.can_view", ds):
-            raise Http404
-
-        return JSONResponse(ds.data)
+class DataPropertiesCacheJSONView(DataProfileJSONView):
+    def get_doc(self, ds):
+        return ds.properties_cache
 
 
 dataset_list_by_owner = OwnerListView.as_view(template_name="dataset/dataset_list_by_owner.html",

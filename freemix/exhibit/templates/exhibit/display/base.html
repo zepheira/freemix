@@ -13,6 +13,8 @@
 {% block head_data %}
 {{ block.super }}
 <link rel="exhibit/data" href="{% url dataset_data_json owner=object.dataset.owner.username slug=object.dataset.slug %}"/>
+<link rel="exhibit/data" href="{% url dataset_properties_cache_json owner=object.dataset.owner.username slug=object.dataset.slug %}"/>
+
 <link rel="freemix/dataprofile" href="{% url dataset_profile_json owner=object.dataset.owner.username slug=object.dataset.slug %}"/>
 <link rel="freemix/exhibit_profile" href="{% url exhibit_profile_json owner=object.owner.username slug=object.slug %}"/>
 {% endblock %}

@@ -59,7 +59,7 @@
             },
 
             getExhibitHtml: function() {
-                return Freemix.property.type[this.type()].getExhibitHtml(this);
+                return "<span ex:content='" + this.expression() + "'/>";
             },
             getValueHtml: function(value) {
 
@@ -185,18 +185,18 @@
     };
 
     Freemix.property.type.url = {
-        label: "URL",
+        label: "URL"
 
-        getExhibitHtml: function(metadata) {
-            return "<a ex:href-content='" +  metadata.expression() + "' target='_blank'><span ex:content='" +  metadata.expression() + "'></span></a>";
-        }
+//        getExhibitHtml: function(metadata) {
+//            return "<a ex:href-content='" +  metadata.expression() + "' target='_blank'><span ex:content='" +  metadata.expression() + "'></span></a>";
+//        }
     };
 
     Freemix.property.type.image = {
 
-        getExhibitHtml: function(metadata) {
-            return "<a class=\"dialog-thumb lightbox\" ex:href-content='" + metadata.expression() + "'><img ex:src-content='" + metadata.expression() + "'/></a>";
-        }
+//        getExhibitHtml: function(metadata) {
+//            return "<a class=\"dialog-thumb lightbox\" ex:href-content='" + metadata.expression() + "'><img ex:src-content='" + metadata.expression() + "'/></a>";
+//        }
     } ;
 
 

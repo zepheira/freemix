@@ -62,6 +62,14 @@ class Dataset(TitleSlugDescriptionModel, TimeStampedModel):
             'owner': self.owner.username,
             'slug': self.slug})
 
+    def save(self, force_insert=False, force_update=False, using=None):
+
+        # Kludge in advance of collapsing freemix and exhibit property descriptions into one entity
+        self.properties_cache = synchronize_properties_cache(self.profile)
+
+        super(Dataset, self).save(force_insert, force_update, using)
+
+
 
 
 
@@ -155,13 +163,14 @@ def parse_profile_json(owner, contents, published=True):
     description = profile.get("description", None)
     data = {"items": contents.get("items", [])}
     profile = {"properties": profile["properties"]}
-
+    properties_cache = synchronize_properties_cache(profile)
     ds = Dataset.objects.create(owner=owner,
                 published=published,
                 title=title,
                 description=description,
                 profile=profile,
-                data=data)
+                data=data,
+                properties_cache=properties_cache)
 
 
     return ds

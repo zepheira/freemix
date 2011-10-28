@@ -39,7 +39,7 @@
     function run_init(nextFn) {
         Freemix.property.initializeFreemix();
 
-        var data = Freemix.data || [$("link[rel='exhibit/data']").attr("href")];
+        var data = Freemix.data || $.map($("link[rel='exhibit/data']"), function(el) {return $(el).attr("href");});
 
         Freemix.exhibit.initializeDatabase(data, function() {
             $("#canvas").generateExhibitHTML(Freemix.profile).createExhibit();

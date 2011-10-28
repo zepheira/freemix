@@ -63,6 +63,9 @@ class SharedDatasetProfileJSONView(SharedKeyJSONView):
     def get_json(self):
         return self.exhibit.dataset.profile
 
+class SharedDatasetPropertiesCacheJSONView(SharedKeyJSONView):
+    def get_json(self):
+        return self.exhibit.dataset.profile
 
 class SharedExhibitProfileJSONView(SharedKeyJSONView):
     def get_json(self):
