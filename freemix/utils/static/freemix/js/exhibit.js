@@ -39,6 +39,31 @@ Exhibit.Formatter._LocationFormatter.format = Exhibit.Formatter._TextFormatter.f
 Exhibit.Formatter._LocationFormatter.formatText = Exhibit.Formatter._TextFormatter.formatText;
 Exhibit.Formatter._constructors["location"] = Exhibit.Formatter._LocationFormatter;
 
+// Fork the ImageFormatter to
+// Wrap the img in a link and add the classes for lightbox
+Exhibit.Formatter._ImageFormatter.prototype.format = function(value, appender) {
+    if (Exhibit.params.safe) {
+        value = value.trim().startsWith("javascript:") ? "" : value;
+    }
+
+    var img = document.createElement("img");
+    img.src = value;
+
+    if (this._tooltip != null) {
+        if (typeof this._tooltip == "string") {
+            img.title = this._tooltip;
+        } else {
+            img.title = this._tooltip.evaluateSingleOnItem(
+                this._uiContext.getSetting("itemID"), this._uiContext.getDatabase()).value;
+        }
+    }
+    var a = document.createElement("a");
+    a.href = value;
+    a.className = "dialog-thumb lightbox";
+    a.appendChild(img);
+    appender(a);
+};
+
 (function($, Freemix) {
 
     $.fn.createExhibit = function() {
