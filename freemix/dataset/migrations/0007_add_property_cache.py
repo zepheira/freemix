@@ -9,7 +9,7 @@ def synchronize_properties_cache(profile):
     result = {}
     for prop in profile["properties"]:
         type = "text"
-        for tag in prop["tags"]:
+        for tag in prop.get("tags", []):
             if tag.startswith("property:type=") and not tag=="property:type=shredded_list":
                 type = tag[len("property:type="):]
 
@@ -28,7 +28,7 @@ class Migration(DataMigration):
             p = json.loads(ds.profile)
             for prop in p["properties"]:
                 inx = 0
-                while inx < len(prop["tags"]):
+                while inx < len(prop.get("tags", [])):
                     if prop["tags"][inx] == "property:type=datetime":
                         prop["tags"][inx] = "property:type=date"
                     inx += 1
@@ -44,7 +44,7 @@ class Migration(DataMigration):
             p = json.loads(ds.profile)
             for prop in p["properties"]:
                 inx = 0
-                while inx < len(prop["tags"]):
+                while inx < len(prop.get("tags", [])):
                     if prop["tags"][inx] == "property:type=date":
                         prop["tags"][inx] = "property:type=datetime"
                     inx += 1
