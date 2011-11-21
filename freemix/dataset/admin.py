@@ -4,7 +4,7 @@ from .models import Dataset
 
 class DatasetAdmin(admin.ModelAdmin):
     list_display   = ('slug','owner',)
-    search_fields  = ('slug','title', 'description',)
+    search_fields  = ('slug','title', 'description','owner__username')
 admin.site.register(Dataset, DatasetAdmin)
 
 class TransactionInline(admin.TabularInline):

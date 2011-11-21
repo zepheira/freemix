@@ -10,7 +10,7 @@ admin.site.register(models.Canvas, CanvasAdmin)
 
 class ExhibitAdmin(admin.ModelAdmin):
     list_display = ('slug', 'owner',)
-    search_fields = ('slug', 'title', 'description',)
+    search_fields = ('slug', 'title', 'description', 'owner__username')
 
 admin.site.register(models.Exhibit, ExhibitAdmin)
 
