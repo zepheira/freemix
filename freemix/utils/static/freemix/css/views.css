@@ -51,3 +51,25 @@ table.exhibit-tabularView-body td {
     font-weight: normal;
     text-decoration: underline;
 }
+
+
+.exhibit-thumbnailView-body div.image-thumbnail {
+    float:      left;
+    width:      150px;
+    height:     170px;
+    border:     1px solid #BCB79E;
+    background: #EEE9E9;
+    padding:    1em;
+    margin:     0.5em;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+.exhibit-thumbnailView-body img.image-thumbnail {
+    max-width: 150px;
+    max-height: 120px;
+}
+.exhibit-thumbnailView-body .name {
+    font-weight: bold;
+}

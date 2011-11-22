@@ -40,6 +40,7 @@ FreemixEmbed.scripts = [
     "{%site_url STATIC_URL %}exhibit/js/views/table-view.js",
     "{%site_url STATIC_URL %}exhibit/js/views/timeline-view.js",
     "{%site_url STATIC_URL %}exhibit/js/views/piechart-view.js",
+    "{%site_url STATIC_URL %}exhibit/js/views/thumbnail-view.js",
     "{%site_url STATIC_URL %}exhibit/js/facets/search-facet.js",
     "{%site_url STATIC_URL %}exhibit/js/facets/list-facet.js",
     "{%site_url STATIC_URL %}exhibit/js/facets/tagcloud-facet.js",

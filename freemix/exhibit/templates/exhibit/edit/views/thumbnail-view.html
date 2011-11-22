@@ -1,0 +1,19 @@
+{% load i18n %}
+<div id="thumbnail-view-template">
+    <form class="thumbnail-view-form">
+        <fieldset>
+            <div id="thumbnail_image">
+                <label for="image_property">{% trans "Image Property" %}</label>
+                <select id="image_property"></select>
+            </div>
+            <div id="thumbnail_title">
+                <label for="title_property">{% trans "Title Property" %}</label>
+                <select id="title_property"></select>
+            </div>
+            <div id="thumbnail_title_link">
+                <label for="title_link_property">{% trans "URL Property" %}</label>
+                <select id="title_link_property"></select>
+            </div>
+        </fieldset>
+    </form>
+</div>
