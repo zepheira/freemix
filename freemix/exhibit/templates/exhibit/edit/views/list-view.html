@@ -1,0 +1,26 @@
+{% extends "exhibit/edit/lenses/record-view.html" %}
+{% load i18n %}
+
+{% block template_id %}id="list-view-template"{% endblock %}
+{% block property-list-headers %}
+    <th class="visible">{% trans "Show" %}</th>
+    <th id="title-chooser">{% trans "Title" %}</th>
+    <th class="title-link-option" id="title-link-chooser">{% trans "Link" %}</th>
+    <th>{% trans "Property" %}</th>
+    <th>{% trans "Value" %}
+        <span class="record-pager">
+            <button class="left-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
+            <button class="right-record-button" title="{% trans "Next Record" %}">&nbsp;</button>
+        </span>
+        <span id="current-record">#p</span> of <span id="record-count">#t</span>
+
+    </th>
+   </tr>
+   <tr>
+     <td></td>
+     <td class="inner"><input type="radio" id="clear-title" name="title" checked="checked" /></td>
+     <td class="inner title-link-option"><input type="radio" id="clear-title-link" name="titleLink" checked="checked" /></td>
+     <td colspan="2"><em>None</em></td>
+{% endblock %}
+
+{% block footer-filler-colspan %}colspan="3"{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "exhibit/edit/lenses/record-view.html" %}
+{% load i18n %}
+
+{% block template_id %}id="map-view-template"{% endblock %}
+
+{% block required-settings %}
+<div id="systemMsg">
+  <ul class="messages required-setting" rel="property-latlng">
+    <li class="warningMsg">
+      {% if can_edit_dataset %}
+      Set a <strong>Lat,Lng</strong> for this view to display properly.
+      {% else %}
+      There are no <strong>Datetime</strong> fields currently defined in the source <a href="{{dataset.get_absolute_url }}" title="{{dataset.title}}">{{exhibit.dataset.title}}</a> data set. 
+      <a href="{% url dataset_edit owner=dataset.owner slug=dataset.slug %}" id="detail_edit_button">{% trans "Edit" %}</a> this data set and set the <strong>Lat,Lng</strong> indicator accordingly to use this view.
+      {% endif %}
+    </li>    
+  </ul>
+</div>
+{% endblock %}
+
+{% block property-list-headers %}
+    <th class="visible">Show</th>
+    <th id="title-chooser">Title</th>
+    <th class="title-link-option" id="title-link-chooser">Link</th>
+    <th id="property-latlng">Lat,Lng</th>
+    <th>Color</th>
+    <th>Property</th>
+    <th>
+        Value
+        <span class="record-pager">
+            <button class="left-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
+            <button class="right-record-button" title="{% trans "Next Record" %}">&nbsp;</button>
+        </span>
+        <span id="current-record">#p</span> of <span id="record-count">#t</span>
+
+    </th>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="inner"><input type="radio" id="clear-title" name="title" checked="checked" /></td>
+    <td class="inner title-link-option"><input type="radio" id="clear-title-link" name="titleLink" checked="checked" /></td>
+    <td></td>
+    <td class="inner"><input type="radio" id="clear-end" name="colorKey" checked="checked" /></td>
+    <td colspan="2"><em>None</em></td>
+{% endblock %}
+{% block footer-filler-colspan %}colspan="5"{% endblock %}
