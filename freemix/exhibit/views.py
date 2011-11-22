@@ -93,6 +93,7 @@ class ExhibitCreateView(View):
         profile_url = reverse("exhibit_profile_template", kwargs=self.dataset_args)
         dataset_profile_url = reverse("dataset_profile_json", kwargs=self.dataset_args)
         data_url = reverse("dataset_data_json", kwargs=self.dataset_args)
+        dataset_properties_cache = reverse("dataset_properties_cache_json", kwargs=self.dataset_args)
         canvas = get_object_or_404(models.Canvas,
                                    slug=self.request.GET.get("canvas", conf.DEFAULT_EXHIBIT_CANVAS))
         save_form_url = reverse("exhibit_create_form", kwargs={
@@ -105,6 +106,7 @@ class ExhibitCreateView(View):
         return render(request, self.template_name, {
             "exhibit_profile_url": profile_url,
             "dataset_profile_url": dataset_profile_url,
+            "dataset_properties_cache_json": dataset_properties_cache,
             "cancel_url": self.dataset.get_absolute_url(),
             "save_form_url": save_form_url,
             "data_url":data_url,
@@ -134,6 +136,8 @@ class ExhibitProfileUpdateView(View):
         profile_url = reverse("exhibit_profile_json", kwargs={"owner": self.kwargs["owner"],
                                                        "slug": self.kwargs["slug"]})
         dataset_profile_url = reverse("dataset_profile_json", kwargs=self.dataset_args)
+        dataset_properties_cache = reverse("dataset_properties_cache_json", kwargs=self.dataset_args)
+
         data_url = reverse("dataset_data_json", kwargs=self.dataset_args)
         canvas = self.exhibit.canvas
 
@@ -143,6 +147,8 @@ class ExhibitProfileUpdateView(View):
         context = {
             "exhibit_profile_url": profile_url,
             "dataset_profile_url": dataset_profile_url,
+            "dataset_properties_cache_json": dataset_properties_cache,
+
             "cancel_url": self.exhibit.get_absolute_url(),
             "data_url": data_url,
             "canvas": canvas,
