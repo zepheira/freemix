@@ -144,7 +144,7 @@
         generateContent: function() {
             var count = Freemix.exhibit.getExpressionCount(this.config.expression);
             return $("<div>Type: <em>" + this.config.type + "</em></div>" +
-                "<div>Expression: <em>" + this.config.expression + "</em></div>" +
+                "<div>Property: <em>" + this.config.expression + "</em></div>" +
                 "<div>Album: <em>" + this.config.albumTitle + "</em></div>" +
                 "<div>Values: <em>" + count.values + "</em></div>" +
                 "<div>Missing: <em>" + count.missing + "</em></div>");

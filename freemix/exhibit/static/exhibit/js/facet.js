@@ -53,7 +53,7 @@
                 "</span><span class='popup-button ui-icon ui-icon-triangle-1-s'/></div>" +
                 "<div class='facet-content ui-widget-content'></div></div>")
             .data("model", this)
-            .find(".popup-button").freemixPopupButton("Edit Facet", function() {
+            .find(".popup-button").freemixPopupButton("Edit Widget", function() {
                 return facet.getPopupContent();
             }).end()
             .find(".facet-content").append(this.generateContent()).end();

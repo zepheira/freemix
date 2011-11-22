@@ -64,7 +64,7 @@
      };
 
      Freemix.facet.addFacetType({
-        thumbnail: "/static/exhibit/img/logo-facet.png",
+        thumbnail: "/static/exhibit/img/text-facet.png",
         label: "Text",
         config: {
             type: "text",

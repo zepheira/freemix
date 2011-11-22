@@ -65,12 +65,12 @@
             });
             w.data("model", facetContainer);
             w.addClass("ui-widget-content").addClass("facet-container");
-            w.append("<div class='create-facet-button button button-icon-left' title='Add a Facet'><span class='ui-icon ui-icon-plus'></span>Add a Facet</div>");
+            w.append("<div class='create-facet-button button button-icon-left' title='Add a Widget'><span class='ui-icon ui-icon-plus'></span>Add a Widget</div>");
 
-            w.find(".create-facet-button").freemixPopupButton("Create a facet", function() {
+            w.find(".create-facet-button").freemixPopupButton("Select widget type", function() {
                     return facetContainer.getPopupContent();
                 },{
-                    style: {width: {min: 430}},
+                    style: {width: {max: 450}},
                     position: {target: $(".create-facet-button .ui-icon", facetContainer.findWidget())}
                 });
         });
@@ -99,9 +99,9 @@
                     }
                 });
             set.append("<li class='create-view ui-state-default'><div class='create-view-button button button-icon-left'><span class='ui-icon ui-icon-plus'></span><span class='label'>Add a View</span></div></li>");
-            set.find(".create-view-button").freemixPopupButton("Create a View", function() {
+            set.find(".create-view-button").freemixPopupButton("Select view type", function() {
                     return viewContainer.getPopupContent();
-                },{style: {width: {min: 430}}});
+                },{style: {width: {max: 450}}});
         });
     };
 

@@ -55,7 +55,7 @@
             fixedOrder: undefined
         },
         generateExhibitHTML: function () {
-            return "<div ex:role='facet' ex:facetClass='Cloud'' ex:expression='" + this.config.expression + "' ex:facetLabel='" + this.config.name + "'></div>";
+            return "<div ex:role='facet' ex:facetClass='Cloud' ex:expression='" + this.config.expression + "' ex:facetLabel='" + this.config.name + "'></div>";
         },
         showEditor: function(facetContainer) {
             var view = this;
@@ -78,7 +78,7 @@
         generateContent: function() {
             var count = Freemix.exhibit.getExpressionCount(this.config.expression);
             return $("<div>Type: <em>" + this.config.type + "</em></div>" +
-                "<div>Expression: <em>" + this.config.expression + "</em></div>" +
+                "<div>Property: <em>" + this.config.expression + "</em></div>" +
                 "<div>Values: <em>" + count.values + "</em></div>" +
                 "<div>Missing: <em>" + count.missing + "</em></div>");
         }
