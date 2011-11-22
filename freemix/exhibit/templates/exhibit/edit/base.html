@@ -16,6 +16,8 @@
     
 {% block head_data %}
     <link rel="exhibit/data" href="{{ data_url }}"/>
+    <link rel="exhibit/data" href="{% url dataset_properties_cache_json owner=exhibit.dataset.owner.username slug=exhibit.dataset.slug %}"/>
+
     <link rel="freemix/dataprofile" href="{{ dataset_profile_url }}"/>
     <link rel="freemix/exhibit_profile" href="{{ exhibit_profile_url }}"/>
 {% endblock %}
