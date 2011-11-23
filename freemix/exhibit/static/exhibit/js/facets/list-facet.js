@@ -27,7 +27,7 @@
 
     function generatePropertyList() {
         var properties = [];
-        $.each(Freemix.property.getPropertiesWithTypes(propertyTypes),
+        $.each(Freemix.property.getPropertiesWithTypes(["date", "number", "text", "currency"]),
         function(name, property) {
             properties.push(Freemix.exhibit.getExpressionCount(property.expression(), property.label()));
         });
