@@ -66,7 +66,7 @@
         var view = $("<div ex:role='view' ex:viewClass='Thumbnail' ex:viewLabel='" + config.name + "'></div>");
         view.attr("ex:showAll", config.showAll);
         view.attr("ex:abbreviatedCount", config.abbreviatedCount);
-        var lens = $("<div ex:role='lens' style='display:none;' class='image-thumbnail'></div>");
+        var lens = $("<div ex:role='lens' style='display:none;' class='image-thumbnail ui-state-highlight'></div>");
         var img = $("<a class='lightbox' ex:href-content='." + config.image + "'><img class='image-thumbnail' ex:src-content='." + config.image +"'/></a>");
         lens.append(img);
         if (config.title) {
@@ -77,6 +77,7 @@
             lens.append(title);
         }
         view.append(lens);
+
         return view;
     }
 
@@ -92,7 +93,7 @@
             image: undefined,
             title: undefined,
             titleLink: undefined,
-            abbreviatedCount: 10,
+            abbreviatedCount: 12,
             metadata: []
         }
     });
