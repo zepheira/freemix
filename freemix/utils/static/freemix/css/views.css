@@ -55,8 +55,8 @@ table.exhibit-tabularView-body td {
 
 .exhibit-thumbnailView-body div.image-thumbnail {
     float:      left;
-    width:      150px;
-    height:     170px;
+    width:      170px;
+    height:     200px;
     border:     1px solid #BCB79E;
     /*background: #EEE9E9;*/
     padding:    1em;
@@ -67,8 +67,8 @@ table.exhibit-tabularView-body td {
 
 }
 .exhibit-thumbnailView-body img.image-thumbnail {
-    max-width: 150px;
-    max-height: 120px;
+    max-width: 170px;
+    max-height: 150px;
 }
 .exhibit-thumbnailView-body .name {
     font-weight: bold;
