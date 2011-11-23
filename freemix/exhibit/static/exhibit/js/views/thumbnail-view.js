@@ -6,11 +6,11 @@
              var content = model.getContent();
 
              if (nullable) {
-                 content.find(selector).append("<option value=''></option>");
+                 $(selector, content).append("<option value=''></option>");
              }
              $.each(collection, function() {
                  var option = "<option value='" + this.name() + "'>" + this.label() + "</option>";
-                 content.find(selector).append(option);
+                 $(selector, content).append(option);
              });
 
 
@@ -26,10 +26,9 @@
                }).val(model.config[key]);
 
               if (!$(selector).val()) {
-                 $(selector).get(0).options[0].selected = true;
+                 $(selector, content).get(0).options[0].selected = true;
 
               }
-             $(selector).change();
 
            };
      }
@@ -52,13 +51,26 @@
          setupHandler("#image_property", "image", images);
 
          setupHandler("#title_property", "title", titles, true);
-
+         var tp = $("#title_property");
+         tp.change(function() {
+             if (tp.val() && links.length > 0) {
+                 $("#title_link_property", content).removeAttr("disabled");
+             } else {
+                 $("#title_link_property", content).attr("disabled", true);
+                 $("#title_link_property", content).val("");
+             }
+         });
+         tp.change();
 
          if (links.length > 0) {
              setupHandler("#title_link_property", "titleLink", links, true);
          } else {
-             $("#thumbnail_title_link").hide();
+             $("#title_link_property", content).attr("disabled", true);
          }
+         $("#image_property", content).change();
+         $("#title_property", content).change();
+         $("#title_link_property", content).change();
+
      }
 
     function generateExhibitHTML() {
