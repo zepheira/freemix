@@ -105,7 +105,6 @@
         if (colorKey) {
             view.attr("ex:colorKey", '.' + colorKey);
         }
-
         var lens = $("<div class='map-lens' ex:role='lens' style='display:none'></div>");
         var props = Freemix.property.enabledProperties();
 
@@ -116,6 +115,9 @@
                 html += "&nbsp;<a ex:href-content='" + props[o.config.titleLink].expression() + "' target='_blank'>(link)</a>";
             }
             title.append(html);
+
+            var formats = "item {title:expression(" + props[o.config.title].expression() + ")}";
+            view.attr("ex:formats", formats);
         }
 
         var table = $("<table class='property-list-table exhibit-list-table'></table>");

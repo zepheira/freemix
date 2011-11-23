@@ -211,6 +211,8 @@
                 html += "&nbsp;<a ex:href-content='" + props[this.config.titleLink].expression() + "' target='_blank'>(link)</a>";
             }
             title.append(html);
+            var formats = "item {title:expression(" + props[this.config.title].expression() + ")}";
+            view.attr("ex:formats", formats);
         }
         lens.append(title);
         var table = $("<table class='property-list-table exhibit-list-table'></table>");

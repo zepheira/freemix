@@ -75,6 +75,8 @@
                 title.find("span").wrap("<a ex:href-content='." + config.titleLink + "'></a>")
             }
             lens.append(title);
+            var formats = "item {title:expression(" + props[config.title].expression() + ")}";
+            view.attr("ex:formats", formats);
         }
         view.append(lens);
 
