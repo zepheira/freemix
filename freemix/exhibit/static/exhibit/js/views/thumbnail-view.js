@@ -63,6 +63,8 @@
 
     function generateExhibitHTML() {
         var config = this.config;
+        var props = Freemix.property.enabledProperties();
+
         var view = $("<div ex:role='view' ex:viewClass='Thumbnail' ex:viewLabel='" + config.name + "'></div>");
         view.attr("ex:showAll", config.showAll);
         view.attr("ex:abbreviatedCount", config.abbreviatedCount);
@@ -84,7 +86,7 @@
     }
 
     Freemix.view.addViewType({
-        propertyTypes: ["number", "currency"],
+        propertyTypes: ["image"],
         label: "Gallery",
         thumbnail: "/static/exhibit/img/gallery.png",
         display: display,

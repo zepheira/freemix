@@ -178,6 +178,8 @@
     }
 
     Freemix.view.addViewType({
+        propertyTypes: ["number", "currency"],
+
         label: "Scatter Plot",
         thumbnail: "/static/exhibit/img/scatterplot-icon.png",
         display: display,
