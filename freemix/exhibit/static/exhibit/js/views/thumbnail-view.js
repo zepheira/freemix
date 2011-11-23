@@ -93,12 +93,11 @@
         generateExhibitHTML: generateExhibitHTML,
 
         config: {
-
             type: "thumbnail",
             image: undefined,
             title: undefined,
             titleLink: undefined,
-            abbreviatedCount: 12,
+            abbreviatedCount: "12",
             metadata: []
         }
     });

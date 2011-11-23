@@ -723,3 +723,23 @@ tr.even {
 }
 
 
+/* thumbnail gallery display */
+
+.thumbnail-view-form {
+    margin-top: 4em;
+}
+
+#thumbnail_image, #thumbnail_title, #thumbnail_title_link {
+    padding: 0.5em;
+    font-weight: bold;
+}
+
+#thumbnail_image #image_property, #thumbnail_title #title_property, #thumbnail_title_link #title_link_property {
+    width: 120px;
+    float: right;
+    margin-right: 120px;
+}
+
+#thumbnail_title_link {
+padding-bottom: 12px;
+}
