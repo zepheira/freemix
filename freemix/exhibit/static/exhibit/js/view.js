@@ -52,6 +52,7 @@
     });
 
     Freemix.exhibit.view = $.extend(true, {}, Freemix.exhibit.widget, {
+        propertyTypes: ["text", "image", "currency", "url", "location", "date", "number"],
         getContainer: function() {
             if (!this._container) {
                 this._container = this.findWidget().parents(".view-container");
@@ -114,7 +115,12 @@
         addViewType: function(content) {
             var type = content.config.type;
             Freemix.view.types.push(type);
-            Freemix.view.prototypes[type]= $.extend(true, {},Freemix.exhibit.view,content);
+
+            var proto = $.extend(true, {},Freemix.exhibit.view,content);
+            if (content.propertyTypes) {
+                proto.propertyTypes = content.propertyTypes;
+            }
+            Freemix.view.prototypes[type]=proto;
         },
         prototypes: {},
         createView: function(properties) {

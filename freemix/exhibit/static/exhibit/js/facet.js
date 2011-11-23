@@ -83,7 +83,12 @@
         addFacetType: function(content) {
             var type = content.config.type;
             Freemix.facet.types.push(type);
-            Freemix.facet.prototypes[type]= $.extend(true, {},Freemix.exhibit.facet,content);
+
+            var proto = $.extend(true, {},Freemix.exhibit.facet,content);
+            if (content.propertyTypes) {
+                proto.propertyTypes = content.propertyTypes;
+            }
+            Freemix.facet.prototypes[type]=proto;
         },
         getFacetContainer: function(id) {
           return $(".facet-container#" + id, Freemix.getBuilder()).data("model");

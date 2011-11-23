@@ -82,6 +82,7 @@
     }
 
     Freemix.view.addViewType({
+        propertyTypes: ["number", "currency"],
         label: "Gallery",
         thumbnail: "/static/exhibit/img/gallery.png",
         display: display,

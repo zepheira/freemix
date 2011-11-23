@@ -42,6 +42,8 @@
     }
 
     Freemix.facet.addFacetType({
+        propertyTypes: ["number", "currency"],
+
         thumbnail: "/static/exhibit/img/slider-facet.png",
         label: "Slider",
         config: {

@@ -1,6 +1,7 @@
 /*global jQuery */
  (function($, Freemix) {
 
+
     function isFacetCandidate(prop) {
         return (prop.values > 1 && prop.values + prop.missing != Freemix.exhibit.database.getAllItemsCount());
     }
@@ -26,7 +27,7 @@
 
     function generatePropertyList() {
         var properties = [];
-        $.each(Freemix.property.getPropertiesWithTypes(["date", "number", "text", "currency"]),
+        $.each(Freemix.property.getPropertiesWithTypes(propertyTypes),
         function(name, property) {
             properties.push(Freemix.exhibit.getExpressionCount(property.expression(), property.label()));
         });
@@ -44,6 +45,8 @@
     Freemix.facet.addFacetType({
         thumbnail: "/static/exhibit/img/list-facet.png",
         label: "List",
+        propertyTypes: ["date", "number", "text", "currency"],
+
         config: {
             type: "list",
             expression: "",

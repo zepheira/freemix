@@ -40,12 +40,23 @@
             $.each(tags,function(key, tag) {
                 var item = items[tag];
                 item.id = key;
-                $("<a href='' title='" + item.label + "'><img src='" + item.thumbnail +
-                    "' alt='" + item.label + "' title='" + item.label + "'/><span class='chooser-item-name'>" +
-                    item.label + "</span></a>").click(function(e) {
-                    clickHandler(item);
-                    e.preventDefault();
-                }).appendTo(list).wrap("<li></li>");
+                var li = $("<li></li>");
+                var img = "<img src='" + item.thumbnail +
+                                                    "' alt='" + item.label + "' title='" + item.label + "'/>";
+                var label = $("<span class='chooser-item-name'>" +
+                                    item.label + "</span>");
+                if (item.isAvailable()) {
+                    var body = $("<a href='' title='" + item.label + "'></a>").append(img).append(label);
+                    body.click(function(e) {
+                        clickHandler(item);
+                        e.preventDefault();
+                    });
+                    li.append(body);
+                } else {
+                    li.addClass("disabled");
+                    li.append(img).append(label);
+                }
+                li.appendTo(list);
             });
             list.appendTo($(this));
         });

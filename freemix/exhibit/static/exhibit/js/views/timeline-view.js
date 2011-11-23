@@ -230,6 +230,7 @@
     }
 
     Freemix.view.addViewType({
+        propertyTypes: ["date"],
         label: "Timeline",
         thumbnail: "/static/exhibit/img/timeline-icon.png",
         display: display,

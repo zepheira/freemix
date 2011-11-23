@@ -9,6 +9,7 @@
     };
 
     Freemix.view.addViewType({
+        propertyTypes: ["location"],
         label: "Map",
         thumbnail: "/static/exhibit/img/map-icon.png",
         display: function(){GoogleDisplay(this)},

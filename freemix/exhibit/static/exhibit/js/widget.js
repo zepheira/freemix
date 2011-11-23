@@ -87,6 +87,11 @@
                 w.hidePopup();
                 w.remove();
             }).end();
+        },
+        propertyTypes: ["text", "image", "currency", "url", "location", "date", "number"],
+
+        isAvailable: function() {
+            return Freemix.property.getPropertiesWithTypes(this.propertyTypes).length > 0;
         }
     };
 

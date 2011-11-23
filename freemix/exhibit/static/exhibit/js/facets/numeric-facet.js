@@ -42,6 +42,7 @@
     }
 
     Freemix.facet.addFacetType({
+        propertyTypes: ["number", "currency"],
         thumbnail: "/static/exhibit/img/numeric-facet.png",
         label: "Range",
         config: {

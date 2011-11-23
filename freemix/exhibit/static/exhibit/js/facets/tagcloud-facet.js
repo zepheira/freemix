@@ -42,6 +42,8 @@
     }
 
     Freemix.facet.addFacetType({
+        propertyTypes: ["date", "number", "text", "currency"],
+
         thumbnail: "/static/exhibit/img/cloud-facet.png",
         label: "Tag Cloud",
         config: {
