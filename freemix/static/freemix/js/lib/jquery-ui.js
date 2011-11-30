@@ -1,5 +1,5 @@
 /*!
- * jQuery UI 1.8.14
+ * jQuery UI 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -18,7 +18,7 @@ if ( $.ui.version ) {
 }
 
 $.extend( $.ui, {
-	version: "1.8.14",
+	version: "1.8.16",
 
 	keyCode: {
 		ALT: 18,
@@ -58,6 +58,8 @@ $.extend( $.ui, {
 
 // plugins
 $.fn.extend({
+	propAttr: $.fn.prop || $.fn.attr,
+
 	_focus: $.fn.focus,
 	focus: function( delay, fn ) {
 		return typeof delay === "number" ?
@@ -258,7 +260,7 @@ $.extend( $.ui, {
 			if ( !set || !instance.element[ 0 ].parentNode ) {
 				return;
 			}
-
+	
 			for ( var i = 0; i < set.length; i++ ) {
 				if ( instance.options[ set[ i ][ 0 ] ] ) {
 					set[ i ][ 1 ].apply( instance.element, args );
@@ -266,29 +268,29 @@ $.extend( $.ui, {
 			}
 		}
 	},
-
+	
 	// will be deprecated when we switch to jQuery 1.4 - use jQuery.contains()
 	contains: function( a, b ) {
 		return document.compareDocumentPosition ?
 			a.compareDocumentPosition( b ) & 16 :
 			a !== b && a.contains( b );
 	},
-
+	
 	// only used by resizable
 	hasScroll: function( el, a ) {
-
+	
 		//If overflow is hidden, the element might have extra content, but the user wants to hide it
 		if ( $( el ).css( "overflow" ) === "hidden") {
 			return false;
 		}
-
+	
 		var scroll = ( a && a === "left" ) ? "scrollLeft" : "scrollTop",
 			has = false;
-
+	
 		if ( el[ scroll ] > 0 ) {
 			return true;
 		}
-
+	
 		// TODO: determine which cases actually cause this to happen
 		// if the element doesn't have the scroll set, see if it's possible to
 		// set the scroll
@@ -297,7 +299,7 @@ $.extend( $.ui, {
 		el[ scroll ] = 0;
 		return has;
 	},
-
+	
 	// these are odd functions, fix the API or move into individual plugins
 	isOverAxis: function( x, reference, size ) {
 		//Determines when x coordinate is over "b" element axis
@@ -311,7 +313,7 @@ $.extend( $.ui, {
 
 })( jQuery );
 /*!
- * jQuery UI Widget 1.8.14
+ * jQuery UI Widget 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -326,7 +328,10 @@ if ( $.cleanData ) {
 	var _cleanData = $.cleanData;
 	$.cleanData = function( elems ) {
 		for ( var i = 0, elem; (elem = elems[i]) != null; i++ ) {
-			$( elem ).triggerHandler( "remove" );
+			try {
+				$( elem ).triggerHandler( "remove" );
+			// http://bugs.jquery.com/ticket/8235
+			} catch( e ) {}
 		}
 		_cleanData( elems );
 	};
@@ -337,7 +342,10 @@ if ( $.cleanData ) {
 			if ( !keepData ) {
 				if ( !selector || $.filter( selector, [ this ] ).length ) {
 					$( "*", this ).add( [ this ] ).each(function() {
-						$( this ).triggerHandler( "remove" );
+						try {
+							$( this ).triggerHandler( "remove" );
+						// http://bugs.jquery.com/ticket/8235
+						} catch( e ) {}
 					});
 				}
 			}
@@ -573,7 +581,7 @@ $.Widget.prototype = {
 
 })( jQuery );
 /*!
- * jQuery UI Mouse 1.8.14
+ * jQuery UI Mouse 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -587,7 +595,7 @@ $.Widget.prototype = {
 (function( $, undefined ) {
 
 var mouseHandled = false;
-$(document).mousedown(function(e) {
+$( document ).mouseup( function( e ) {
 	mouseHandled = false;
 });
 
@@ -623,7 +631,7 @@ $.widget("ui.mouse", {
 
 	_mouseDown: function(event) {
 		// don't let more than one widget handle mouseStart
-		if(mouseHandled) {return};
+		if( mouseHandled ) { return };
 
 		// we may have missed mouseup (out of window)
 		(this._mouseStarted && this._mouseUp(event));
@@ -632,7 +640,9 @@ $.widget("ui.mouse", {
 
 		var self = this,
 			btnIsLeft = (event.which == 1),
-			elIsCancel = (typeof this.options.cancel == "string" ? $(event.target).closest(this.options.cancel).length : false);
+			// event.target.nodeName works around a bug in IE 8 with
+			// disabled inputs (#7620)
+			elIsCancel = (typeof this.options.cancel == "string" && event.target.nodeName ? $(event.target).closest(this.options.cancel).length : false);
 		if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
 			return true;
 		}
@@ -669,7 +679,7 @@ $.widget("ui.mouse", {
 			.bind('mouseup.'+this.widgetName, this._mouseUpDelegate);
 
 		event.preventDefault();
-
+		
 		mouseHandled = true;
 		return true;
 	},
@@ -733,7 +743,7 @@ $.widget("ui.mouse", {
 
 })(jQuery);
 /*
- * jQuery UI Draggable 1.8.14
+ * jQuery UI Draggable 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -813,16 +823,18 @@ $.widget("ui.draggable", $.ui.mouse, {
 		this.handle = this._getHandle(event);
 		if (!this.handle)
 			return false;
-
-		$(o.iframeFix === true ? "iframe" : o.iframeFix).each(function() {
-			$('<div class="ui-draggable-iframeFix" style="background: #fff;"></div>')
-			.css({
-				width: this.offsetWidth+"px", height: this.offsetHeight+"px",
-				position: "absolute", opacity: "0.001", zIndex: 1000
-			})
-			.css($(this).offset())
-			.appendTo("body");
-		});
+		
+		if ( o.iframeFix ) {
+			$(o.iframeFix === true ? "iframe" : o.iframeFix).each(function() {
+				$('<div class="ui-draggable-iframeFix" style="background: #fff;"></div>')
+				.css({
+					width: this.offsetWidth+"px", height: this.offsetHeight+"px",
+					position: "absolute", opacity: "0.001", zIndex: 1000
+				})
+				.css($(this).offset())
+				.appendTo("body");
+			});
+		}
 
 		return true;
 
@@ -897,10 +909,10 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 		this.helper.addClass("ui-draggable-dragging");
 		this._mouseDrag(event, true); //Execute the drag once - this causes the helper not to be visible before getting its correct position
-
+		
 		//If the ddmanager is used for droppables, inform the manager that dragging has started (see #5003)
 		if ( $.ui.ddmanager ) $.ui.ddmanager.dragStart(this, event);
-
+		
 		return true;
 	},
 
@@ -939,7 +951,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 			dropped = this.dropped;
 			this.dropped = false;
 		}
-
+		
 		//if the original element is removed, don't bother to continue if helper is set to "original"
 		if((!this.element[0] || !this.element[0].parentNode) && this.options.helper == "original")
 			return false;
@@ -959,30 +971,30 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 		return false;
 	},
-
+	
 	_mouseUp: function(event) {
 		if (this.options.iframeFix === true) {
-			$("div.ui-draggable-iframeFix").each(function() {
-				this.parentNode.removeChild(this);
+			$("div.ui-draggable-iframeFix").each(function() { 
+				this.parentNode.removeChild(this); 
 			}); //Remove frame helpers
 		}
-
+		
 		//If the ddmanager is used for droppables, inform the manager that dragging has stopped (see #5003)
 		if( $.ui.ddmanager ) $.ui.ddmanager.dragStop(this, event);
-
+		
 		return $.ui.mouse.prototype._mouseUp.call(this, event);
 	},
-
+	
 	cancel: function() {
-
+		
 		if(this.helper.is(".ui-draggable-dragging")) {
 			this._mouseUp({});
 		} else {
 			this._clear();
 		}
-
+		
 		return this;
-
+		
 	},
 
 	_getHandle: function(event) {
@@ -1237,7 +1249,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 });
 
 $.extend($.ui.draggable, {
-	version: "1.8.14"
+	version: "1.8.16"
 });
 
 $.ui.plugin.add("draggable", "connectToSortable", {
@@ -1307,12 +1319,12 @@ $.ui.plugin.add("draggable", "connectToSortable", {
 		};
 
 		$.each(inst.sortables, function(i) {
-
+			
 			//Copy over some variables to allow calling the sortable's native _intersectsWith
 			this.instance.positionAbs = inst.positionAbs;
 			this.instance.helperProportions = inst.helperProportions;
 			this.instance.offset.click = inst.offset.click;
-
+			
 			if(this.instance._intersectsWith(this.instance.containerCache)) {
 
 				//If it intersects, we use a little isOver variable and set it once, so our move-in stuff gets fired only once
@@ -1355,13 +1367,13 @@ $.ui.plugin.add("draggable", "connectToSortable", {
 
 					this.instance.isOver = 0;
 					this.instance.cancelHelperRemoval = true;
-
+					
 					//Prevent reverting on this forced stop
 					this.instance.options.revert = false;
-
+					
 					// The out event needs to be triggered independently
 					this.instance._trigger('out', event, this.instance._uiHash(this.instance));
-
+					
 					this.instance._mouseStop(event, true);
 					this.instance.options.helper = this.instance.options._helper;
 
@@ -1531,7 +1543,7 @@ $.ui.plugin.add("draggable", "stack", {
 			return (parseInt($(a).css("zIndex"),10) || 0) - (parseInt($(b).css("zIndex"),10) || 0);
 		});
 		if (!group.length) { return; }
-
+		
 		var min = parseInt(group[0].style.zIndex) || 0;
 		$(group).each(function(i) {
 			this.style.zIndex = min + i;
@@ -1556,7 +1568,7 @@ $.ui.plugin.add("draggable", "zIndex", {
 
 })(jQuery);
 /*
- * jQuery UI Droppable 1.8.14
+ * jQuery UI Droppable 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -1704,7 +1716,7 @@ $.widget("ui.droppable", {
 });
 
 $.extend($.ui.droppable, {
-	version: "1.8.14"
+	version: "1.8.16"
 });
 
 $.ui.intersect = function(draggable, droppable, toleranceMode) {
@@ -1797,7 +1809,7 @@ $.ui.ddmanager = {
 	},
 	dragStart: function( draggable, event ) {
 		//Listen for scrolling so that if the dragging causes scrolling the position of the droppables can be recalculated (see #5003)
-		draggable.element.parentsUntil( "body" ).bind( "scroll.droppable", function() {
+		draggable.element.parents( ":not(body,html)" ).bind( "scroll.droppable", function() {
 			if( !draggable.options.refreshPositions ) $.ui.ddmanager.prepareOffsets( draggable, event );
 		});
 	},
@@ -1844,7 +1856,7 @@ $.ui.ddmanager = {
 
 	},
 	dragStop: function( draggable, event ) {
-		draggable.element.parentsUntil( "body" ).unbind( "scroll.droppable" );
+		draggable.element.parents( ":not(body,html)" ).unbind( "scroll.droppable" );
 		//Call prepareOffsets one final time since IE does not fire return scroll events when overflow was caused by drag (see #5003)
 		if( !draggable.options.refreshPositions ) $.ui.ddmanager.prepareOffsets( draggable, event );
 	}
@@ -1852,7 +1864,7 @@ $.ui.ddmanager = {
 
 })(jQuery);
 /*
- * jQuery UI Resizable 1.8.14
+ * jQuery UI Resizable 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -2402,7 +2414,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 });
 
 $.extend($.ui.resizable, {
-	version: "1.8.14"
+	version: "1.8.16"
 });
 
 /*
@@ -2443,7 +2455,7 @@ $.ui.plugin.add("resizable", "alsoResize", {
 
 		_alsoResize = function (exp, c) {
 			$(exp).each(function() {
-				var el = $(this), start = $(this).data("resizable-alsoresize"), style = {},
+				var el = $(this), start = $(this).data("resizable-alsoresize"), style = {}, 
 					css = c && c.length ? c : el.parents(ui.originalElement[0]).length ? ['width', 'height'] : ['width', 'height', 'top', 'left'];
 
 				$.each(css, function (i, prop) {
@@ -2694,7 +2706,7 @@ var isNumber = function(value) {
 
 })(jQuery);
 /*
- * jQuery UI Selectable 1.8.14
+ * jQuery UI Selectable 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -2955,12 +2967,12 @@ $.widget("ui.selectable", $.ui.mouse, {
 });
 
 $.extend($.ui.selectable, {
-	version: "1.8.14"
+	version: "1.8.16"
 });
 
 })(jQuery);
 /*
- * jQuery UI Sortable 1.8.14
+ * jQuery UI Sortable 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -3037,7 +3049,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 	_setOption: function(key, value){
 		if ( key === "disabled" ) {
 			this.options[ key ] = value;
-
+	
 			this.widget()
 				[ value ? "addClass" : "removeClass"]( "ui-sortable-disabled" );
 		} else {
@@ -3477,7 +3489,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 			? [options.connectWith]
 			: options.connectWith;
 	},
-
+	
 	_getItemsAsjQuery: function(connected) {
 
 		var self = this;
@@ -3650,28 +3662,28 @@ $.widget("ui.sortable", $.ui.mouse, {
 	},
 
 	_contactContainers: function(event) {
-
-		// get innermost container that intersects with item
-		var innermostContainer = null, innermostIndex = null;
-
-
+		
+		// get innermost container that intersects with item 
+		var innermostContainer = null, innermostIndex = null;		
+		
+		
 		for (var i = this.containers.length - 1; i >= 0; i--){
 
-			// never consider a container that's located within the item itself
+			// never consider a container that's located within the item itself 
 			if($.ui.contains(this.currentItem[0], this.containers[i].element[0]))
 				continue;
 
 			if(this._intersectsWith(this.containers[i].containerCache)) {
 
-				// if we've already found a container and it's more "inner" than this, then continue
+				// if we've already found a container and it's more "inner" than this, then continue 
 				if(innermostContainer && $.ui.contains(this.containers[i].element[0], innermostContainer.element[0]))
 					continue;
 
-				innermostContainer = this.containers[i];
+				innermostContainer = this.containers[i]; 
 				innermostIndex = i;
-
+					
 			} else {
-				// container doesn't intersect. trigger "out" event if necessary
+				// container doesn't intersect. trigger "out" event if necessary 
 				if(this.containers[i].containerCache.over) {
 					this.containers[i]._trigger("out", event, this._uiHash(this));
 					this.containers[i].containerCache.over = 0;
@@ -3679,42 +3691,42 @@ $.widget("ui.sortable", $.ui.mouse, {
 			}
 
 		}
-
-		// if no intersecting containers found, return
-		if(!innermostContainer) return;
+		
+		// if no intersecting containers found, return 
+		if(!innermostContainer) return; 
 
 		// move the item into the container if it's not there already
 		if(this.containers.length === 1) {
 			this.containers[innermostIndex]._trigger("over", event, this._uiHash(this));
 			this.containers[innermostIndex].containerCache.over = 1;
-		} else if(this.currentContainer != this.containers[innermostIndex]) {
+		} else if(this.currentContainer != this.containers[innermostIndex]) { 
 
-			//When entering a new container, we will find the item with the least distance and append our item near it
-			var dist = 10000; var itemWithLeastDistance = null; var base = this.positionAbs[this.containers[innermostIndex].floating ? 'left' : 'top'];
-			for (var j = this.items.length - 1; j >= 0; j--) {
-				if(!$.ui.contains(this.containers[innermostIndex].element[0], this.items[j].item[0])) continue;
-				var cur = this.items[j][this.containers[innermostIndex].floating ? 'left' : 'top'];
-				if(Math.abs(cur - base) < dist) {
-					dist = Math.abs(cur - base); itemWithLeastDistance = this.items[j];
-				}
-			}
+			//When entering a new container, we will find the item with the least distance and append our item near it 
+			var dist = 10000; var itemWithLeastDistance = null; var base = this.positionAbs[this.containers[innermostIndex].floating ? 'left' : 'top']; 
+			for (var j = this.items.length - 1; j >= 0; j--) { 
+				if(!$.ui.contains(this.containers[innermostIndex].element[0], this.items[j].item[0])) continue; 
+				var cur = this.items[j][this.containers[innermostIndex].floating ? 'left' : 'top']; 
+				if(Math.abs(cur - base) < dist) { 
+					dist = Math.abs(cur - base); itemWithLeastDistance = this.items[j]; 
+				} 
+			} 
 
-			if(!itemWithLeastDistance && !this.options.dropOnEmpty) //Check if dropOnEmpty is enabled
-				return;
+			if(!itemWithLeastDistance && !this.options.dropOnEmpty) //Check if dropOnEmpty is enabled 
+				return; 
 
-			this.currentContainer = this.containers[innermostIndex];
-			itemWithLeastDistance ? this._rearrange(event, itemWithLeastDistance, null, true) : this._rearrange(event, null, this.containers[innermostIndex].element, true);
-			this._trigger("change", event, this._uiHash());
-			this.containers[innermostIndex]._trigger("change", event, this._uiHash(this));
+			this.currentContainer = this.containers[innermostIndex]; 
+			itemWithLeastDistance ? this._rearrange(event, itemWithLeastDistance, null, true) : this._rearrange(event, null, this.containers[innermostIndex].element, true); 
+			this._trigger("change", event, this._uiHash()); 
+			this.containers[innermostIndex]._trigger("change", event, this._uiHash(this)); 
 
-			//Update the placeholder
-			this.options.placeholder.update(this.currentContainer, this.placeholder);
-
-			this.containers[innermostIndex]._trigger("over", event, this._uiHash(this));
+			//Update the placeholder 
+			this.options.placeholder.update(this.currentContainer, this.placeholder); 
+		
+			this.containers[innermostIndex]._trigger("over", event, this._uiHash(this)); 
 			this.containers[innermostIndex].containerCache.over = 1;
-		}
-
-
+		} 
+	
+		
 	},
 
 	_createHelper: function(event) {
@@ -4032,12 +4044,12 @@ $.widget("ui.sortable", $.ui.mouse, {
 });
 
 $.extend($.ui.sortable, {
-	version: "1.8.14"
+	version: "1.8.16"
 });
 
 })(jQuery);
 /*
- * jQuery UI Effects 1.8.14
+ * jQuery UI Effects 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -4222,7 +4234,7 @@ function getElementStyles() {
 			}
 		}
 	}
-
+	
 	return newStyle;
 }
 
@@ -4246,7 +4258,7 @@ function filterStyles(styles) {
 			delete styles[name];
 		}
 	}
-
+	
 	return styles;
 }
 
@@ -4344,7 +4356,7 @@ $.fn.extend({
 /******************************************************************************/
 
 $.extend($.effects, {
-	version: "1.8.14",
+	version: "1.8.16",
 
 	// Saves a set of properties in a data storage
 	save: function(element, set) {
@@ -4405,9 +4417,16 @@ $.extend($.effects, {
 					border: 'none',
 					margin: 0,
 					padding: 0
-				});
+				}),
+			active = document.activeElement;
 
 		element.wrap(wrapper);
+
+		// Fixes #7595 - Elements lose focus when wrapped.
+		if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
+			$( active ).focus();
+		}
+		
 		wrapper = element.parent(); //Hotfix for jQuery 1.4 since some change in wrap() seems to actually loose the reference to the wrapped element
 
 		// transfer positioning properties to the wrapper
@@ -4432,8 +4451,18 @@ $.extend($.effects, {
 	},
 
 	removeWrapper: function(element) {
-		if (element.parent().is('.ui-effects-wrapper'))
-			return element.parent().replaceWith(element);
+		var parent,
+			active = document.activeElement;
+		
+		if (element.parent().is('.ui-effects-wrapper')) {
+			parent = element.parent().replaceWith(element);
+			// Fixes #7595 - Elements lose focus when wrapped.
+			if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
+				$( active ).focus();
+			}
+			return parent;
+		}
+			
 		return element;
 	},
 
@@ -4487,12 +4516,12 @@ function standardSpeed( speed ) {
 	if ( !speed || typeof speed === "number" || $.fx.speeds[ speed ] ) {
 		return true;
 	}
-
+	
 	// invalid strings - treat as "normal" speed
 	if ( typeof speed === "string" && !$.effects[ speed ] ) {
 		return true;
 	}
-
+	
 	return false;
 }
 
@@ -4507,7 +4536,7 @@ $.fn.extend({
 			},
 			mode = args2.options.mode,
 			effectMethod = $.effects[effect];
-
+		
 		if ( $.fx.off || !effectMethod ) {
 			// delegate to the original method (e.g., .show()) if possible
 			if ( mode ) {
@@ -4520,7 +4549,7 @@ $.fn.extend({
 				});
 			}
 		}
-
+		
 		return effectMethod.call(this, args2);
 	},
 
@@ -4783,7 +4812,7 @@ $.extend($.easing,
 
 })(jQuery);
 /*
- * jQuery UI Effects Blind 1.8.14
+ * jQuery UI Effects Blind 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -4832,7 +4861,7 @@ $.effects.blind = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Bounce 1.8.14
+ * jQuery UI Effects Bounce 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -4910,7 +4939,7 @@ $.effects.bounce = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Clip 1.8.14
+ * jQuery UI Effects Clip 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -4964,7 +4993,7 @@ $.effects.clip = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Drop 1.8.14
+ * jQuery UI Effects Drop 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5014,7 +5043,7 @@ $.effects.drop = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Explode 1.8.14
+ * jQuery UI Effects Explode 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5093,7 +5122,7 @@ $.effects.explode = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Fade 1.8.14
+ * jQuery UI Effects Fade 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5125,7 +5154,7 @@ $.effects.fade = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Fold 1.8.14
+ * jQuery UI Effects Fold 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5181,7 +5210,7 @@ $.effects.fold = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Highlight 1.8.14
+ * jQuery UI Effects Highlight 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5231,7 +5260,7 @@ $.effects.highlight = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Pulsate 1.8.14
+ * jQuery UI Effects Pulsate 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5282,7 +5311,7 @@ $.effects.pulsate = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Scale 1.8.14
+ * jQuery UI Effects Scale 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5460,7 +5489,7 @@ $.effects.size = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Shake 1.8.14
+ * jQuery UI Effects Shake 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5517,7 +5546,7 @@ $.effects.shake = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Slide 1.8.14
+ * jQuery UI Effects Slide 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5567,7 +5596,7 @@ $.effects.slide = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Transfer 1.8.14
+ * jQuery UI Effects Transfer 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5612,7 +5641,7 @@ $.effects.transfer = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Accordion 1.8.14
+ * jQuery UI Accordion 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -5711,7 +5740,7 @@ $.widget( "ui.accordion", {
 
 		self._createIcons();
 		self.resize();
-
+		
 		// ARIA
 		self.element.attr( "role", "tablist" );
 
@@ -5806,7 +5835,7 @@ $.widget( "ui.accordion", {
 
 	_setOption: function( key, value ) {
 		$.Widget.prototype._setOption.apply( this, arguments );
-
+			
 		if ( key == "active" ) {
 			this.activate( value );
 		}
@@ -6131,7 +6160,7 @@ $.widget( "ui.accordion", {
 });
 
 $.extend( $.ui.accordion, {
-	version: "1.8.14",
+	version: "1.8.16",
 	animations: {
 		slide: function( options, additions ) {
 			options = $.extend({
@@ -6223,7 +6252,7 @@ $.extend( $.ui.accordion, {
 
 })( jQuery );
 /*
- * jQuery UI Autocomplete 1.8.14
+ * jQuery UI Autocomplete 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -6272,7 +6301,7 @@ $.widget( "ui.autocomplete", {
 				"aria-haspopup": "true"
 			})
 			.bind( "keydown.autocomplete", function( event ) {
-				if ( self.options.disabled || self.element.attr( "readonly" ) ) {
+				if ( self.options.disabled || self.element.propAttr( "readOnly" ) ) {
 					return;
 				}
 
@@ -6549,7 +6578,7 @@ $.widget( "ui.autocomplete", {
 			this._trigger( "close", event );
 		}
 	},
-
+	
 	_change: function( event ) {
 		if ( this.previous !== this.element.val() ) {
 			this._trigger( "change", event, { item: this.selectedItem } );
@@ -6653,7 +6682,7 @@ $.extend( $.ui.autocomplete, {
 
 /*
  * jQuery UI Menu (not officially released)
- *
+ * 
  * This widget isn't yet finished and the API is subject to change. We plan to finish
  * it for the next release. You're welcome to give it a try anyway and give us feedback,
  * as long as you're okay with migrating your code later on. We can help with that, too.
@@ -6689,7 +6718,7 @@ $.widget("ui.menu", {
 			});
 		this.refresh();
 	},
-
+	
 	refresh: function() {
 		var self = this;
 
@@ -6697,7 +6726,7 @@ $.widget("ui.menu", {
 		var items = this.element.children("li:not(.ui-menu-item):has(a)")
 			.addClass("ui-menu-item")
 			.attr("role", "menuitem");
-
+		
 		items.children("a")
 			.addClass("ui-corner-all")
 			.attr("tabindex", -1)
@@ -6835,7 +6864,7 @@ $.widget("ui.menu", {
 
 }(jQuery));
 /*
- * jQuery UI Button 1.8.14
+ * jQuery UI Button 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -6892,7 +6921,7 @@ $.widget( "ui.button", {
 			.bind( "reset.button", formResetHandler );
 
 		if ( typeof this.options.disabled !== "boolean" ) {
-			this.options.disabled = this.element.attr( "disabled" );
+			this.options.disabled = this.element.propAttr( "disabled" );
 		}
 
 		this._determineButtonType();
@@ -6989,7 +7018,7 @@ $.widget( "ui.button", {
 					return false;
 				}
 				$( this ).addClass( "ui-state-active" );
-				self.buttonElement.attr( "aria-pressed", true );
+				self.buttonElement.attr( "aria-pressed", "true" );
 
 				var radio = self.element[ 0 ];
 				radioGroup( radio )
@@ -6998,7 +7027,7 @@ $.widget( "ui.button", {
 						return $( this ).button( "widget" )[ 0 ];
 					})
 					.removeClass( "ui-state-active" )
-					.attr( "aria-pressed", false );
+					.attr( "aria-pressed", "false" );
 			});
 		} else {
 			this.buttonElement
@@ -7063,7 +7092,7 @@ $.widget( "ui.button", {
 			// we don't search against the document in case the element
 			// is disconnected from the DOM
 			var ancestor = this.element.parents().filter(":last"),
-				labelSelector = "label[for=" + this.element.attr("id") + "]";
+				labelSelector = "label[for='" + this.element.attr("id") + "']";
 			this.buttonElement = ancestor.find( labelSelector );
 			if ( !this.buttonElement.length ) {
 				ancestor = ancestor.length ? ancestor.siblings() : this.element.siblings();
@@ -7108,9 +7137,9 @@ $.widget( "ui.button", {
 		$.Widget.prototype._setOption.apply( this, arguments );
 		if ( key === "disabled" ) {
 			if ( value ) {
-				this.element.attr( "disabled", true );
+				this.element.propAttr( "disabled", true );
 			} else {
-				this.element.removeAttr( "disabled" );
+				this.element.propAttr( "disabled", false );
 			}
 			return;
 		}
@@ -7127,22 +7156,22 @@ $.widget( "ui.button", {
 				if ( $( this ).is( ":checked" ) ) {
 					$( this ).button( "widget" )
 						.addClass( "ui-state-active" )
-						.attr( "aria-pressed", true );
+						.attr( "aria-pressed", "true" );
 				} else {
 					$( this ).button( "widget" )
 						.removeClass( "ui-state-active" )
-						.attr( "aria-pressed", false );
+						.attr( "aria-pressed", "false" );
 				}
 			});
 		} else if ( this.type === "checkbox" ) {
 			if ( this.element.is( ":checked" ) ) {
 				this.buttonElement
 					.addClass( "ui-state-active" )
-					.attr( "aria-pressed", true );
+					.attr( "aria-pressed", "true" );
 			} else {
 				this.buttonElement
 					.removeClass( "ui-state-active" )
-					.attr( "aria-pressed", false );
+					.attr( "aria-pressed", "false" );
 			}
 		}
 	},
@@ -7162,7 +7191,7 @@ $.widget( "ui.button", {
 				.text(),
 			icons = this.options.icons,
 			multipleIcons = icons.primary && icons.secondary,
-			buttonClasses = [];
+			buttonClasses = [];  
 
 		if ( icons.primary || icons.secondary ) {
 			if ( this.options.text ) {
@@ -7199,7 +7228,7 @@ $.widget( "ui.buttonset", {
 	_create: function() {
 		this.element.addClass( "ui-buttonset" );
 	},
-
+	
 	_init: function() {
 		this.refresh();
 	},
@@ -7211,10 +7240,10 @@ $.widget( "ui.buttonset", {
 
 		$.Widget.prototype._setOption.apply( this, arguments );
 	},
-
+	
 	refresh: function() {
 		var ltr = this.element.css( "direction" ) === "ltr";
-
+		
 		this.buttons = this.element.find( this.options.items )
 			.filter( ":ui-button" )
 				.button( "refresh" )
@@ -7251,7 +7280,7 @@ $.widget( "ui.buttonset", {
 
 }( jQuery ) );
 /*
- * jQuery UI Datepicker 1.8.14
+ * jQuery UI Datepicker 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -7264,7 +7293,7 @@ $.widget( "ui.buttonset", {
  */
 (function( $, undefined ) {
 
-$.extend($.ui, { datepicker: { version: "1.8.14" } });
+$.extend($.ui, { datepicker: { version: "1.8.16" } });
 
 var PROP_NAME = 'datepicker';
 var dpuuid = new Date().getTime();
@@ -7357,7 +7386,8 @@ function Datepicker() {
 		altFormat: '', // The date format to use for the alternate field
 		constrainInput: true, // The input is constrained by the current date format
 		showButtonPanel: false, // True to show button panel, false to not show it
-		autoSize: false // True to size the input for the date format, false to leave as is
+		autoSize: false, // True to size the input for the date format, false to leave as is
+		disabled: false // The initial disabled state
 	};
 	$.extend(this._defaults, this.regional['']);
 	this.dpDiv = bindHover($('<div id="' + this._mainDivId + '" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div>'));
@@ -7366,7 +7396,7 @@ function Datepicker() {
 $.extend(Datepicker.prototype, {
 	/* Class name added to elements to indicate already configured with a date picker. */
 	markerClassName: 'hasDatepicker',
-
+	
 	//Keep track of the maximum number of rows displayed (see #7043)
 	maxRows: 4,
 
@@ -7375,7 +7405,7 @@ $.extend(Datepicker.prototype, {
 		if (this.debug)
 			console.log.apply('', arguments);
 	},
-
+	
 	// TODO rename to "widget" when switching to widget factory
 	_widgetDatepicker: function() {
 		return this.dpDiv;
@@ -7449,6 +7479,10 @@ $.extend(Datepicker.prototype, {
 			});
 		this._autoSize(inst);
 		$.data(target, PROP_NAME, inst);
+		//If disabled option is true, disable the datepicker once it has been attached to the input (see ticket #5665)
+		if( inst.settings.disabled ) {
+			this._disableDatepicker( target );
+		}
 	},
 
 	/* Make attachments based on settings. */
@@ -7528,7 +7562,13 @@ $.extend(Datepicker.prototype, {
 		this._setDate(inst, this._getDefaultDate(inst), true);
 		this._updateDatepicker(inst);
 		this._updateAlternate(inst);
-		inst.dpDiv.show();
+		//If disabled option is true, disable the datepicker before showing it (see ticket #5665)
+		if( inst.settings.disabled ) {
+			this._disableDatepicker( target );
+		}
+		// Set display:block in place of inst.dpDiv.show() which won't work on disconnected elements
+		// http://bugs.jqueryui.com/ticket/7552 - A Datepicker created on a detached div has zero height
+		inst.dpDiv.css( "display", "block" );
 	},
 
 	/* Pop-up the date picker in a "dialog" box.
@@ -7768,10 +7808,17 @@ $.extend(Datepicker.prototype, {
 				case 9: $.datepicker._hideDatepicker();
 						handled = false;
 						break; // hide on tab out
-				case 13: var sel = $('td.' + $.datepicker._dayOverClass + ':not(.' +
+				case 13: var sel = $('td.' + $.datepicker._dayOverClass + ':not(.' + 
 									$.datepicker._currentClass + ')', inst.dpDiv);
 						if (sel[0])
 							$.datepicker._selectDay(event.target, inst.selectedMonth, inst.selectedYear, sel[0]);
+							var onSelect = $.datepicker._get(inst, 'onSelect');
+							if (onSelect) {
+								var dateStr = $.datepicker._formatDate(inst);
+
+								// trigger custom callback
+								onSelect.apply((inst.input ? inst.input[0] : null), [dateStr, inst]);
+							}
 						else
 							$.datepicker._hideDatepicker();
 						return false; // don't submit the form
@@ -7859,6 +7906,7 @@ $.extend(Datepicker.prototype, {
 	},
 
 	/* Pop-up the date picker for a given input field.
+       If false returned from beforeShow event handler do not show. 
 	   @param  input  element - the input field attached to the date picker or
 	                  event - if triggered by focus */
 	_showDatepicker: function(input) {
@@ -7875,7 +7923,12 @@ $.extend(Datepicker.prototype, {
 			$.datepicker._curInst.dpDiv.stop(true, true);
 		}
 		var beforeShow = $.datepicker._get(inst, 'beforeShow');
-		extendRemove(inst.settings, (beforeShow ? beforeShow.apply(input, [input, inst]) : {}));
+		var beforeShowSettings = beforeShow ? beforeShow.apply(input, [input, inst]) : {};
+		if(beforeShowSettings === false){
+            //false
+			return;
+		}
+		extendRemove(inst.settings, beforeShowSettings);
 		inst.lastVal = null;
 		$.datepicker._lastInput = input;
 		$.datepicker._setDateFromField(inst);
@@ -7959,7 +8012,7 @@ $.extend(Datepicker.prototype, {
 				// this breaks the change event in IE
 				inst.input.is(':visible') && !inst.input.is(':disabled') && inst.input[0] != document.activeElement)
 			inst.input.focus();
-		// deffered render of the years select (to avoid flashes on Firefox)
+		// deffered render of the years select (to avoid flashes on Firefox) 
 		if( inst.yearshtml ){
 			var origyearshtml = inst.yearshtml;
 			setTimeout(function(){
@@ -8112,24 +8165,11 @@ $.extend(Datepicker.prototype, {
 	_selectMonthYear: function(id, select, period) {
 		var target = $(id);
 		var inst = this._getInst(target[0]);
-		inst._selectingMonthYear = false;
 		inst['selected' + (period == 'M' ? 'Month' : 'Year')] =
 		inst['draw' + (period == 'M' ? 'Month' : 'Year')] =
 			parseInt(select.options[select.selectedIndex].value,10);
 		this._notifyChange(inst);
 		this._adjustDate(target);
-	},
-
-	/* Restore input focus after not changing month/year. */
-	_clickMonthYear: function(id) {
-		var target = $(id);
-		var inst = this._getInst(target[0]);
-		if (inst.input && inst._selectingMonthYear) {
-			setTimeout(function() {
-				inst.input.focus();
-			}, 0);
-		}
-		inst._selectingMonthYear = !inst._selectingMonthYear;
 	},
 
 	/* Action for selecting a day. */
@@ -8802,7 +8842,7 @@ $.extend(Datepicker.prototype, {
 					drawMonth = 0;
 					drawYear++;
 				}
-				calender += '</tbody></table>' + (isMultiMonth ? '</div>' +
+				calender += '</tbody></table>' + (isMultiMonth ? '</div>' + 
 							((numMonths[0] > 0 && col == numMonths[1]-1) ? '<div class="ui-datepicker-row-break"></div>' : '') : '');
 				group += calender;
 			}
@@ -8830,7 +8870,6 @@ $.extend(Datepicker.prototype, {
 			var inMaxYear = (maxDate && maxDate.getFullYear() == drawYear);
 			monthHtml += '<select class="ui-datepicker-month" ' +
 				'onchange="DP_jQuery_' + dpuuid + '.datepicker._selectMonthYear(\'#' + inst.id + '\', this, \'M\');" ' +
-				'onclick="DP_jQuery_' + dpuuid + '.datepicker._clickMonthYear(\'#' + inst.id + '\');"' +
 			 	'>';
 			for (var month = 0; month < 12; month++) {
 				if ((!inMinYear || month >= minDate.getMonth()) &&
@@ -8864,7 +8903,6 @@ $.extend(Datepicker.prototype, {
 				endYear = (maxDate ? Math.min(endYear, maxDate.getFullYear()) : endYear);
 				inst.yearshtml += '<select class="ui-datepicker-year" ' +
 					'onchange="DP_jQuery_' + dpuuid + '.datepicker._selectMonthYear(\'#' + inst.id + '\', this, \'Y\');" ' +
-					'onclick="DP_jQuery_' + dpuuid + '.datepicker._clickMonthYear(\'#' + inst.id + '\');"' +
 					'>';
 				for (; year <= endYear; year++) {
 					inst.yearshtml += '<option value="' + year + '"' +
@@ -8872,7 +8910,7 @@ $.extend(Datepicker.prototype, {
 						'>' + year + '</option>';
 				}
 				inst.yearshtml += '</select>';
-
+				
 				html += inst.yearshtml;
 				inst.yearshtml = null;
 			}
@@ -8983,7 +9021,7 @@ $.extend(Datepicker.prototype, {
  * Bind hover events for datepicker elements.
  * Done via delegate so the binding only occurs once in the lifetime of the parent div.
  * Global instActive, set by _updateDatepicker allows the handlers to find their way back to the active picker.
- */
+ */ 
 function bindHover(dpDiv) {
 	var selector = 'button, .ui-datepicker-prev, .ui-datepicker-next, .ui-datepicker-calendar td a';
 	return dpDiv.bind('mouseout', function(event) {
@@ -9026,12 +9064,12 @@ function isArray(a) {
                     Object - settings for attaching new datepicker functionality
    @return  jQuery object */
 $.fn.datepicker = function(options){
-
+	
 	/* Verify an empty collection wasn't passed - Fixes #6976 */
 	if ( !this.length ) {
 		return this;
 	}
-
+	
 	/* Initialise the date picker. */
 	if (!$.datepicker.initialized) {
 		$(document).mousedown($.datepicker._checkExternalClick).
@@ -9057,7 +9095,7 @@ $.fn.datepicker = function(options){
 $.datepicker = new Datepicker(); // singleton instance
 $.datepicker.initialized = false;
 $.datepicker.uuid = new Date().getTime();
-$.datepicker.version = "1.8.14";
+$.datepicker.version = "1.8.16";
 
 // Workaround for #4055
 // Add another global to avoid noConflict issues with inline event handlers
@@ -9065,7 +9103,7 @@ window['DP_jQuery_' + dpuuid] = $;
 
 })(jQuery);
 /*
- * jQuery UI Dialog 1.8.14
+ * jQuery UI Dialog 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -9176,9 +9214,9 @@ $.widget("ui.dialog", {
 				// setting tabIndex makes the div focusable
 				// setting outline to 0 prevents a border on focus in Mozilla
 				.attr('tabIndex', -1).css('outline', 0).keydown(function(event) {
-					if (options.closeOnEscape && event.keyCode &&
+					if (options.closeOnEscape && !event.isDefaultPrevented() && event.keyCode &&
 						event.keyCode === $.ui.keyCode.ESCAPE) {
-
+						
 						self.close(event);
 						event.preventDefault();
 					}
@@ -9280,7 +9318,7 @@ $.widget("ui.dialog", {
 
 	destroy: function() {
 		var self = this;
-
+		
 		if (self.overlay) {
 			self.overlay.destroy();
 		}
@@ -9306,7 +9344,7 @@ $.widget("ui.dialog", {
 	close: function(event) {
 		var self = this,
 			maxZ, thisZ;
-
+		
 		if (false === self._trigger('beforeClose', event)) {
 			return;
 		}
@@ -9372,7 +9410,7 @@ $.widget("ui.dialog", {
 
 		//Save and then restore scroll since Opera 9.5+ resets when parent z-Index is changed.
 		//  http://ui.jquery.com/bugs/ticket/3193
-		saveScroll = { scrollTop: self.element.attr('scrollTop'), scrollLeft: self.element.attr('scrollLeft') };
+		saveScroll = { scrollTop: self.element.scrollTop(), scrollLeft: self.element.scrollLeft() };
 		$.ui.dialog.maxZ += 1;
 		self.uiDialog.css('z-index', $.ui.dialog.maxZ);
 		self.element.attr(saveScroll);
@@ -9599,7 +9637,7 @@ $.widget("ui.dialog", {
 					at: myAt.join(" "),
 					offset: offset.join(" ")
 				};
-			}
+			} 
 
 			position = $.extend({}, $.ui.dialog.prototype.options.position, position);
 		} else {
@@ -9627,7 +9665,7 @@ $.widget("ui.dialog", {
 
 		$.each( options, function( key, value ) {
 			self._setOption( key, value );
-
+			
 			if ( key in sizeRelatedOptions ) {
 				resize = true;
 			}
@@ -9679,7 +9717,7 @@ $.widget("ui.dialog", {
 				if ( isDraggable && !value ) {
 					uiDialog.draggable( "destroy" );
 				}
-
+				
 				if ( !isDraggable && value ) {
 					self._makeDraggable();
 				}
@@ -9741,7 +9779,7 @@ $.widget("ui.dialog", {
 			})
 			.height();
 		minContentHeight = Math.max( 0, options.minHeight - nonContentHeight );
-
+		
 		if ( options.height === "auto" ) {
 			// only needed for IE6 support
 			if ( $.support.minHeight ) {
@@ -9768,7 +9806,7 @@ $.widget("ui.dialog", {
 });
 
 $.extend($.ui.dialog, {
-	version: "1.8.14",
+	version: "1.8.16",
 
 	uuid: 0,
 	maxZ: 0,
@@ -9814,9 +9852,9 @@ $.extend($.ui.dialog.overlay, {
 
 			// allow closing by pressing the escape key
 			$(document).bind('keydown.dialog-overlay', function(event) {
-				if (dialog.options.closeOnEscape && event.keyCode &&
+				if (dialog.options.closeOnEscape && !event.isDefaultPrevented() && event.keyCode &&
 					event.keyCode === $.ui.keyCode.ESCAPE) {
-
+					
 					dialog.close(event);
 					event.preventDefault();
 				}
@@ -9852,7 +9890,7 @@ $.extend($.ui.dialog.overlay, {
 		}
 
 		$el.remove();
-
+		
 		// adjust the maxZ to allow other modal dialogs to continue to work (see #4309)
 		var maxZ = 0;
 		$.each(this.instances, function() {
@@ -9943,7 +9981,7 @@ $.extend($.ui.dialog.overlay.prototype, {
 
 }(jQuery));
 /*
- * jQuery UI Position 1.8.14
+ * jQuery UI Position 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -9998,7 +10036,7 @@ $.fn.position = function( options ) {
 	}
 
 	// force my and at to have valid horizontal and veritcal positions
-	// if a value is missing or invalid, it will be converted to center
+	// if a value is missing or invalid, it will be converted to center 
 	$.each( [ "my", "at" ], function() {
 		var pos = ( options[this] || "" ).split( " " );
 		if ( pos.length === 1) {
@@ -10173,7 +10211,7 @@ if ( !$.offset.setOffset ) {
 				top:  (options.top  - curOffset.top)  + curTop,
 				left: (options.left - curOffset.left) + curLeft
 			};
-
+		
 		if ( 'using' in options ) {
 			options.using.call( elem, props );
 		} else {
@@ -10184,7 +10222,7 @@ if ( !$.offset.setOffset ) {
 	$.fn.offset = function( options ) {
 		var elem = this[ 0 ];
 		if ( !elem || !elem.ownerDocument ) { return null; }
-		if ( options ) {
+		if ( options ) { 
 			return this.each(function() {
 				$.offset.setOffset( this, options );
 			});
@@ -10195,7 +10233,7 @@ if ( !$.offset.setOffset ) {
 
 }( jQuery ));
 /*
- * jQuery UI Progressbar 1.8.14
+ * jQuery UI Progressbar 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -10299,12 +10337,12 @@ $.widget( "ui.progressbar", {
 });
 
 $.extend( $.ui.progressbar, {
-	version: "1.8.14"
+	version: "1.8.16"
 });
 
 })( jQuery );
 /*
- * jQuery UI Slider 1.8.14
+ * jQuery UI Slider 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -10379,7 +10417,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 				.addClass( "ui-slider-range" +
 				// note: this isn't the most fittingly semantic framework class for this element,
 				// but worked best visually with a variety of themes
-				" ui-widget-header" +
+				" ui-widget-header" + 
 				( ( o.range === "min" || o.range === "max" ) ? " ui-slider-range-" + o.range : "" ) );
 		}
 
@@ -10426,11 +10464,11 @@ $.widget( "ui.slider", $.ui.mouse, {
 					curVal,
 					newVal,
 					step;
-
+	
 				if ( self.options.disabled ) {
 					return;
 				}
-
+	
 				switch ( event.keyCode ) {
 					case $.ui.keyCode.HOME:
 					case $.ui.keyCode.END:
@@ -10451,14 +10489,14 @@ $.widget( "ui.slider", $.ui.mouse, {
 						}
 						break;
 				}
-
+	
 				step = self.options.step;
 				if ( self.options.values && self.options.values.length ) {
 					curVal = newVal = self.values( index );
 				} else {
 					curVal = newVal = self.value();
 				}
-
+	
 				switch ( event.keyCode ) {
 					case $.ui.keyCode.HOME:
 						newVal = self._valueMin();
@@ -10487,22 +10525,22 @@ $.widget( "ui.slider", $.ui.mouse, {
 						newVal = self._trimAlignValue( curVal - step );
 						break;
 				}
-
+	
 				self._slide( event, index, newVal );
-
+	
 				return ret;
-
+	
 			})
 			.keyup(function( event ) {
 				var index = $( this ).data( "index.ui-slider-handle" );
-
+	
 				if ( self._keySliding ) {
 					self._keySliding = false;
 					self._stop( event, index );
 					self._change( event, index );
 					$( this ).removeClass( "ui-state-active" );
 				}
-
+	
 			});
 
 		this._refreshValue();
@@ -10584,7 +10622,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 		closestHandle
 			.addClass( "ui-state-active" )
 			.focus();
-
+		
 		offset = closestHandle.offset();
 		mouseOverHandle = !$( event.target ).parents().andSelf().is( ".ui-slider-handle" );
 		this._clickOffset = mouseOverHandle ? { left: 0, top: 0 } : {
@@ -10610,7 +10648,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 	_mouseDrag: function( event ) {
 		var position = { x: event.pageX, y: event.pageY },
 			normValue = this._normValueFromMouse( position );
-
+		
 		this._slide( event, this._handleIndex, normValue );
 
 		return false;
@@ -10629,7 +10667,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 
 		return false;
 	},
-
+	
 	_detectOrientation: function() {
 		this.orientation = ( this.options.orientation === "vertical" ) ? "vertical" : "horizontal";
 	},
@@ -10686,7 +10724,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 		if ( this.options.values && this.options.values.length ) {
 			otherVal = this.values( index ? 0 : 1 );
 
-			if ( ( this.options.values.length === 2 && this.options.range === true ) &&
+			if ( ( this.options.values.length === 2 && this.options.range === true ) && 
 					( ( index === 0 && newVal > otherVal) || ( index === 1 && newVal < otherVal ) )
 				) {
 				newVal = otherVal;
@@ -10807,10 +10845,10 @@ $.widget( "ui.slider", $.ui.mouse, {
 				if ( value ) {
 					this.handles.filter( ".ui-state-focus" ).blur();
 					this.handles.removeClass( "ui-state-hover" );
-					this.handles.attr( "disabled", "disabled" );
+					this.handles.propAttr( "disabled", true );
 					this.element.addClass( "ui-disabled" );
 				} else {
-					this.handles.removeAttr( "disabled" );
+					this.handles.propAttr( "disabled", false );
 					this.element.removeClass( "ui-disabled" );
 				}
 				break;
@@ -10871,7 +10909,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 			return vals;
 		}
 	},
-
+	
 	// returns the step-aligned value that val is closest to, between (inclusive) min and max
 	_trimAlignValue: function( val ) {
 		if ( val <= this._valueMin() ) {
@@ -10881,7 +10919,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 			return this._valueMax();
 		}
 		var step = ( this.options.step > 0 ) ? this.options.step : 1,
-			valModStep = (val - this._valueMin()) % step;
+			valModStep = (val - this._valueMin()) % step,
 			alignValue = val - valModStep;
 
 		if ( Math.abs(valModStep) * 2 >= step ) {
@@ -10900,7 +10938,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 	_valueMax: function() {
 		return this.options.max;
 	},
-
+	
 	_refreshValue: function() {
 		var oRange = this.options.range,
 			o = this.options,
@@ -10965,12 +11003,12 @@ $.widget( "ui.slider", $.ui.mouse, {
 });
 
 $.extend( $.ui.slider, {
-	version: "1.8.14"
+	version: "1.8.16"
 });
 
 }(jQuery));
 /*
- * jQuery UI Tabs 1.8.14
+ * jQuery UI Tabs 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -11669,7 +11707,7 @@ $.widget( "ui.tabs", {
 });
 
 $.extend( $.ui.tabs, {
-	version: "1.8.14"
+	version: "1.8.16"
 });
 
 /*
@@ -11691,7 +11729,7 @@ $.extend( $.ui.tabs.prototype, {
 				var t = o.selected;
 				self.select( ++t < self.anchors.length ? t : 0 );
 			}, ms );
-
+			
 			if ( e ) {
 				e.stopPropagation();
 			}
