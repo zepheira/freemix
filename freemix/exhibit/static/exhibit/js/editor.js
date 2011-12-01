@@ -178,7 +178,7 @@
     function updatePreview() {
         var metadata = Freemix.syncMetadata(Freemix.profile);
         Freemix.getPreview().empty();
-        $("#canvas-template").clone().appendTo(Freemix.getPreview()).generateExhibitHTML(metadata).createExhibit();
+        $("#canvas-template").clone().appendTo(Freemix.getPreview()).generateExhibitHTML(metadata);
 
     }
 
@@ -236,7 +236,7 @@
 
             $("#preview_toggle").button("option", "label", "Show Builder");
             $("#build, #theme").hide();
-            $("#preview").show();
+            $("#preview").show().createExhibit();
         } else {
             updateBuilder();
 
