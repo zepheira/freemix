@@ -1,7 +1,7 @@
 {% extends "freemix/base.html" %}
-
+{% load compress %}
 {% block freemix_js %}
     {{ block.super }}
-    <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.js"></script>
+
     {% include "freemix/js_include/jquery_ui.html" %}
 {% endblock %}

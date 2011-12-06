@@ -15,18 +15,22 @@
 
 {% block freemix_css %}
 {{ block.super }}
-{% compress css %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/layout.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/views.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/editor.css"/>
-{% endcompress %}
-<link rel="stylesheet" type="text/css" href="http://api.simile.zepheira.com/exhibit/2.2.0/extensions/chart/chart-extension-bundle.css" />
+    {% compress css %}
+
+    {% include "simile/css/exhibit.html" %}
+    {% include "simile/css/exhibit_extensions.html" %}
+
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/layout.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/views.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}freemix/css/editor.css"/>
+    {% endcompress %}
 {% endblock %}
 
 {% block freemix_js%}
-    <script type="text/javascript" src="http://api.simile.zepheira.com/exhibit/2.2.0/exhibit-api.js?autoCreate=false"></script>
 
     {{block.super}}
+    {% include "simile/js/exhibit.html" %}
+
     {% include "freemix/js_include/viewer.html" %}
     {% compress js %}
     <script type="text/javascript" src="{{STATIC_URL}}freemix/js/lib/jquery.uuid.js"></script>

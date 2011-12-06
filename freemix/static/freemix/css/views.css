@@ -27,6 +27,13 @@ ol.exhibit-tileView-body li {
 /* Lightbox image view */
 .dialog-thumb img {
     max-width: 100px;
+    max-height: 100px;
+}
+
+.dialog-thumb {
+    /* Fix for IE max-width bug */
+    width: 100px;
+    height: 100px;
 }
 
 /* Table view */

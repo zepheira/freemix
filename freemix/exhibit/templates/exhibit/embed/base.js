@@ -21,7 +21,7 @@ FreemixEmbed.scripts = [
     "http://www.google.com/jsapi",
     "http://extensions.simile.zepheira.com/piechart/piechart-extension.js",
     "{%site_url STATIC_URL %}freemix/js/lib/jquery.js",
-    "{%site_url STATIC_URL %}freemix/js/lib/jquery.bgiframe.min.js",
+//    "{%site_url STATIC_URL %}freemix/js/lib/jquery.bgiframe.min.js",
     "{%site_url STATIC_URL %}freemix/js/lib/jquery.machineTag.js",
     "{%site_url STATIC_URL %}freemix/js/lib/jquery.json.js",
     "{%site_url STATIC_URL %}freemix/js/lib/jquery.highlight.js",
