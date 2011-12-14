@@ -70,15 +70,17 @@
             .find(".delete-button").click(function() {
                     facet.remove();
                     return false;
-                }).end();
+                }).end()
+            .find(".facet-menu a").click(function() {
+
+                    return false;
+                });
 
         },
 
         refresh: function() {
             this.findWidget().find(".facet-content").empty().append(this.generateExhibitHTML());
-            var exhibit = Exhibit.create(Freemix.exhibit.database);
-            var context = context || new Exhibit.UIContext();
-
+            var exhibit = Freemix.getBuilderExhibit();
             this.facetClass.createFromDOM(this.findWidget().find(".facet-content div").get(0), null, exhibit._uiContext);
 
         },

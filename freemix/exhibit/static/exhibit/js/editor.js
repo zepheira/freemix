@@ -124,6 +124,15 @@
         return $("#preview");
     };
 
+    Freemix.getBuilderExhibit = function() {
+        var exhibit = Freemix.getBuilder().data("exhibit");
+        if (!exhibit) {
+            exhibit = Exhibit.create(Freemix.exhibit.database);
+            Freemix.getBuilder().data("exhibit", exhibit);
+        }
+        return exhibit;
+    };
+
     Freemix.syncMetadata = function(model) {
         var metadata = {};
         metadata.theme = model.theme;
