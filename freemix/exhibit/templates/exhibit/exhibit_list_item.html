@@ -42,17 +42,15 @@
       {% trans "Created by"%} <span class="exhibit-creator"><a href="{% url profile_detail exhibit.owner.username %}">{{exhibit.owner|nicename}}</a></span> {% trans "on" %} <span class="exhibit-created-data">{{exhibit.created|date:"N j, Y"}}</span> {% trans "and based on the" %} <span class="exhibit-dataset-title"><a href="{{exhibit.dataset.get_absolute_url }}" title="{{exhibit.dataset.title}}">{{exhibit.dataset.title}}</a></span> {% trans "data set" %}.
     </div>
 
-    {% if request.user.is_authenticated and request.user.username == exhibit.owner.username %}
+    {% if can_inspect %}
 
     <div class="exhibit-actions exhibit-right">
 
       <div class="exhibit-links">
 
-        {% if can_inspect %}
         <span class="action action_inspect_exhibit">
           <a class="exhibit_inspect" href="{% url exhibit_detail owner=exhibit.owner.username slug=exhibit.slug %}">{% trans "Inspect" %}</a>
         </span>
-	{% endif %}
 
         {% if can_edit %}
         <span class="divider action_edit_exhibit">|</span>
