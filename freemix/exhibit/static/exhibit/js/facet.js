@@ -33,24 +33,30 @@
             });
             return result;
         },
+        getDialog: function() {
+            return this._dialog;
+        },
         getPopupContent: function() {
             var fc = this;
                 return $("<div class='chooser'></div>").freemixThumbnails(
                     Freemix.facet.types, Freemix.facet.prototypes,
                 function(facetTemplate) {
                     var facet = Freemix.facet.createFacet({type: facetTemplate.config.type, name: facetTemplate.label});
-                                facet.showEditor(fc);
+                    fc.findWidget().one("edit-facet", function() {
+                        fc.addFacet(facet);
+                    });
+                    facet.showEditor(fc);
                 });
             },
         getPopupButton: function() {
             return this.findWidget().find(".create-facet-button");
         }
     });
-    var context;
+
     Freemix.exhibit.facet = $.extend(true, {}, Freemix.exhibit.widget, {
         facetClass: Exhibit.ListFacet,
         findContainer: function() {
-            return this.findWidget().parents(".facet-container");
+            return this.findWidget().parents(".facet-container").data("model");
         },
         generateWidget: function() {
             var facet = this;
@@ -72,7 +78,7 @@
                     return false;
                 }).end()
             .find(".facet-menu a").click(function() {
-
+                    facet.showEditor();
                     return false;
                 }).end();
 
@@ -86,7 +92,9 @@
         },
 
         showEditor: function(facetContainer){
-            facetContainer.hidePopup();
+            facetContainer = facetContainer || this.findContainer();
+
+            facetContainer.getDialog().dialog("close");
             facetContainer.addFacet(this);
         },
         generateExhibitHTML: function() {}

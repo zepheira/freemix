@@ -78,12 +78,35 @@
             w.addClass("ui-widget-content").addClass("facet-container");
             w.append("<div class='create-facet-button button button-icon-left' title='Add a Widget'><span class='ui-icon ui-icon-plus'></span>Add a Widget</div>");
 
-            w.find(".create-facet-button").freemixPopupButton("Select widget type", function() {
-                    return facetContainer.getPopupContent();
-                },{
-                    style: {width: {max: 450}},
-                    position: {target: $(".create-facet-button .ui-icon", facetContainer.findWidget())}
+            var dialog =$("<div style='display:hidden;'></div>").appendTo('body');
+            facetContainer._dialog = dialog;
+            dialog.dialog({
+                width: 500,
+                height: "auto",
+                modal: true,
+                draggable: false,
+                resizable: false,
+                autoOpen: false,
+                title: "Select widget type",
+                show: "fade",
+                hide: "fade",
+                close: function(event, ui) {
+                    facetContainer.findWidget().off("edit-facet");
+                }
+            });
+
+            w.find(".create-facet-button").click(function() {
+                dialog.empty();
+                dialog.append(facetContainer.getPopupContent());
+                dialog.dialog("option", {
+                    "title":"Select widget type",
+                    "buttons": [],
+                    "width": 500,
+                    "position": "center"
                 });
+                dialog.dialog("open");
+            });
+
         });
     };
 

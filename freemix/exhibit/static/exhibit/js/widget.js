@@ -22,7 +22,6 @@
 
     Freemix.exhibit.widget = {
         config: {
-            id: "",
             name: ""
         },
         findWidget: function() {
