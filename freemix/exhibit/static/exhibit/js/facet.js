@@ -74,14 +74,14 @@
             .find(".facet-menu a").click(function() {
 
                     return false;
-                });
+                }).end();
 
         },
 
         refresh: function() {
             this.findWidget().find(".facet-content").empty().append(this.generateExhibitHTML());
             var exhibit = Freemix.getBuilderExhibit();
-            this.facetClass.createFromDOM(this.findWidget().find(".facet-content div").get(0), null, exhibit._uiContext);
+            this.facetClass.createFromDOM(this.findWidget().find(".facet-content div").get(0), null, exhibit.getUIContext());
 
         },
 
