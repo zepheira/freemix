@@ -4,7 +4,7 @@
       // Display the view's UI.
      function display() {
          var content = this.getContent();
-         root = Freemix.getTemplate("scatterplot-view-template");
+         var root = Freemix.getTemplate("scatterplot-view-template");
          content.empty();
          root.appendTo(content);
          this.findWidget().recordPager(

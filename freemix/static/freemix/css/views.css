@@ -80,3 +80,8 @@ table.exhibit-tabularView-body td {
 .exhibit-thumbnailView-body .name {
     font-weight: bold;
 }
+
+.facet-content div.exhibit-text-facet input {
+    width: auto;
+    min-width: 0;
+}

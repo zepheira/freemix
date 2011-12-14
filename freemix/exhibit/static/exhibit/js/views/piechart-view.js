@@ -4,7 +4,7 @@
      // Display the view's UI.
      function display() {
          var content = this.getContent();
-         root = Freemix.getTemplate("piechart-view-template");
+         var root = Freemix.getTemplate("piechart-view-template");
          content.empty();
          root.appendTo(content);
          this.findWidget().recordPager();

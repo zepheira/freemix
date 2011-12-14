@@ -42,6 +42,7 @@
     }
 
     Freemix.facet.addFacetType({
+        facetClass: Exhibit.NumericRangeFacet,
         propertyTypes: ["number", "currency"],
         thumbnail: "/static/exhibit/img/numeric-facet.png",
         label: "Range",
@@ -70,12 +71,9 @@
             facetContainer.setPopupContent(editor);
 
         },
-        generateContent: function() {
-            var count = Freemix.exhibit.getExpressionCount(this.config.expression);
-            return $("<div>Type: <em>" + this.config.type + "</em></div>" +
-                "<div>Property: <em>" + this.config.expression + "</em></div>" +
-                "<div>Values: <em>" + count.values + "</em></div>" +
-                "<div>Missing: <em>" + count.missing + "</em></div>");
+
+        serialize: function() {
+            return $.extend(true, {}, this.config);
         }
     });
 })(window.Freemix.jQuery, window.Freemix);

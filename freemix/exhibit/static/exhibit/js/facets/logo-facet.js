@@ -74,7 +74,7 @@
             facetContainer.setPopupContent(editor);
 
         },
-        generateContent: function() {
+        refresh: function() {
             var config = this.config;
             var html = $(this.generateExhibitHTML());
             var img = html.find("img");
@@ -105,7 +105,12 @@
             if (config.href) {
                 div.append($("<div>Link: <em>" + config.href + "</em></div>"));
             }
+            this.findWidget().find(".facet-content").empty().append(div);
+
             return div;
+        },
+        serialize: function() {
+            return $.extend(true, {}, this.config);
         }
     });
 

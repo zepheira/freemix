@@ -168,6 +168,9 @@
      }
 
     function generateExhibitHTML() {
+        function expression(prop) {
+            return "." + prop;
+        }
         var config = this.config;
         if (!config.startDate) {
             return $("<div ex:role='view' ex:viewLabel='Range Missing'></div>");
@@ -176,19 +179,19 @@
         var colorKey = config.colorKey;
         var view = $("<div ex:role='view' ex:viewClass='Timeline' ex:viewLabel='" + config.name + "'></div>");
         if (colorKey) {
-            view.attr("ex:colorKey", '.' + colorKey);
+            view.attr("ex:colorKey", expression(colorKey));
         }
         if (config.name) {
             view.attr("ex:label", config.name);
         }
         if (config.title) {
-            view.attr("ex:eventLabel", "." + config.title);
+            view.attr("ex:eventLabel", expression(config.title));
         }
         if (config.startDate) {
-            view.attr("ex:start", "." + config.startDate);
+            view.attr("ex:start", expression(config.startDate));
         }
         if (config.endDate) {
-            view.attr("ex:end", "." + config.endDate);
+            view.attr("ex:end", expression(config.endDate));
         }
         if (config.topBandUnit) {
             view.attr("ex:topBandUnit", config.topBandUnit);
@@ -196,22 +199,22 @@
         if (config.bottomBandUnit) {
             view.attr("ex:bottomBandUnit", config.bottomBandUnit);
         }
-        if (config.topBandUnitsPerPixel) {
-            view.attr("ex:topBandUnitsPerPixel", "." + config.topBandUnitsPerPixel);
+        if (config.topBandPixelsPerUnit) {
+            view.attr("ex:topBandPixelsPerUnit", expression(config.topBandPixelsPerUnit));
         }
-        if (config.bottomBandUnitsPerPixel) {
-            view.attr("ex:bottomBandUnitsPerPixel", "." + config.bottomBandUnitsPerPixel);
+        if (config.bottomBandPixelsPerUnit) {
+            view.attr("ex:bottomBandUnitsPerPixel", expression(config.bottomBandPixelsPerUnit));
         }
 
         var lens = $("<div class='timeline-lens ui-widget-content' ex:role='lens' style='display:none'></div>");
         var title = $("<div class='exhibit-title ui-widget-header'></div>");
         if (this.config.title) {
-            var html = "<span ex:content='" + props[this.config.title].expression() + "' ></span>";
+            var html = "<span ex:content='" + expression(this.config.title) + "' ></span>";
             if (this.config.titleLink) {
-                html += "&nbsp;<a ex:href-content='" + props[this.config.titleLink].expression() + "' target='_blank'>(link)</a>";
+                html += "&nbsp;<a ex:href-content='" + expression(this.config.titleLink) + "' target='_blank'>(link)</a>";
             }
             title.append(html);
-            var formats = "item {title:expression(" + props[this.config.title].expression() + ")}";
+            var formats = "item {title:expression(" + expression(this.config.title) + ")}";
             view.attr("ex:formats", formats);
         }
         lens.append(title);

@@ -131,13 +131,13 @@
         metadata.facets = {};
         $(".facet-container", Freemix.getBuilder()).each( function() {
             var data = $(this).data("model");
-            metadata.facets[$(this).attr("id")] = data.getConfigList();
+            metadata.facets[$(this).attr("id")] = data.serialize();
         });
 
         metadata.views = {};
         $(".view-container",Freemix.getBuilder()).each( function() {
             var data = $(this).data("model");
-            metadata.views[$(this).attr("id")] = data.getConfigList();
+            metadata.views[$(this).attr("id")] = data.serialize();
         });
 
 
@@ -147,12 +147,7 @@
     $.fn.generateExhibitHTML = function(model) {
         return this.each(function() {
             var root = $(this);
-            if (model.text) {
-                $.each(model.text, function(key, value) {
-                    var id = $(this).attr("id");
-                    root.find("#" + key).text(value);
-                });
-            }
+
             root.find(".view-container").each(function() {
                 var id = $(this).attr("id");
                 var container = $("<div class='view-panel' ex:role='viewPanel'></div>");
@@ -226,6 +221,7 @@
             new Freemix.Identify(database);
             togglePreview();
             $("#contents").show();
+            Freemix.getBuilder().trigger("freemix.show-builder");
         });
 
     }

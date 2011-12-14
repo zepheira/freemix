@@ -62,13 +62,8 @@
                 return "<span ex:content='" + this.expression() + "'/>";
             },
             getValueHtml: function(value) {
+                context = context || new Exhibit.UIContext();
 
-                if (!context) {
-                   context = new Exhibit.UIContext();
-                }
-
-
-//
                 var valfun = Freemix.property.type[this.type()].getValueHtml;
                 var p = this;
                 var response;
@@ -90,7 +85,7 @@
                 return response;
             },
             remove: function() {
-                property = this;
+                var property = this;
                 delete Freemix.property.propertyList[this.config.property];
                 var indexes = [];
                 $.each(Freemix.profile.properties, function(inx, p) {
@@ -179,24 +174,15 @@
 
     Freemix.property.type.text = {
 
-        getExhibitHtml: function(metadata) {
-           return "<span ex:content='" + metadata.expression() + "'/>";
-        }
     };
 
     Freemix.property.type.url = {
         label: "URL"
 
-//        getExhibitHtml: function(metadata) {
-//            return "<a ex:href-content='" +  metadata.expression() + "' target='_blank'><span ex:content='" +  metadata.expression() + "'></span></a>";
-//        }
     };
 
     Freemix.property.type.image = {
 
-//        getExhibitHtml: function(metadata) {
-//            return "<a class=\"dialog-thumb lightbox\" ex:href-content='" + metadata.expression() + "'><img ex:src-content='" + metadata.expression() + "'/></a>";
-//        }
     } ;
 
 

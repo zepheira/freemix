@@ -5,16 +5,7 @@
     $.fn.generateExhibitHTML = function(model) {
         return this.each(function() {
             var root = $(this);
-            if (model.text) {
 
-                $.each(model.text, function(key, value) {
-                    var id = $(this).attr("id");
-                    root.find("#" + key).text(value);
-                });
-                if (model.text.title) {
-                    document.title = model.text.title;
-                }
-            }
             root.find(".view-container").each(function() {
                 var id = $(this).attr("id");
                 var container = $("<div class='view-panel' ex:role='viewPanel'></div>");

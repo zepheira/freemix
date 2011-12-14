@@ -26,7 +26,7 @@
                          "Ok": function() {
                              var model = $(this).data("model");
                              model.config.text = $(this).find("textarea").val();
-                             model.findWidget().find(".facet-content").empty().append(model.generateContent());
+                             model.refresh();
 
                              $(this).dialog("close");
                              okHandler = $(this).data("okhandler");
@@ -74,14 +74,15 @@
             var text = $("<div class='text-facet'>").creole(this.config.text);
             return text;
         },
-        generateContent: function() {
+        refresh: function() {
             var facet = this;
-            result = $("<div><a href='#'>Edit</a><hr><div class='text-facet-content'></div></div>");
+            var result = $("<div><a href='#'>Edit</a><hr><div class='text-facet-content'></div></div>");
             $("a", result).click(function() {
                 $("#text-facet-editor").textFacetEditor(facet);
                 return false;
             });
             $(".text-facet-content", result).append(this.generateExhibitHTML());
+            this.findWidget().find(".facet-content").empty().append(result);
             return result;
         },
         showEditor: function(facetContainer) {
@@ -89,6 +90,9 @@
             $("#text-facet-editor").textFacetEditor(this, function(facet) {
                 facetContainer.addFacet(facet);
             });
+        },
+        serialize: function() {
+            return $.extend(true, {}, this.config);
         }
 
     });

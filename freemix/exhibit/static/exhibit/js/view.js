@@ -21,12 +21,12 @@
             });
             return viewPanel;
         },
-        getConfigList: function() {
+        serialize: function() {
             var config = [];
             $("ul.view-set>li", this.findWidget()).each(function() {
                 if (!$(this).hasClass("create-view")) {
                     var view = $(this).data("model");
-                    config.push($.extend(true, {}, view.config));
+                    config.push(view.serialize());
                 }
             });
             return config;
@@ -43,8 +43,8 @@
             return $("<div class='chooser'></div>")
                 .freemixThumbnails(Freemix.view.types, Freemix.view.prototypes, function(viewTemplate) {
                     var view = Freemix.view.createView({type: viewTemplate.config.type, name: viewTemplate.label});
-        		    view.showEditor(fc);
-     	        });
+                    view.showEditor(fc);
+                });
         },
         getPopupButton: function() {
             return this.findWidget().find(".create-view-button");
@@ -70,10 +70,10 @@
                 .data("model", view)
                 .hover(function() {$(this).addClass('ui-state-hover');}, function() {$(this).removeClass('ui-state-hover');})
                 .click(function() {
-        			if (!$(this).hasClass("ui-state-active")) {
+                    if (!$(this).hasClass("ui-state-active")) {
                         $(this).data("model").select();
-    			    }
-    			    return false;
+                    }
+                    return false;
                 });
             widget.find(".popup-button").hide();
             widget.find("span.popup-button").freemixPopupButton("Edit View", function() {

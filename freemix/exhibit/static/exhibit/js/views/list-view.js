@@ -3,10 +3,10 @@
     // Display the view's UI.
     function display() {
         var content = this.getContent();
-        root = Freemix.getTemplate("list-view-template");
+        var root = Freemix.getTemplate("list-view-template");
         content.empty();
         root.appendTo(content);
-        config = this.config;
+        var config = this.config;
         this.findWidget().recordPager(
             function(row, model, metadata) {
                  if (Freemix.property.propertyHasType(metadata.property, "url")) {

@@ -4,7 +4,7 @@
       // Display the view's UI.
      function display() {
          var content = this.getContent();
-         root = Freemix.getTemplate("table-view-template");
+         var root = Freemix.getTemplate("table-view-template");
          content.empty();
          root.appendTo(content);
 
@@ -21,7 +21,7 @@
                      name: 'sortProperty'
                  });
                  row.find('td.visible input:checkbox', content).bind('change', function(e) {
-                     t = $(this);
+                     var t = $(this);
                      if (row.find('td.inner input:radio').is(':checked')) {
                          t.attr('checked', true);
                          metadata.hidden = undefined;
@@ -75,7 +75,7 @@
         view.attr("ex:columnLabels", labels.join(', '));
         view.attr("ex:columns", columns.join(', '));
         if (config.sortProperty) {
-            indexOffset = 0;
+            var indexOffset = 0;
             $.each(config.metadata,
             function(index, metadata) {
                 var property = metadata.property;

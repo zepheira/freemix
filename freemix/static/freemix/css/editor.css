@@ -165,11 +165,9 @@
     font-weight: bold;
 }
 
-.facet-header .popup-button {
-    float: right;
-}
 
-.facet-content {
+
+.facet-body {
     margin: 0;
     padding: 5px;
 }
@@ -179,6 +177,23 @@
     margin: 3px 0;
 }
 
+.facet-menu {
+
+}
+
+.facet-menu .ui-icon.ui-icon-pencil {
+    /*float: right;*/
+    display: inline-block;
+}
+
+.facet-menu a {
+    opacity: .5;
+    text-decoration: none;
+}
+
+.facet-menu a:hover {
+    opacity: 1;
+}
 
 .freemix-themeable .facet-content.ui-widget-content {
     border-top: 0;
@@ -186,7 +201,15 @@
 
 .facet-header {
     margin: 0;
-    padding: 5px;
+    /*padding: 5px;*/
+}
+
+.facet-header .ui-icon {
+    float: left;
+}
+
+.facet-header .ui-icon.delete-button {
+    float: right;
 }
 
 .freemix-themeable .facet-content .ui-slider {

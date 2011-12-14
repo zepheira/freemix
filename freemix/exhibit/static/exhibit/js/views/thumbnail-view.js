@@ -109,8 +109,7 @@
             image: undefined,
             title: undefined,
             titleLink: undefined,
-            abbreviatedCount: "12",
-            metadata: []
+            abbreviatedCount: "12"
         }
     });
 

@@ -31,8 +31,8 @@
             }
             return this._selector;
         },
-        getConfig: function() {
-            return this.config;
+        serialize: function() {
+            return $.extend(true, {}, this.config);
         },
         generateWidget: function() {
             return $("<div>");
@@ -108,18 +108,10 @@
     $.fn.createChildCheck = function(config) {
         return this.each(function() {
             var $this = $(this);
-            var type = 'checkbox';
+            var type = config.radio ? 'radio' : 'checkbox';
+            var name = config.name ? config.name : $.make_uuid();
 
-            if (config.name) {
-                name = config.name;
-            } else {
-                name = $.make_uuid();
-            }
-            if (config.radio) {
-                type = 'radio';
-
-            }
-            disabled = "";
+            var disabled = "";
             if (config.enabled) {
                 if (!config.enabled()) {
                     disabled = " disabled='true'";

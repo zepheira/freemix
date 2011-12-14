@@ -5,7 +5,7 @@
     // Display the view's UI.
     Freemix.mapViewLib.display = function(o) {
         var content = o.getContent();
-        root = Freemix.getTemplate("map-view-template");
+        var root = Freemix.getTemplate("map-view-template");
         content.empty();
         root.appendTo(content);
         o.findWidget().recordPager(

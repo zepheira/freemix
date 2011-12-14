@@ -1,14 +1,15 @@
 /*global jQuery */
 (function($, Freemix) {
     function OLDisplay(obj) {
-	Freemix.mapViewLib.display(obj);
-    };
+        Freemix.mapViewLib.display(obj);
+    }
 
     function OLGenerateExhibitHTML(obj) {
         return Freemix.mapViewLib.generateExhibitHTML(obj, "OLMap");
-    };
+    }
 
     Freemix.view.addViewType({
+        facetClass: Exhibit.OLMapView,
         propertyTypes: ["location"],
         label: "Map",
         thumbnail: "/static/exhibit/img/map-icon.png",
