@@ -1,43 +1,45 @@
 {% load i18n %}
 <div id="logo-facet-editor">
 
-
-    <div class="colmask doublepage">
+    <div class="colmask doublepage widget-edit-dialog logo-facet-editor">
       <div class="colleft">
-        <div class="col1">
-          <label class="grid_6">Preview</label>
-          <div class="grid_6 ui-widget-content ui-corner-all" id="logo-facet-preview"></div>
-        </div>
-        <div class="col2">
+
+        <div class="col1 facet-properties ui-state-highlight">
+          <label class="facet-editor-pane-title">{% trans "Properties" %}</label>
+ 	  <div class="facet-edit-body">
             <form class="uniForm">
-
-                  <fieldset class="inlineLabels">
-                    <div id="div_id_src" class="ctrlHolder">
-                        <p class='errorField ui-helper-hidden'>Enter a valid image URL.</p>
-                        <label for="id_src">{% blocktrans %}Image URL*:{% endblocktrans %}</label>
-                        <input id="id_src" class="textinput" type="text"  name="src"/>
-                    </div>
-                    <div id="div_id_alt" class="ctrlHolder">
-                        <label for="id_alt">{% blocktrans %}Alternate Text:{% endblocktrans %}</label>
-                        <input id="id_alt" type="text" name="alt"/>
-                    </div>
-                    <div id="div_id_href" class="ctrlHolder">
-                        <label for="id_href">{% blocktrans %}Destination URL:{% endblocktrans %}</label>
-                        <input id="id_href" class="textinput" type="text"  name="href"/>
-                    </div>
-                    <div id="div_id_slider" class="ctrlHolder">
-                        <label for="logo-facet-size">{% trans "Image Size:" %}</label>
-                        <input id="logo-facet-size" type="text" size="3"/>px
-                        <div id="logo-facet-slider"></div>
-                    </div>
-                  
-
-                  </fieldset>
+              <fieldset class="inlineLabels">
+                <div id="div_id_src" class="ctrlHolder text-entry">
+                  <p class='errorField ui-helper-hidden'>Enter a valid image URL.</p>
+                  <label for="id_src">{% blocktrans %}Image&nbsp;URL:{% endblocktrans %}</label>
+                  <input id="id_src" class="textinput" type="text"  name="src"/>
+                </div>
+                <div id="div_id_alt" class="ctrlHolder text-entry">
+                  <label for="id_alt">{% blocktrans %}Alternate&nbsp;Text:{% endblocktrans %}</label>
+                  <input id="id_alt" type="text" name="alt"/>
+                </div>
+                <div id="div_id_href" class="ctrlHolder text-entry">
+                  <label for="id_href">{% blocktrans %}Destination&nbsp;URL:{% endblocktrans %}</label>
+                  <input id="id_href" class="textinput" type="text"  name="href"/>
+                </div>
+                <div id="div_id_slider" class="ctrlHolder slider text-entry">
+                  <label for="logo-facet-size">{% trans "Image&nbsp;Size:" %}</label>
+                  <input id="logo-facet-size" type="text" size="3"/>px
+                  <div id="logo-facet-slider"></div>
+                </div>
+              </fieldset>
             </form>
-
+	  </div>
         </div>
+
+        <div class="col2 facet-preview ui-state-focus">
+          <label class="facet-editor-pane-title">{% trans "Preview" %}</label>
+	  <div class="facet-edit-body">
+            <div class="ui-widget-content ui-corner-all" id="facet-preview"></div>
+          </div>
+	</div>
+
       </div>
     </div>
-
 
 </div>

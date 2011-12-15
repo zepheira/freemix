@@ -766,3 +766,66 @@ tr.even {
 #thumbnail_title_link {
 padding-bottom: 12px;
 }
+
+/* styling widget editing and preview dialogs */
+
+.facet-editor-pane-title {
+  font-size: 110%;
+  font-weight: bold;
+  border: 1px solid lightgrey;
+  background: white;
+  margin-left: 10px;
+  padding: 3px 3px 3px 3px;
+  position: absolute;
+  margin-top: -10px;
+}
+
+.facet-preview {
+  margin-top: 10px;
+}
+
+.facet-preview .facet-edit-body {
+  margin-top: 10px;
+  margin-right: 20px;
+}
+
+.facet-edit-body {
+padding: 10px 10px 0px 10px;
+}
+
+/* force heights */
+
+.search-facet-editor .facet-properties, .search-facet-editor .facet-preview {
+height: 90px;
+}
+
+.list-facet-editor .facet-properties, .list-facet-editor .facet-preview {
+height: 180px;
+}
+
+.tagcloud-facet-editor .facet-properties, .tagcloud-facet-editor .facet-preview {
+height: 180px;
+}
+
+.slider-facet-editor .facet-properties, .slider-facet-editor .facet-preview {
+height: 150px;
+}
+
+.numeric-facet-editor .facet-properties, .numeric-facet-editor .facet-preview {
+height: 180px;
+}
+
+.logo-facet-editor .facet-properties, .logo-facet-editor .facet-preview {
+height: 280px;
+}
+
+.text-facet-editor .facet-properties, .text-facet-editor .facet-preview {
+height: 280px;
+}
+
+.text-facet-editor textarea {
+width: 98%;
+height: 220px;
+margin-top: 10px;
+padding-right: 0px;
+}
