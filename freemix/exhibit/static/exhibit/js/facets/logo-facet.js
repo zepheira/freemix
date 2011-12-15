@@ -103,7 +103,7 @@
 
             function updatePreview() {
                 var preview = config.src ? facet.generateExhibitHTML(config) : "";
-                template.find("#logo-facet-preview").empty().append(preview);
+                template.find("#facet-preview").empty().append(preview);
 
             }
 
@@ -111,7 +111,7 @@
                 var slider = $("#logo-facet-slider", template);
 
                 if (config.src) {
-                    var img = template.find("#logo-facet-preview img");
+                    var img = template.find("#facet-preview img");
                     img.load(function() {
                          var naturalWidth = img.get(0).naturalWidth;
                          if (!naturalWidth) {
