@@ -153,13 +153,16 @@
             });
             href.val(config.href);
 
+            var slider = $("#logo-facet-slider", template);
+
+
             size.val(config.width);
             size.change(function(event) {
                 config.width = $(event.target).val();
+                slider.slider("value", config.width);
                 validate();
             });
 
-            var slider = $("#logo-facet-slider", template);
 
             slider.slider({
                 slide: function(event, ui) {
