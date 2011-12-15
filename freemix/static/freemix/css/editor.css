@@ -35,6 +35,12 @@
     font-size: 1.4em;
 }
 
+
+.action_preview_exhibit {
+font-size: 90%;
+}
+
+
 .record-controls {
     border-top: 0px;
     text-align: center;
@@ -201,6 +207,7 @@
 
 .jquery-ui-themeswitcher-trigger {
 margin-right: 20px;
+margin-bottom: 10px;
 }
 
 .facet-header {
@@ -236,7 +243,7 @@ margin-right: 20px;
 }
 
 .facet-container .create-facet {
-    padding-bottom: 7px;
+    padding-bottom: 8px;
 }
 
 
