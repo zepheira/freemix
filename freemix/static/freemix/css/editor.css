@@ -224,11 +224,17 @@
     padding-left: 0;
 }
 
+
 .facet-container {
     min-height: 2.5em;
     list-style-type: none;
     position: relative;
 }
+
+.facet-container .create-facet {
+    padding-bottom: 7px;
+}
+
 
 .rename-component-buttons {
     display: block;

@@ -76,7 +76,7 @@
             });
             w.data("model", facetContainer);
             w.addClass("ui-widget-content").addClass("facet-container");
-            w.append("<div class='create-facet-button button button-icon-left' title='Add a Widget'><span class='ui-icon ui-icon-plus'></span>Add a Widget</div>");
+            w.append("<div class='create-facet ui-state-default'><div class='create-facet-button button button-icon-left' title='Add a Widget'><span class='ui-icon ui-icon-plus'></span><span class='label'>Add a Widget</span></div></div>");
 
             var dialog =$("<div style='display:hidden;'></div>").appendTo('body');
             facetContainer._dialog = dialog;
