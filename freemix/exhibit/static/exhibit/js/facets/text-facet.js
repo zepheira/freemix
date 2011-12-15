@@ -54,7 +54,7 @@
             $("#text-facet-preview", template).creole(facet.config.text || "");
 
             facetContainer.getDialog().empty().append(template).dialog("option", {
-                width: "80%",
+                width: "640px",
                 title: "Edit Text Facet",
                 position: "center",
                 buttons: {
