@@ -782,18 +782,32 @@ padding-bottom: 12px;
 
 .facet-preview {
   margin-top: 10px;
+  margin-right: 20px;
+  background-color: #F5F5F5;
+  border: 1px solid lightgrey;
 }
 
 .facet-preview .facet-edit-body {
-  margin-top: 10px;
-  margin-right: 20px;
+padding: 20px 10px 0px 10px;
+margin-right: 20px;
 }
 
-.facet-edit-body {
-padding: 10px 10px 0px 10px;
+.facet-properties .facet-edit-body {
+padding-left: 10px;
+padding-top: 10px;
 }
 
-/* force heights */
+.facet-properties .text-entry input {
+width: 80%;
+}
+
+.facet-properties .pull-down select {
+width: 90%;
+}
+
+.facet-properties .slider input {
+margin-left: 10px;
+}
 
 .search-facet-editor .facet-properties, .search-facet-editor .facet-preview {
 height: 90px;
@@ -812,7 +826,7 @@ height: 150px;
 }
 
 .numeric-facet-editor .facet-properties, .numeric-facet-editor .facet-preview {
-height: 180px;
+height: 200px;
 }
 
 .logo-facet-editor .facet-properties, .logo-facet-editor .facet-preview {
