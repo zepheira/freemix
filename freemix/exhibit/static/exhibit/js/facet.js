@@ -41,7 +41,7 @@
                 return $("<div class='chooser'></div>").freemixThumbnails(
                     Freemix.facet.types, Freemix.facet.prototypes,
                 function(facetTemplate) {
-                    var facet = Freemix.facet.createFacet({type: facetTemplate.config.type, name: facetTemplate.label});
+                    var facet = Freemix.facet.createFacet({type: facetTemplate.config.type});
                     fc.findWidget().one("edit-facet", function() {
                         fc.addFacet(facet);
                     });

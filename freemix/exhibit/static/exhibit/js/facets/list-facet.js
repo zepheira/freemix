@@ -1,7 +1,6 @@
 /*global jQuery */
  (function($, Freemix) {
 
-
     function isFacetCandidate(prop) {
         return (prop.values > 1 && prop.values + prop.missing != Freemix.exhibit.database.getAllItemsCount());
     }
@@ -35,13 +34,6 @@
         return properties;
     }
 
-    function createPropertyRow(property) {
-       return  $("<tr id='" + property.label + "' class='ui-state-default'>" +
-            "<td>" + property.label + "</td>" +
-            "<td class='right'>" + property.values + "</td>" +
-            "<td class='right'>" + property.missing + "</td></tr>");
-    }
-
     Freemix.facet.addFacetType({
         thumbnail: "/static/exhibit/img/list-facet.png",
         label: "List",
@@ -57,31 +49,81 @@
             scroll: true,
             fixedOrder: undefined
         },
-        generateExhibitHTML: function() {
-            return "<div ex:role='facet' ex:expression='" + this.config.expression +
-                "' ex:facetLabel='" + this.config.name + "'></div>";
+        generateExhibitHTML: function(config) {
+
+            config = config || this.config;
+
+            return "<div ex:role='facet' ex:expression='" + config.expression +
+                "' ex:facetLabel='" + config.name + "'></div>";
         },
         showEditor: function(facetContainer) {
-            var view = this;
+            var facet = this;
+            var config = $.extend(true, {}, facet.config);
+            var template = Freemix.getTemplate("list-facet-editor");
+            facetContainer = facetContainer || facet.findContainer();
+            var dialog = facetContainer.getDialog();
+            template.data("model", this);
+            template.find("form").submit(function() {return false;});
+
+
+
+
+            function updatePreview() {
+                var preview = $(facet.generateExhibitHTML(config));
+                template.find("#facet-preview").empty().append(preview);
+                var exhibit = Freemix.getBuilderExhibit();
+                facet.facetClass.createFromDOM(preview.get(0), null, exhibit.getUIContext());
+
+            }
+            var select = template.find("#facet_property");
             var properties = generatePropertyList();
-            var editor = Freemix.getTemplate("list-facet-editor");
-            var table = $("#add-facet-table tbody", editor).empty();
-            $.each(properties,
-            function(i, property) {
-                createPropertyRow(property).click(function() {
-                    view.config.name = property.label;
-                    view.config.expression = property.expression;
-                    facetContainer.hidePopup();
-                    facetContainer.addFacet(view);
-                }).appendTo(table);
+
+            $.each(properties, function() {
+                var option = "<option value='" + this.expression + "'>" + this.label + "</option>";
+                select.append(option);
+            });
+            if (config.expression) {
+                select.val(config.expression);
+            } else {
+                select.get(0).options[0].selected=true;
+                config.expression = select.val();
+            }
+            select.change(function() {
+                config.expression = $(this).val();
+                updatePreview();
             });
 
-            facetContainer.setPopupContent(editor);
+            var label = template.find("#facet_name");
+            label.val(config.name);
+            label.change(function() {
+                config.name = label.val();
+                updatePreview();
+            });
+            dialog.empty().append(template).dialog("option", {
+                title: "Edit List",
+                position: "center",
+                buttons: [{
+                   text: "Ok",
+                   id: "ok-button",
+                   click: function() {
+                           var model = template.data("model");
+                           model.config = config;
+                           facetContainer.findWidget().trigger("edit-facet");
+                           model.refresh();
+                           facetContainer.getDialog().dialog("close");
+                       }
+                   },
+                   {
+                   text: "Cancel",
+                   click: function() {
+                           $(this).dialog("close");
+                       }
+                   }
+              ]
+            }).dialog("option", "position", "center");
 
-        },
-
-        serialize: function() {
-            return $.extend(true, {}, this.config);
+            updatePreview();
+            dialog.dialog("open");
         }
     });
 })(window.Freemix.jQuery, window.Freemix);
