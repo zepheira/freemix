@@ -199,6 +199,10 @@
     border-top: 0;
 }
 
+.jquery-ui-themeswitcher-trigger {
+margin-right: 20px;
+}
+
 .facet-header {
     margin: 0;
     /*padding: 5px;*/
