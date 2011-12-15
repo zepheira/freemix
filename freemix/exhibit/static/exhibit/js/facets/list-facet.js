@@ -20,8 +20,13 @@
 
             config = config || this.config;
 
-            return "<div ex:role='facet' ex:expression='" + config.expression +
-                "' ex:facetLabel='" + config.name + "'></div>";
+            var result = $("<div ex:role='facet'></div>");
+            result.attr("ex:expression", config.expression);
+            if (config.name && config.name.length > 0) {
+                result.attr("ex:facetLabel", config.name);
+            }
+            return result;
+
         },
         showEditor: function(facetContainer) {
             var facet = this;

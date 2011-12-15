@@ -11,7 +11,7 @@
         generateExhibitHTML: function (config) {
             config = config || this.config;
             var result = $("<div ex:role='facet' ex:facetClass='TextSearch'></div>");
-            if (config.name) {
+            if (config.name && config.name.length > 0) {
                 result.attr("ex:facetLabel", config.name);
             }
             return result;
