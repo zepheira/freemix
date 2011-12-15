@@ -12,12 +12,12 @@
        },
        generateExhibitHTML: function (config) {
            config = config || this.config;
-           var result = $("<div ex:role='facet ex:facetClass='NumericRange></div>");
+           var result = $("<div ex:role='facet' ex:facetClass='NumericRange'></div>");
            result.attr("ex:expression", config.expression);
            if (config.name && config.name.length > 0) {
                result.attr("ex:facetLabel", config.name);
            }
-           if (config.interval) {
+           if (config.interval  && config.interval > 0) {
                result.attr("ex:interval", config.interval);
            }
 
@@ -41,24 +41,56 @@
 
            }
 
-           function updateSlider() {
-               var slider = $("#logo-facet-slider", template);
-
-               if (config.src) {
-                   var img = template.find("#facet-preview img");
-                   img.load(function() {
-                        var naturalWidth = img.get(0).naturalWidth;
-                        if (!naturalWidth) {
-                            naturalWidth = img.get(0).width * 2;
-                        }
-
-                        slider.slider('option', 'max', naturalWidth);
-                        slider.slider('option', 'value', config.width || img.get(0).width);
-                    });
-               } else {
-
-               }
+           function roundPow10(value) {
+               return Math.pow(10, Math.ceil(Math.log(value)/Math.log(10)));
            }
+
+           function updateSlider() {
+               var slider = template.find("#range_interval_slider");
+               var input = template.find("$#range_interval");
+               var database = Freemix.getBuilderExhibit().getUIContext().getDatabase();
+               var path = Exhibit.ExpressionParser.parse(config.expression).getPath();
+
+               var propertyID = path.getLastSegment().property;
+               var property = database.getProperty(propertyID);
+               var rangeIndex = property.getRangeIndex();
+
+               var delta = rangeIndex.getMax() - rangeIndex.getMin();
+
+
+
+               var max = roundPow10(Math.ceil(delta/2));
+               var min = Math.max(Math.ceil(delta/100), 1);
+               if (min > 100) {
+                   min = Math.floor(min/100)*100;
+               }
+
+               var base = roundPow10(min);
+               var step = Math.ceil(base/100);
+
+               input.data("range", {"min": min, "max": max});
+
+               clampInterval(base);
+
+               slider.slider('option', {
+                   max: max,
+                   min: min,
+                   value: config.interval,
+                   step: step
+               });
+
+
+           }
+
+           function clampInterval(base) {
+               var input = template.find("$#range_interval");
+               var range = input.data("range");
+               base = base||range.min;
+               config.interval = Math.max(config.interval, base);
+               config.interval = Math.min(config.interval, range.max);
+               input.val(config.interval);
+           }
+
 
            var select = template.find("#facet_property");
            var properties = Freemix.facet.generatePropertyList(facet.propertyTypes);
@@ -75,6 +107,7 @@
            }
            select.change(function() {
                config.expression = $(this).val();
+               updateSlider();
                updatePreview();
            });
 
@@ -90,7 +123,7 @@
 
            interval.val(config.interval);
            interval.change(function(event) {
-               config.interval = $(event.target).val();
+               config.interval = parseInt($(event.target).val());
                slider.slider("value", config.interval);
                updatePreview();
 
@@ -127,7 +160,7 @@
                    }
              ]
            }).dialog("option", "position", "center");
-
+           updateSlider();
            updatePreview();
            dialog.dialog("open");
         }
