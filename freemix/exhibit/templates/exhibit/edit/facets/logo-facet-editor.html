@@ -1,30 +1,43 @@
 {% load i18n %}
 <div id="logo-facet-editor">
-<div id="add-facet" title="Add a Facet">
 
 
-        <form class="uniForm">
-        
-              <fieldset class="inlineLabels">
-                <div id="div_id_src" class="ctrlHolder">
-                    <p class='errorField ui-helper-hidden'>Enter a valid image URL.</p>
-                    <label for="id_src">{% blocktrans %}Image URL*:{% endblocktrans %}</label>
-                    <input id="id_src" class="textinput" type="text" maxlength="80" name="src"/>
-                </div>
-                <div id="div_id_alt" class="ctrlHolder">
-                    <label for="id_alt">{% blocktrans %}Alternate Text:{% endblocktrans %}</label>
-                    <textarea id="id_alt" class="textarea" type="text" name="alt"></textarea>
-                </div>
-                <div id="div_id_href" class="ctrlHolder">
-                    <label for="id_href">{% blocktrans %}Destination URL:{% endblocktrans %}</label>
-                    <input id="id_href" class="textinput" type="text" maxlength="80" name="href"/>
-                </div>
-                <div class="form_block">
-                    <button id="cancel-button">{% trans "Cancel"%}</button>
-                    <button id="save-button" type="submit">{% trans "OK" %}</button>
-                </div>
-              </fieldset>
-        </form>
-                
-</div>
+    <div class="colmask doublepage">
+      <div class="colleft">
+        <div class="col1">
+          <label class="grid_6">Preview</label>
+          <div class="grid_6 ui-widget-content ui-corner-all" id="logo-facet-preview"></div>
+        </div>
+        <div class="col2">
+            <form class="uniForm">
+
+                  <fieldset class="inlineLabels">
+                    <div id="div_id_src" class="ctrlHolder">
+                        <p class='errorField ui-helper-hidden'>Enter a valid image URL.</p>
+                        <label for="id_src">{% blocktrans %}Image URL*:{% endblocktrans %}</label>
+                        <input id="id_src" class="textinput" type="text"  name="src"/>
+                    </div>
+                    <div id="div_id_alt" class="ctrlHolder">
+                        <label for="id_alt">{% blocktrans %}Alternate Text:{% endblocktrans %}</label>
+                        <input id="id_alt" type="text" name="alt"/>
+                    </div>
+                    <div id="div_id_href" class="ctrlHolder">
+                        <label for="id_href">{% blocktrans %}Destination URL:{% endblocktrans %}</label>
+                        <input id="id_href" class="textinput" type="text"  name="href"/>
+                    </div>
+                    <div id="div_id_slider" class="ctrlHolder">
+                        <label for="logo-facet-size">{% trans "Image Size:" %}</label>
+                        <input id="logo-facet-size" type="text" size="3"/>px
+                        <div id="logo-facet-slider"></div>
+                    </div>
+                  
+
+                  </fieldset>
+            </form>
+
+        </div>
+      </div>
+    </div>
+
+
 </div>

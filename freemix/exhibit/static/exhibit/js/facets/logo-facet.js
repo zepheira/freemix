@@ -13,20 +13,22 @@
             width: undefined,
             height: undefined
         },
-        generateExhibitHTML: function() {
+        generateExhibitHTML: function(config) {
+            config = config || this.config;
             var img = $("<img/>");
-            if (this.config.src) {
-                img.attr("src", this.config.src);
+            if (config.src) {
+                img.attr("src", config.src);
             }
-            if (this.config.alt) {
-                img.attr("alt", this.config.alt);
+            if (config.alt) {
+                img.attr("alt", config.alt);
             }
-            if (this.config.width) {
-                img.attr("style", "max-width:" + this.config.width + "px");
+            if (config.width) {
+                img.attr("style", "max-width:" + config.width + "px");
             }
-            if (this.config.href) {
+            if (config.href) {
                 var link = $("<a/>");
-                link.attr("href", this.config.href);
+                link.attr("href", config.href);
+                link.attr("target", "_blank");
                 link.append(img);
                 var p = $("<span/>");
                 p.append(link);
@@ -39,68 +41,151 @@
             return p.html();
         },
         showEditor: function(facetContainer) {
-            var view = this;
-            var config = view.config;
-            var editor = Freemix.getTemplate("logo-facet-editor");
+            var facet = this;
+            facetContainer = facetContainer || facet.findContainer();
 
-            editor.find("form").submit(function() {
-                var e = facetContainer.popupApi().elements.content;
-                e.find(".error").removeClass("error");
-                e.find(".errorField").hide();
+            var config = $.extend(true, {}, facet.config);
+            var template = Freemix.getTemplate("logo-facet-editor");
+            var dialog = facetContainer.getDialog();
+
+            template.data("model", this);
+
+
+            function validate() {
+
+                 var disabled_buttons = [{
+                      text: "Ok",
+                      id: "ok-button",
+                      disabled: true,
+                      click: function() {
+                              return false;
+                          }
+                      },
+                      {
+                      text: "Cancel",
+                      click: function() {
+                              $(this).dialog("close");
+                          }
+                      }];
+
+                 var enabled_buttons = [{
+                       text: "Ok",
+                       id: "ok-button",
+                       click: function() {
+                               var model = template.data("model");
+                               model.config = config;
+                               facetContainer.findWidget().trigger("edit-facet");
+                               model.refresh();
+                               facetContainer.getDialog().dialog("close");
+                           }
+                       },
+                       {
+                       text: "Cancel",
+                       click: function() {
+                               $(this).dialog("close");
+                           }
+                       }
+                  ];
+
                 if (config.src && config.src.length > 0) {
-                    facetContainer.hidePopup();
-                    facetContainer.addFacet(view);
+
+                    dialog.find("#ok-button,  #load-image-button").prop("disabled", false);
+                    dialog.dialog("option", "buttons", enabled_buttons);
+
                 } else {
-                    e.find("#div_id_src").addClass("error");
-                    e.find("#div_id_src .errorField").show();
+                    dialog.find("#ok-button, #text-facet-slider, #load-image-button").prop("disabled", true);
+                    dialog.dialog("option", "buttons", disabled_buttons);
+
+
                 }
-                return false;
-            });
+                updatePreview();
+             }
 
+            function updatePreview() {
+                var preview = config.src ? facet.generateExhibitHTML(config) : "";
+                template.find("#logo-facet-preview").empty().append(preview);
 
-            $("#id_src", editor).change(function(event) {
+            }
+
+            function updateSlider() {
+                var slider = $("#logo-facet-slider", template);
+
+                if (config.src) {
+                    var img = template.find("#logo-facet-preview img");
+                    img.load(function() {
+                         var naturalWidth = img.get(0).naturalWidth;
+                         if (!naturalWidth) {
+                             naturalWidth = img.get(0).width * 2;
+                         }
+
+                         slider.slider('option', 'max', naturalWidth);
+                         slider.slider('option', 'value', config.width || img.get(0).width);
+                     });
+                } else {
+
+                }
+            }
+
+            facetContainer = facetContainer || this.findContainer();
+            var src = template.find("#id_src");
+            var alt = template.find("#id_alt");
+            var href = template.find("#id_href");
+            var size = template.find("#logo-facet-size");
+
+            src.change(function(event) {
                 config.src = $(event.target).val();
-            });
-            $("#id_alt", editor).change(function(event) {
-                config.alt = $(event.target).val();
-            });
-            $("#id_href", editor).change(function(event) {
-                config.href = $(event.target).val();
-            });
-            $("#cancel-button", editor).click(function(event) {
-                facetContainer.hidePopup();
-                return false;
-            });
-            facetContainer.setPopupContent(editor);
+                validate();
+                updateSlider();
 
+            });
+
+            src.val(config.src);
+
+            alt.change(function(event) {
+                config.alt = $(event.target).val();
+                validate();
+            });
+            alt.val(config.alt);
+
+            href.change(function(event) {
+                config.href = $(event.target).val();
+                validate();
+            });
+            href.val(config.href);
+
+            size.val(config.width);
+            size.change(function(event) {
+                config.width = $(event.target).val();
+                validate();
+            });
+
+            var slider = $("#logo-facet-slider", template);
+
+            slider.slider({
+                slide: function(event, ui) {
+                    size.val(ui.value);
+                    config.width=ui.value;
+                    validate();
+                    return true;
+                }
+            });
+            dialog.empty().append(template).dialog("option", {
+                title: "Edit Logo",
+                position: "center"
+            }).dialog("option", "position", "center");
+            validate();
+            updateSlider();
+
+            dialog.dialog("open");
         },
         refresh: function() {
             var config = this.config;
             var html = $(this.generateExhibitHTML());
             var img = html.find("img");
-            if (config.width) {
-                img.attr("style", "max-width:" + config.width + "px");
-            }
-            var slider = $("<div/>");
-            slider.slider({
-                slide: function(event, ui) {
-                    config.width = ui.value;
-                    img.attr("style", "max-width:" + config.width + "px");
-                    return true;
-                }
-            });
-            img.load(function() {
-                var naturalWidth = img.get(0).naturalWidth;
-                if (!naturalWidth) {
-                    naturalWidth = img.get(0).width * 2;
-                }
-                slider.slider('option', 'max', naturalWidth);
-                slider.slider('option', 'value', img.get(0).width);
-            });
+
             var div = $("<div/>");
             var block = $("<div/>");
             block.append(img);
-            div.append(slider);
             div.append(block);
             if (config.href) {
                 div.append($("<div>Link: <em>" + config.href + "</em></div>"));
