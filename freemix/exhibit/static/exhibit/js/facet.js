@@ -100,6 +100,27 @@
         generateExhibitHTML: function() {}
      });
 
+    function isFacetCandidate(prop) {
+        return (prop.values > 1 && prop.values + prop.missing != Freemix.exhibit.database.getAllItemsCount());
+    }
+
+    function simpleSort(a, b) {
+        if (a.missing == b.missing) {
+            return a.values - b.values;
+        } else {
+            return a.missing - b.missing;
+        }
+    }
+
+    function sorter(a, b) {
+        var aIsCandidate = isFacetCandidate(a);
+        var bIsCandidate = isFacetCandidate(b);
+
+        if ((aIsCandidate && bIsCandidate) || (!aIsCandidate && !bIsCandidate)) {
+            return simpleSort(a, b);
+        }
+        return bIsCandidate ? 1: -1;
+    }
 
      Freemix.facet = {
         createFacet: function(properties) {
@@ -123,6 +144,15 @@
         },
         getFacetContainer: function(id) {
           return $(".facet-container#" + id, Freemix.getBuilder()).data("model");
+        },
+        generatePropertyList: function(types) {
+            var properties = [];
+            var proplist = types? Freemix.property.getPropertiesWithTypes(types) : Freemix.property.enabledProperties();
+            $.each(proplist, function(name, property) {
+                properties.push(Freemix.exhibit.getExpressionCount(property.expression(), property.label()));
+            });
+            properties.sort(sorter);
+            return properties;
         }
     };
 

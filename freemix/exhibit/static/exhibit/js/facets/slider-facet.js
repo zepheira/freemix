@@ -1,39 +1,6 @@
 /*global jQuery */
  (function($, Freemix) {
 
-    function isFacetCandidate(prop) {
-        return (prop.values > 1 && prop.values + prop.missing != Freemix.exhibit.database.getAllItemsCount());
-    }
-
-    function simpleSort(a, b) {
-        if (a.missing == b.missing) {
-            return a.values - b.values;
-        } else {
-            return a.missing - b.missing;
-        }
-    }
-
-    function sorter(a, b) {
-        var aIsCandidate = isFacetCandidate(a);
-        var bIsCandidate = isFacetCandidate(b);
-
-        if ((aIsCandidate && bIsCandidate) || (!aIsCandidate && !bIsCandidate)) {
-            return simpleSort(a, b);
-        }
-        return bIsCandidate ? 1: -1;
-    }
-
-
-    function generatePropertyList() {
-        var properties = [];
-        $.each(Freemix.property.getPropertiesWithTypes(["number", "currency"]),
-        function(name, property) {
-            properties.push(Freemix.exhibit.getExpressionCount(property.expression(), property.label()));
-        });
-        properties.sort(sorter);
-        return properties;
-    }
-
     Freemix.facet.addFacetType({
         facetClass: Exhibit.SliderFacet,
         propertyTypes: ["number", "currency"],
@@ -59,9 +26,6 @@
               template.data("model", this);
               template.find("form").submit(function() {return false;});
 
-
-
-
               function updatePreview() {
                   var preview = $(facet.generateExhibitHTML(config));
                   template.find("#facet-preview").empty().append(preview);
@@ -70,7 +34,7 @@
 
               }
               var select = template.find("#facet_property");
-              var properties = generatePropertyList();
+              var properties = Freemix.facet.generatePropertyList(facet.propertyTypes);
 
               $.each(properties, function() {
                   var option = "<option value='" + this.expression + "'>" + this.label + "</option>";
