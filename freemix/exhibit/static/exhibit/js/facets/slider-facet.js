@@ -9,8 +9,8 @@
         label: "Slider",
         config: {
             type: "Slider",
-	    expression: "",	    
-	    height: "50px"
+            expression: "",
+            height: "50px"
         },
         generateExhibitHTML: function(config) {
             config = config || this.config;
