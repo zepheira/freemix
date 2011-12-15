@@ -10,12 +10,26 @@
         config: {
             type: "Slider",
             expression: "",
-            height: "50px"
+            height: "50px",
+            histogram: true,
+            horizontal: true
         },
         generateExhibitHTML: function(config) {
             config = config || this.config;
-            return "<div ex:role='facet' ex:facetClass='Slider' ex:histogram='true' ex:horizontal='true' ex:height='50px' ex:expression='" + config.expression +
-                "' ex:facetLabel='" + config.name + "'></div>";
+
+            var result = $("<div ex:role='facet' ex:facetClass='Slider'></div>");
+
+            result.attr("ex:expression", config.expression);
+            result.attr("ex:height", config.height);
+            result.attr("ex:histogram", config.histogram);
+            result.attr("ex:horizontal", config.horizontal);
+            if (config.name && config.name.length > 0) {
+                result.attr("ex:facetLabel", config.name);
+            }
+            return result;
+//
+//            return "<div ex:role='facet' ex:facetClass='Slider' ex:histogram='true' ex:horizontal='true' ex:height='50px' ex:expression='" + config.expression +
+//                "' ex:facetLabel='" + config.name + "'></div>";
         },
         showEditor: function(facetContainer) {
               var facet = this;
