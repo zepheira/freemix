@@ -85,8 +85,11 @@
            function clampInterval(base) {
                var input = template.find("$#range_interval");
                var range = input.data("range");
-               base = base||range.min;
-               config.interval = Math.max(config.interval, base);
+               if (config.interval < range.min) {
+
+                   base = base||range.min;
+                   config.interval = base;
+               }
                config.interval = Math.min(config.interval, range.max);
                input.val(config.interval);
            }
