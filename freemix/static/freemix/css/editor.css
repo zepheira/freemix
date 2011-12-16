@@ -857,7 +857,7 @@ height: 280px;
 }
 
 .text-facet-editor .facet-properties, .text-facet-editor .facet-preview {
-height: 280px;
+height: 300px;
 }
 
 .text-facet-editor textarea {
@@ -876,4 +876,10 @@ padding-right: 0px;
       float: left;
       position: relative;
       padding: 0 0 0 0;
+}
+
+/* remove spurious banner on top of editing pane */
+
+.exhibit_edit {
+margin-top: -22px;
 }

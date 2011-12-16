@@ -86,3 +86,10 @@ table.exhibit-tabularView-body td {
     width: auto;
     min-width: 0;
 }
+
+/* remove spurious banner on top of editing pane */
+
+.exhibit_display {
+margin-top: -24px;
+padding-top: 10px;
+}
