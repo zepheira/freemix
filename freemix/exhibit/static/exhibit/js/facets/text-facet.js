@@ -34,7 +34,7 @@
 
         refresh: function() {
             var facet = this;
-            var result = $("<div class='text-facet-content'></div>");
+            var result = $("<div class='text-facet-content exhibit-facet'></div>");
 
 
             result.append(this.generateExhibitHTML());

@@ -19,7 +19,7 @@
         },
         generateExhibitHTML: function (config) {
             config = config || this.config;
-            var result = $("<div ex:role='facet' ex:facetClass='Cloud'></div>");
+            var result = $("<div ex:role='facet' ex:facetClass='Cloud'  class='exhibit-facet exhibit-cloudFacet'></div>");
             result.attr("ex:expression", config.expression);
             if (config.name && config.name.length > 0) {
                 result.attr("ex:facetLabel", config.name);

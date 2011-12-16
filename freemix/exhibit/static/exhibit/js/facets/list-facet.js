@@ -20,7 +20,7 @@
 
             config = config || this.config;
 
-            var result = $("<div ex:role='facet'></div>");
+            var result = $("<div ex:role='facet' class='exhibit-facet'></div>");
             result.attr("ex:expression", config.expression);
             if (config.name && config.name.length > 0) {
                 result.attr("ex:facetLabel", config.name);

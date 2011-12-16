@@ -27,7 +27,11 @@
     max-width: 19em;
 }
 
-#top-facets .facet,#top-facets .exhibit-facet  {
+#top-facets .facet,
+#top-facets .exhibit-facet,
+#top-facets .exhibit-cloudFacet {
+    display: inline-table;
+    vertical-align: top;
 }
 
 #top-facets img {

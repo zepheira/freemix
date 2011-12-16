@@ -17,7 +17,7 @@
         generateExhibitHTML: function(config) {
             config = config || this.config;
 
-            var result = $("<div ex:role='facet' ex:facetClass='Slider'></div>");
+            var result = $("<div ex:role='facet' ex:facetClass='Slider' class='exhibit-facet'></div>");
 
             result.attr("ex:expression", config.expression);
             result.attr("ex:height", config.height);
