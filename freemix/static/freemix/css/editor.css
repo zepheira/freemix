@@ -826,6 +826,11 @@ width: 90%;
 margin-left: 10px;
 }
 
+.facet-properties .slider {
+border-bottom: 3px solid lightgrey;
+width: 90%;
+}
+
 .search-facet-editor .facet-properties, .search-facet-editor .facet-preview {
 height: 90px;
 }
