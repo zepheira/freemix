@@ -162,6 +162,7 @@ font-size: 90%;
     vertical-align: top;
 }
 
+
 #build .facet {
     margin: 1em;
     min-width: 3em;
@@ -864,4 +865,15 @@ width: 90%;
 height: 230px;
 margin-top: 10px;
 padding-right: 0px;
+}
+
+
+/* reset layout for editor */
+
+.col1,
+.col2,
+.col3 {
+      float: left;
+      position: relative;
+      padding: 0 0 0 0;
 }
