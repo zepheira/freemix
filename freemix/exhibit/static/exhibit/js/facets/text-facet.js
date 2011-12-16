@@ -28,13 +28,13 @@
             text: undefined
         },
         generateExhibitHTML: function() {
-            return $("<div class='text-facet'>").creole(this.config.text);
+            return $("<div class='text-facet exhibit-facet'>").creole(this.config.text);
 
         },
 
         refresh: function() {
             var facet = this;
-            var result = $("<div class='text-facet-content exhibit-facet'></div>");
+            var result = $("<div class='text-facet-content'></div>");
 
 
             result.append(this.generateExhibitHTML());
