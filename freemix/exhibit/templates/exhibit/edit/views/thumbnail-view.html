@@ -1,7 +1,11 @@
 {% load i18n %}
 <div id="thumbnail-view-template">
-    <form class="thumbnail-view-form view-config ui-widget-content">
+    <form class="view-form view-config ui-widget-content">
         <fieldset>
+            <div id="view_label">
+                <label for="view_label_input">{% trans "View Label" %}</label>
+                <input type="text" id="view_label_input"/>
+            </div>
             <div id="thumbnail_image">
                 <label for="image_property">{% trans "Image" %}</label>
                 <select id="image_property"></select>

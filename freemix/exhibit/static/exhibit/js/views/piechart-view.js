@@ -10,11 +10,12 @@
          this.findWidget().recordPager();
      }
 
-    function generateExhibitHTML() {
+    function generateExhibitHTML(config) {
+        config = config || this.config;
+
         var view = $("<div ex:role='view' ex:viewClass='Piechart' ex:viewLabel='" + this.config.name + "'></div>");
         var properties = [];
         var props = Freemix.property.enabledProperties();
-        var config = this.config;
         $.each(config.metadata,
         function(index, metadata) {
             var property = metadata.property;

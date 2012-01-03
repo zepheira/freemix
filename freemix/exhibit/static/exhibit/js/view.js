@@ -102,10 +102,31 @@
             }
         },
         display: function() {},
-        generateExhibitHTML: function() {},
+        generateExhibitHTML: function(config) {},
         showEditor: function(vc) {
             vc.hidePopup();
             vc.addView(this);
+        },
+        _setupViewForm: function(config) {
+            config = config || this.config;
+            var content = this.getContent();
+
+            content.find("form").submit(function() {return false;});
+
+        },
+        _setupLabelEditor: function(config) {
+            config = config||this.config;
+            var view = this;
+            var label = this.getContent().find("#view_label_input");
+
+            label.val(config.name);
+            label.change(function() {
+                view.rename($(this).val());
+            });
+        },
+        _setupTitlePropertyEditor: function(config) {
+            //TODO
+
         }
 
      });

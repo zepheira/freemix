@@ -95,7 +95,7 @@
                 }
             });
 
-            w.find(".create-facet-button").click(function() {
+            w.find(".create-facet").click(function() {
                 dialog.empty();
                 dialog.append(facetContainer.getPopupContent());
                 dialog.dialog("option", {

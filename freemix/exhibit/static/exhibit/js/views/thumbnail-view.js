@@ -1,22 +1,18 @@
 /*global jQuery */
  (function($, Freemix) {
 
-     function createSetupHandler(model) {
+     function createSelectOptionHandler(model) {
          return function(selector, key, collection, nullable) {
-             var content = model.getContent();
 
              if (nullable) {
-                 $(selector, content).append("<option value=''></option>");
+                 selector.append("<option value=''></option>");
              }
              $.each(collection, function() {
                  var option = "<option value='" + this.name() + "'>" + this.label() + "</option>";
-                 $(selector, content).append(option);
+                 selector.append(option);
              });
 
-
-
-              model.getContent().find(selector)
-               .change(function() {
+              selector.change(function() {
                    var value = $(this).val();
                    if (value && value != ( "" || undefined)) {
                        model.config[key] = value;
@@ -25,8 +21,8 @@
                    }
                }).val(model.config[key]);
 
-              if (!$(selector).val()) {
-                 $(selector, content).get(0).options[0].selected = true;
+              if (!selector.val()) {
+                 selector.get(0).options[0].selected = true;
 
               }
 
@@ -36,45 +32,54 @@
 
      // Display the view's UI.
      function display() {
+         var view = this;
          var config = this.config;
          var content = this.getContent();
          var root = Freemix.getTemplate("thumbnail-view-template");
 
          content.empty();
          content.append(root);
-         var setupHandler = createSetupHandler(this);
+         content.find("form").submit(function() {return false;});
+         this._setupViewForm();
+         this._setupLabelEditor();
+
+         var setupHandler = createSelectOptionHandler(this);
          var images = Freemix.property.getPropertiesWithType("image");
          var links = Freemix.property.getPropertiesWithTypes(["image", "url"]);
          var titles = Freemix.property.enabledProperties();
 
-         // Set up image property selector
-         setupHandler("#image_property", "image", images);
+         var image = content.find("#image_property");
+         var title = content.find("#title_property");
+         var title_link = content.find("#title_link_property");
 
-         setupHandler("#title_property", "title", titles, true);
-         var tp = $("#title_property");
-         tp.change(function() {
-             if (tp.val() && links.length > 0) {
-                 $("#title_link_property", content).removeAttr("disabled");
+
+         // Set up image property selector
+         setupHandler(image, "image", images);
+         setupHandler(title, "title", titles, true);
+         title.change(function() {
+             if (title.val() && links.length > 0) {
+                 title_link.removeAttr("disabled");
              } else {
-                 $("#title_link_property", content).attr("disabled", true);
-                 $("#title_link_property", content).val("");
+                 title_link.attr("disabled", true);
+                 title_link.val("");
              }
          });
-         tp.change();
+         title.change();
 
          if (links.length > 0) {
-             setupHandler("#title_link_property", "titleLink", links, true);
+             setupHandler(title_link, "titleLink", links, true);
          } else {
-             $("#title_link_property", content).attr("disabled", true);
+             title_link.attr("disabled", true);
          }
-         $("#image_property", content).change();
-         $("#title_property", content).change();
-         $("#title_link_property", content).change();
+         image.change();
+         title.change();
+         title_link.change();
+
 
      }
 
-    function generateExhibitHTML() {
-        var config = this.config;
+    function generateExhibitHTML(config) {
+        config = config || this.config;
         var props = Freemix.property.enabledProperties();
 
         var view = $("<div ex:role='view' ex:viewClass='Thumbnail' ex:viewLabel='" + config.name + "'></div>");

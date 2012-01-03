@@ -14,7 +14,7 @@
         label: "Map",
         thumbnail: "/static/exhibit/img/map-icon.png",
         display: function(){GoogleDisplay(this)},
-        generateExhibitHTML: function(){return GoogleGenerateExhibitHTML(this)},
+        generateExhibitHTML: function(config){return GoogleGenerateExhibitHTML(config || this.config)},
         config: {
             type: "map",
             title: undefined,

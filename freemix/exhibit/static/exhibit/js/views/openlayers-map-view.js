@@ -14,7 +14,7 @@
         label: "Map",
         thumbnail: "/static/exhibit/img/map-icon.png",
         display: function(){OLDisplay(this)},
-       	generateExhibitHTML: function(){return OLGenerateExhibitHTML(this)},
+       	generateExhibitHTML: function(config){return OLGenerateExhibitHTML(config || this.config)},
         config: {
             type: "map",
             title: undefined,

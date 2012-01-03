@@ -5,6 +5,7 @@
      function display() {
          var content = this.getContent();
          var root = Freemix.getTemplate("scatterplot-view-template");
+         var model = this;
          content.empty();
          root.appendTo(content);
          this.findWidget().recordPager(
@@ -67,10 +68,10 @@
          $('#clear-title-link').bind('click', function() {
              model.config.titleLink = null;
          });
-         if (typeof this.config.title !== "undefined" && this.config.title != null) {
+         if (typeof model.config.title !== "undefined" && model.config.title != null) {
              $('.view-content:visible .title-link-option').show();
          }
-         if (typeof this.config.xaxis === "undefined") {
+         if (typeof model.config.xaxis === "undefined") {
              $('.required-setting[rel=property-xaxis]').show();
              $('.required-setting[rel=property-xaxis]:visible').bind('mouseover', function() {
                  $('#'+$(this).attr('rel')).addClass('ui-state-highlight');
@@ -83,7 +84,7 @@
          } else {
              $('.required-setting[rel=property-xaxis]:visible').hide();
          }
-         if (typeof this.config.yaxis === "undefined") {
+         if (typeof model.config.yaxis === "undefined") {
              $('.required-setting[rel=property-yaxis]').show();
              $('.required-setting[rel=property-yaxis]:visible').bind('mouseover', function() {
                  $('#'+$(this).attr('rel')).addClass('ui-state-highlight');
@@ -98,13 +99,15 @@
          }
      }
 
-    function generateExhibitHTML() {
-        if (typeof this.config.xaxis === "undefined" || typeof this.config.yaxis === "undefined") {
+    function generateExhibitHTML(config) {
+        config = config || this.config;
+
+        if (typeof config.xaxis === "undefined" || typeof config.yaxis === "undefined") {
             return $('<div ex:role="view" ex:viewLabel="Axis Missing"></div>');
         }
 
-        var xaxis = this.config.xaxis;
-        var yaxis = this.config.yaxis;
+        var xaxis = config.xaxis;
+        var yaxis = config.yaxis;
         if (xaxis && yaxis) {
             var minx = 0;
             var maxx = 0;
@@ -138,7 +141,7 @@
             }
         }
 
-        var view = $("<div ex:role='view' ex:viewClass='Exhibit.ScatterPlotView' ex:viewLabel='" + this.config.name + "'></div>");
+        var view = $("<div ex:role='view' ex:viewClass='Exhibit.ScatterPlotView' ex:viewLabel='" + config.name + "'></div>");
         var props = Freemix.property.enabledProperties();
         if (xaxis) {
             view.attr("ex:x", props[xaxis].expression());
@@ -151,18 +154,18 @@
 
         var lens = $("<div class='scatterplot-lens' ex:role='lens' style='display:none'></div>");
         var title = $("<div class='exhibit-title ui-widget-header'></div>");
-        if (this.config.title) {
-            var html = "<span ex:content='" + props[this.config.title].expression() + "' ></span>";
-            if (this.config.titleLink) {
-                html += "&nbsp;<a ex:href-content='" + props[this.config.titleLink].expression() + "' target='_blank'>(link)</a>";
+        if (config.title) {
+            var html = "<span ex:content='" + props[config.title].expression() + "' ></span>";
+            if (config.titleLink) {
+                html += "&nbsp;<a ex:href-content='" + props[config.titleLink].expression() + "' target='_blank'>(link)</a>";
             }
             title.append(html);
-            var formats = "item {title:expression(" + props[this.config.title].expression() + ")}";
+            var formats = "item {title:expression(" + props[config.title].expression() + ")}";
             view.attr("ex:formats", formats);
         }
         lens.append(title);
         var table = $("<table class='property-list-table exhibit-list-table'></table>");
-        $.each(this.config.metadata,
+        $.each(config.metadata,
         function(index, metadata) {
             var property = metadata.property;
             var identify = props[property];

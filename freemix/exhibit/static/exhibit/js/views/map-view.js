@@ -92,13 +92,13 @@
         }
     };
 
-    Freemix.mapViewLib.generateExhibitHTML = function(o, viewClass) {
-        if (!o.config.latlng) {
+    Freemix.mapViewLib.generateExhibitHTML = function(config, viewClass) {
+        if (!config.latlng) {
             return $("<div ex:role='view' ex:viewClass='"+viewClass+"' ex:viewLabel='Location Missing'></div>");
         }
-        var latlng = o.config.latlng;
-        var colorKey = o.config.colorKey;
-        var view = $("<div ex:role='view' ex:viewClass='"+viewClass+"' ex:viewLabel='" + o.config.name + "'></div>");
+        var latlng = config.latlng;
+        var colorKey = config.colorKey;
+        var view = $("<div ex:role='view' ex:viewClass='"+viewClass+"' ex:viewLabel='" + config.name + "'></div>");
         if (latlng) {
             view.attr("ex:latlng", '.' + latlng);
         }
@@ -109,19 +109,19 @@
         var props = Freemix.property.enabledProperties();
 
         var title = $("<div class='exhibit-title ui-widget-header'></div>");
-        if (o.config.title) {
-            var html = "<span ex:content='" + props[o.config.title].expression() + "' ></span>";
-            if (o.config.titleLink) {
-                html += "&nbsp;<a ex:href-content='" + props[o.config.titleLink].expression() + "' target='_blank'>(link)</a>";
+        if (config.title) {
+            var html = "<span ex:content='" + props[config.title].expression() + "' ></span>";
+            if (config.titleLink) {
+                html += "&nbsp;<a ex:href-content='" + props[config.titleLink].expression() + "' target='_blank'>(link)</a>";
             }
             title.append(html);
 
-            var formats = "item {title:expression(" + props[o.config.title].expression() + ")}";
+            var formats = "item {title:expression(" + props[config.title].expression() + ")}";
             view.attr("ex:formats", formats);
         }
 
         var table = $("<table class='property-list-table exhibit-list-table'></table>");
-        $.each(o.config.metadata,
+        $.each(config.metadata,
         function(index, metadata) {
             var property = metadata.property;
             var identify = props[property];

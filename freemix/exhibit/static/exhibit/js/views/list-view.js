@@ -49,24 +49,25 @@
         }
     }
 
-    function generateExhibitHTML() {
-        var view = $("<div ex:role='view' ex:viewLabel='" + this.config.name + "'></div>");
+    function generateExhibitHTML(config) {
+        config = config || this.config;
+        var view = $("<div ex:role='view' ex:viewLabel='" + config.name + "'></div>");
         var props = Freemix.property.enabledProperties();
 
         var lens = $("<div ex:role='lens' style='display:none'></div>");
         var title = $("<div class='exhibit-title ui-widget-header'></div>");
-        if (this.config.title) {
-            var html = "<span ex:content='" + props[this.config.title].expression() + "' ></span>";
-            if (this.config.titleLink) {
-                html += "&nbsp;<a ex:href-content='" + props[this.config.titleLink].expression() + "' target='_blank'>(link)</a>";
+        if (config.title) {
+            var html = "<span ex:content='" + props[config.title].expression() + "' ></span>";
+            if (config.titleLink) {
+                html += "&nbsp;<a ex:href-content='" + props[config.titleLink].expression() + "' target='_blank'>(link)</a>";
             }
             title.append(html);
-            var formats = "item {title:expression(" + props[this.config.title].expression() + ")}";
+            var formats = "item {title:expression(" + props[config.title].expression() + ")}";
             view.attr("ex:formats", formats);
         }
         lens.append(title);
         var table = $("<table class='property-list-table exhibit-list-table'></table>");
-        $.each(this.config.metadata,
+        $.each(config.metadata,
         function(index, metadata) {
             var property = metadata.property;
             var identify = props[property];

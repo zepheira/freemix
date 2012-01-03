@@ -42,8 +42,8 @@
          });
      }
 
-    function generateExhibitHTML() {
-        var config = this.config;
+    function generateExhibitHTML(config) {
+        config = config || this.config;
         var empty = true;
 
         var props = Freemix.property.enabledProperties();

@@ -167,11 +167,11 @@
          }
      }
 
-    function generateExhibitHTML() {
+    function generateExhibitHTML(config) {
         function expression(prop) {
             return "." + prop;
         }
-        var config = this.config;
+        config = config || this.config;
         if (!config.startDate) {
             return $("<div ex:role='view' ex:viewLabel='Range Missing'></div>");
         }
