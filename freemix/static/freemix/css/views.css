@@ -83,10 +83,9 @@ table.exhibit-tabularView-body td {
 }
 
 .facet-content div.exhibit-text-facet input {
-    width: auto;
+    width: 90%;
     min-width: 0;
 }
-
 /* remove spurious banner on top of editing pane */
 
 .exhibit_display {
