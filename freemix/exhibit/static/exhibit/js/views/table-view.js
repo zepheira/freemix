@@ -3,43 +3,30 @@
 
       // Display the view's UI.
      function display() {
+         var model = this;
          var content = this.getContent();
          var root = Freemix.getTemplate("table-view-template");
          content.empty();
          root.appendTo(content);
+         this._setupViewForm();
+         this._setupLabelEditor();
 
-         this.findWidget().recordPager(
-             function(row, model, metadata) {
-                 $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                     radio: true,
-                     checked: model.config['sortProperty'] === metadata.property,
-                     change: function() {
-                         if ($(this).is(":checked")) {
-                             model.config['sortProperty'] = metadata.property;
-                         }
-                     },
-                     name: 'sortProperty'
-                 });
-                 row.find('td.visible input:checkbox', content).bind('change', function(e) {
-                     var t = $(this);
-                     if (row.find('td.inner input:radio').is(':checked')) {
-                         t.attr('checked', true);
-                         metadata.hidden = undefined;
-                     } else {
-                         row.find('td.inner input:radio').attr('disabled', !t.is(':checked'));
-                     }
-                 });
-                 if (!row.find('td.visible input:checkbox').is(':checked')) {
-                     row.find('input[name="sortProperty"]:radio').attr('disabled', true);
-                 }
-             }
-         );
+         var props = Freemix.property.enabledProperties();
 
-         var m = this;
-         $('select.sort-order', content).val(m.config.asc.toString());
-         $('select.sort-order', content).bind('change', function(e) {
-             m.config.asc = $(this).val() === 'true';
+         var sort  = content.find("#sort_property");
+
+         model._setupSelectOptionHandler(sort, "sortProperty", props, true);
+         sort.change();
+
+         var sort_order = content.find("#sort_order");
+         sort_order.val(model.config.asc.toString());
+         sort_order.change(function(e) {
+             model.config.asc = $(this).val() === 'true';
          });
+         sort_order.change();
+
+         this.findWidget().recordPager();
+
      }
 
     function generateExhibitHTML(config) {

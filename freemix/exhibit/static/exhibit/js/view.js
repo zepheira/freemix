@@ -125,7 +125,55 @@
             });
         },
         _setupTitlePropertyEditor: function(config) {
-            //TODO
+            config = config||this.config;
+            var links = Freemix.property.getPropertiesWithTypes(["image", "url"]);
+            var titles = Freemix.property.enabledProperties();
+            var content = this.getContent();
+            var title = content.find("#title_property");
+            var title_link = content.find("#title_link_property");
+
+            this._setupSelectOptionHandler(title, "title", titles, true);
+            title.change(function() {
+                 if (title.val() && links.length > 0) {
+                     title_link.removeAttr("disabled");
+                 } else {
+                     title_link.attr("disabled", true);
+                     title_link.val("");
+                     title_link.change();
+                 }
+            });
+
+            if (links.length > 0) {
+                 this._setupSelectOptionHandler(title_link, "titleLink", links, true);
+            } else {
+                 title_link.attr("disabled", true);
+            }
+            title.change();
+            title_link.change();
+
+        },
+        _setupSelectOptionHandler: function(selector, key, collection, nullable) {
+            var config = this.config;
+            if (nullable) {
+                selector.append("<option value=''></option>");
+            }
+            $.each(collection, function() {
+                var option = "<option value='" + this.name() + "'>" + this.label() + "</option>";
+                selector.append(option);
+            });
+
+             selector.change(function() {
+                  var value = $(this).val();
+                  if (value && value != ( "" || undefined)) {
+                      config[key] = value;
+                  } else {
+                      config[key] = undefined;
+                  }
+              }).val(config[key]);
+
+             if (!selector.val()) {
+                selector.get(0).options[0].selected = true;
+             }
 
         }
 

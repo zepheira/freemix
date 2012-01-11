@@ -1,81 +1,25 @@
 /*global jQuery */
  (function($, Freemix) {
 
-     function createSelectOptionHandler(model) {
-         return function(selector, key, collection, nullable) {
-
-             if (nullable) {
-                 selector.append("<option value=''></option>");
-             }
-             $.each(collection, function() {
-                 var option = "<option value='" + this.name() + "'>" + this.label() + "</option>";
-                 selector.append(option);
-             });
-
-              selector.change(function() {
-                   var value = $(this).val();
-                   if (value && value != ( "" || undefined)) {
-                       model.config[key] = value;
-                   } else {
-                       model.config[key] = undefined;
-                   }
-               }).val(model.config[key]);
-
-              if (!selector.val()) {
-                 selector.get(0).options[0].selected = true;
-
-              }
-
-           };
-     }
-
-
      // Display the view's UI.
      function display() {
-         var view = this;
-         var config = this.config;
          var content = this.getContent();
          var root = Freemix.getTemplate("thumbnail-view-template");
 
          content.empty();
          content.append(root);
-         content.find("form").submit(function() {return false;});
          this._setupViewForm();
          this._setupLabelEditor();
 
-         var setupHandler = createSelectOptionHandler(this);
          var images = Freemix.property.getPropertiesWithType("image");
-         var links = Freemix.property.getPropertiesWithTypes(["image", "url"]);
-         var titles = Freemix.property.enabledProperties();
 
          var image = content.find("#image_property");
-         var title = content.find("#title_property");
-         var title_link = content.find("#title_link_property");
-
 
          // Set up image property selector
-         setupHandler(image, "image", images);
-         setupHandler(title, "title", titles, true);
-         title.change(function() {
-             if (title.val() && links.length > 0) {
-                 title_link.removeAttr("disabled");
-             } else {
-                 title_link.attr("disabled", true);
-                 title_link.val("");
-             }
-         });
-         title.change();
+         this._setupSelectOptionHandler(image, "image", images);
+         this._setupTitlePropertyEditor();
 
-         if (links.length > 0) {
-             setupHandler(title_link, "titleLink", links, true);
-         } else {
-             title_link.attr("disabled", true);
-         }
          image.change();
-         title.change();
-         title_link.change();
-
-
      }
 
     function generateExhibitHTML(config) {

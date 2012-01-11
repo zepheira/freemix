@@ -1,170 +1,56 @@
 /*global jQuery */
  (function($, Freemix) {
 
-     function createSetupHandler(model) {
-         return function(selector, key, nullValue) {
-              model.getContent().find(selector)
-               .change(function() {
-                   var value = $(this).val();
-                   if (value != (nullValue || "" || undefined)) {
-                       model.config[key] = value;
-                   } else {
-                       model.config[key] = undefined;
-                   }
-               })
-               .val(model.config[key]);
-           };
-     }
-
-
-
      // Display the view's UI.
      function display() {
          var content = this.getContent();
          var root = Freemix.getTemplate("timeline-view-template");
          content.empty();
          root.appendTo(content);
+         var model = this;
 
-         var setupHandler = createSetupHandler(this);
+         model._setupViewForm();
+         model._setupLabelEditor();
+         model._setupTitlePropertyEditor();
 
-         var $start = content.find("#timeline-start-date");
-         var $end = content.find("#timeline-end-date");
+         var start = content.find("#start_property");
+         var end = content.find("#end_property");
+         var color = content.find("#color_property");
+         var top_band = content.find("#top-band-unit");
+         var bottom_band = content.find("#bottom-band-unit");
 
-         setupHandler("#top-band-unit", "topBandUnit");
-         setupHandler("#bottom-band-unit", "bottomBandUnit");
-         setupHandler("#timeline-start-date", "startDate");
-         if (!$("#top-band-unit").val()) {
-             $("#top-band-unit").get(0).options[0].selected = true;
-             $("#top-band-unit").change();
+         top_band.change(function() {
+             var value = $(this).val();
+             model.config.topBandUnit = $(this).val();
+         }).val(model.config.topBandUnit);
+
+         bottom_band.change(function() {
+             var value = $(this).val();
+             model.config.bottomBandUnit = $(this).val();
+         }).val(model.config.bottomBandUnit);
+
+         if (!top_band.val()) {
+             top_band.get(0).options[0].selected = true;
+             top_band.change();
          }
-         if (!$("#bottom-band-unit").val()) {
-             $("#bottom-band-unit").get(0).options[0].selected = true;
-             $("#bottom-band-unit").change();
+         if (!bottom_band.val()) {
+             bottom_band.get(0).options[0].selected = true;
+             bottom_band.change();
          }
 
-         // Read record data into selects.
-         $.each(Freemix.property.getPropertiesWithType("date"),
-         function() {
-             var value = $start.val();
-             $start.append('<option value="' + this.name() + '">' + this.label() + '</option>');
-             if (!value) {
-                 $start.val(this.name());
-                 $start.change();
-             }
-         });
+         var dates = Freemix.property.getPropertiesWithTypes(model.propertyTypes);
+         var colors = Freemix.property.enabledProperties();
 
-	 $end.append('<option value="">(none)</option>');
-         $.each(Freemix.property.getPropertiesWithType("date"),
-         function() {
-             var value = $end.val();
-             $end.append('<option value="' + this.name() + '">' + this.label() + '</option>');
-             if (value == this.name()) {
-                 $end.val(this.name());
-                 $end.change();
-             }
-         });
-         setupHandler("#timeline-end-date", "endDate");
+         model._setupSelectOptionHandler(start, "startDate", dates);
+         model._setupSelectOptionHandler(end, "endDate", dates, true);
+         model._setupSelectOptionHandler(color, "colorKey", colors, true);
 
-         this.findWidget().recordPager(
-             function(row, model, metadata) {
-                 $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                     radio: true,
-                     checked: model.config.colorKey === metadata.property,
-                     change: function() {
-                         if ($(this).is(":checked")) {
-                             model.config.colorKey = metadata.property;
-                         }
-                     },
-                     name: 'colorKey'
-                 });
+         start.change();
+         end.change();
+         color.change();
 
-                 if (Freemix.property.propertyHasType(metadata.property, "date")) {
-                     $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                         radio: true,
-                         checked: model.config.endDate === metadata.property,
-                         change: function() {
-                             if ($(this).is(":checked")) {
-                                 model.config.endDate = metadata.property;
-                             }
-                         },
-                         name: 'endDate'
-                     });
-                 } else {
-                     $('<td class="inner"><input type="radio" disabled="true" /></td>').insertAfter(row.find("td.visible"));
-                 }
+         model.findWidget().recordPager();
 
-                 if (Freemix.property.propertyHasType(metadata.property, "date")) {
-                     $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                         radio: true,
-                         checked: model.config.startDate === metadata.property,
-                         change: function() {
-                             if ($(this).is(":checked")) {
-                                 model.config.startDate = metadata.property;
-                             }
-                         },
-                         name: 'startDate'
-                     });
-                 } else {
-                     $('<td class="inner"><input type="radio" disabled="true" /></td>').insertAfter(row.find("td.visible"));
-                 }
-
-                 if (Freemix.property.propertyHasType(metadata.property, "url")) {
-                     $("<td class='inner title-link-option'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                         radio: true,
-                         checked: model.config.titleLink === metadata.property,
-                         change: function() {
-                             if ($(this).is(":checked")) {
-                                 model.config.titleLink = metadata.property;
-                             }
-                         },
-                         name: 'titleLink'
-                     });
-                 } else {
-                     $('<td class="inner title-link-option"><input type="radio" disabled="true" /></td>').insertAfter(row.find("td.visible"));
-                 }
-
-                 $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                     radio: true,
-                     checked: model.config.title === metadata.property,
-                     change: function() {
-                         if ($(this).is(":checked")) {
-                             model.config.title = metadata.property;
-                             $('.view-content:visible .title-link-option').fadeIn();
-                         }
-                     },
-                     name: 'title'
-                 });
-             }
-         );
-         $('#clear-title').bind('click', function() {
-             model.config.title = null;
-             $('.view-content:visible .title-link-option').fadeOut();
-         });
-         $('#clear-title-link').bind('click', function() {
-             model.config.titleLink = null;
-         });
-         $('#clear-end').bind('click', function() {
-             model.config.endDate = null;
-         });
-         $('#clear-color').bind('click', function() {
-             model.config.colorKey = null;
-         });
-         if (typeof this.config.title !== "undefined" && this.config.title != null) {
-             $('.view-content:visible .title-link-option').show();
-         }
-         if (typeof this.config.startDate === "undefined") {
-             $('.required-setting').show();
-             $('.required-setting:visible').bind('mouseover', function() {
-                 $('#'+$(this).attr('rel')).addClass('ui-state-highlight');
-             }).bind('mouseout', function() {
-                 $('#'+$(this).attr('rel')).removeClass('ui-state-highlight');
-             });
-             $('input[name=startDate]').bind('change', function() {
-                 $('.required-setting:visible').hide();
-             });
-         } else {
-             $('.required-setting:visible').hide();
-         }
      }
 
     function generateExhibitHTML(config) {
@@ -248,9 +134,9 @@
             colorKey: undefined,
             startDate: undefined,
             endDate: undefined,
-            topBandUnit: undefined,
+            topBandUnit: "auto",
             topBandPixelsPerUnit: undefined,
-            bottomBandUnit: undefined,
+            bottomBandUnit: "auto",
             bottomBandPixelsPerUnit: undefined,
             metadata: []
         }

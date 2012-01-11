@@ -1,45 +1,61 @@
-{% extends "exhibit/edit/views/record-view.html" %}
 {% load i18n %}
+<div class="record-view" id="scatterplot-view-template">
+    <form class="view-form view-config ui-widget-content">
+       <fieldset>
+           <div id="view_label">
+               <label for="view_label_input">{% trans "View Label" %}</label>
+               <input type="text" id="view_label_input"/>
+           </div>
+           <div>
+               <label for="title_property">{% trans "Title" %}</label>
+               <select id="title_property"></select>
+           </div>
+           <div>
+               <label for="title_link_property">{% trans "Link" %}</label>
+               <select id="title_link_property"></select>
+           </div>
 
-{% block template_id %}id="scatterplot-view-template"{% endblock %}
+           <div>
+               <label for="xaxis_property">{% trans "X Axis" %}</label>
+               <select id="xaxis_property"></select>
+           </div>
 
-{% block required-settings %}
-<div id="systemMsg">
-  <ul class="messages required-setting" rel="property-xaxis">
-    <li class="warningMsg">Set a <strong>X</strong> coordinate for this view to display properly.</li>
-  </ul>
+           <div>
+               <label for="yaxis_property">{% trans "Y Axis" %}</label>
+               <select id="yaxis_property"></select>
+           </div>
+       </fieldset>
+   </form>
+
+    <div class="record-box">
+        <table class="property-list-table">
+            <thead class="ui-widget-header ui-corner-top">
+                <tr>
+                    <th class="visible">{% trans "Show" %}</th>
+                    <th>{% trans "Property" %}</th>
+                    <th>{% trans "Value" %}
+                        <span class="record-pager">
+                            <button class="left-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
+                            <button class="right-record-button" title="{% trans "Next Record" %}">&nbsp;</button>
+                        </span>
+                        <span id="current-record">#p</span> of <span id="record-count">#t</span>
+
+                    </th>
+                   </tr>
+
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+            <tr class='table-footer'>
+
+                <td ></td>
+                <td colspan="2">
+                    <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
 </div>
-
-<div id="systemMsg">
-  <ul class="messages required-setting" rel="property-yaxis">
-    <li class="warningMsg">Set a <strong>Y</strong> coordinate for this view to display properly.</li>
-  </ul>
-</div>
-{% endblock %}
-
-{% block property-list-headers %}
-    <th class="visible">Show</th>
-    <th id="title-chooser">Title</th>
-    <th class="title-link-option" id="title-link-chooser">Link</th>
-    <th id="property-xaxis">X</th>
-    <th id="property-yaxis">Y</th>
-    <th>Property</th>
-    <th>
-        Value
-        <span class="record-pager">
-            <button class="left-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
-            <button class="right-record-button" title="{% trans "Next Record" %}">&nbsp;</button>
-        </span>
-        <span id="current-record">#p</span> of <span id="record-count">#t</span>
-
-    </th>
-   </tr>
-   <tr>
-    <td></td>
-    <td class="inner"><input type="radio" id="clear-title" name="title" checked="checked" /></td>
-    <td class="inner title-link-option"><input type="radio" id="clear-title-link" name="titleLink" checked="checked" /></td>
-    <td></td>
-    <td></td>
-    <td colspan="2"><em>None</em></td>
-{% endblock %}
-{% block footer-filler-colspan %}colspan="5"{% endblock %}

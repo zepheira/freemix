@@ -7,6 +7,8 @@
          var root = Freemix.getTemplate("piechart-view-template");
          content.empty();
          root.appendTo(content);
+         this._setupViewForm();
+         this._setupLabelEditor();
          this.findWidget().recordPager();
      }
 

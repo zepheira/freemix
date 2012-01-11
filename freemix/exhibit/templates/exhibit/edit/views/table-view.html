@@ -1,25 +1,54 @@
-{% extends "exhibit/edit/views/record-view.html" %}
 {% load i18n %}
+<div class="record-view" id="table-view-template">
 
-{% block template_id %}id="table-view-template"{% endblock %}
-{% block view_header %}{% endblock %}
-{% block property-list-headers %}
-    <th class="visible">Show</th>
-    <th>Sort By<br />
-        <select name="sort-order" class="sort-order">
-            <option value="true">Ascend</option>
-            <option value="false">Descend</option>
-        </select>
-    </th>
-    <th>Property</th>
-    <th>
-        Value
-        <span class="record-pager">
-            <button class="left-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
-            <button class="right-record-button" title="{% trans "Next Record" %}">&nbsp;</button>
-        </span>
-        <span id="current-record">#p</span> of <span id="record-count">#t</span>
+    <form class="view-form view-config ui-widget-content">
+       <fieldset>
+           <div id="view_label">
+               <label for="view_label_input">{% trans "View Label" %}</label>
+               <input type="text" id="view_label_input"/>
+           </div>
+           <div>
+               <label for="sort_property">{% trans "Sort By" %}</label>
+               <select id="sort_property"></select>
+           </div>
+           <div>
+              <label for="sort_order">{% trans "Sort Order" %}</label>
+              <select id="sort_order" name="sort_order" class="sort-order">
+                <option value="true">{% trans "Ascending" %}</option>
+                <option value="false">{% trans "Descending" %}</option>
+              </select>
+           </div>
 
-    </th>
-{% endblock %}
-{% block footer-filler-colspan %}colspan="2"{% endblock %}
+       </fieldset>
+   </form>
+    <div class="record-box">
+        <table class="property-list-table">
+            <thead class="ui-widget-header ui-corner-top">
+                <tr>
+                    <th class="visible">{% trans "Show" %}</th>
+                    <th>{% trans "Property" %}</th>
+                    <th>{% trans "Value" %}
+                        <span class="record-pager">
+                            <button class="left-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
+                            <button class="right-record-button" title="{% trans "Next Record" %}">&nbsp;</button>
+                        </span>
+                        <span id="current-record">#p</span> of <span id="record-count">#t</span>
+
+                    </th>
+                   </tr>
+
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+            <tr class='table-footer'>
+
+                <td></td>
+                <td colspan="2">
+                    <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

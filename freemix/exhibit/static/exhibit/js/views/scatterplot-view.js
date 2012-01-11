@@ -8,95 +8,22 @@
          var model = this;
          content.empty();
          root.appendTo(content);
-         this.findWidget().recordPager(
-             function(row, model, metadata) {
 
-                 $("<td class='inner'></td>").insertAfter(row.find('td.visible')).createChildCheck({
-                     radio: true,
-                     checked:  model.config['yaxis'] === metadata.property,
-                     change: function() {
-                         if ($(this).is(":checked")) {
-                              model.config['yaxis'] = metadata.property;
-                         }
-                     },
-                     name: 'yaxis'
-                 });
+         model._setupViewForm();
+         model._setupLabelEditor();
+         model._setupTitlePropertyEditor();
 
-                 $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                     radio: true,
-                     checked:  model.config['xaxis'] === metadata.property,
-                     change: function() {
-                         if ($(this).is(":checked")) {
-                              model.config['xaxis'] = metadata.property;
-                         }
-                     },
-                     name: 'xaxis'
-                 });
+         var numbers = Freemix.property.getPropertiesWithTypes(["number"]);
 
-                 if (Freemix.property.propertyHasType(metadata.property, "url")) {
-                     $("<td class='inner title-link-option'></td>").insertAfter(row.find('td.visible')).createChildCheck({
-                         radio: true,
-                         checked: model.config.titleLink === metadata.property,
-                         change: function() {
-                             if ($(this).is(":checked")) {
-                                 model.config.titleLink = metadata.property;
-                             }
-                         },
-                         name: 'titleLink'
-                     });
-                 } else {
-                     $('<td class="inner title-link-option"><input type="radio" disabled="true" /></td>').insertAfter(row.find('td.visible'));
-                 }
+         var xaxis = content.find("#xaxis_property");
+         var yaxis = content.find("#yaxis_property");
 
-                 $("<td class='inner'></td>").insertAfter(row.find('td.visible')).createChildCheck({
-                     radio: true,
-                     checked: model.config.title === metadata.property,
-                     change: function() {
-                         if ($(this).is(":checked")) {
-                             model.config.title = metadata.property;
-                             $('.view-content:visible .title-link-option').fadeIn();
-                         }
-                     },
-                     name: 'title'
-                 });
-            }
-         );
-         $('#clear-title').bind('click', function() {
-             model.config.title = null;
-             $('.view-content:visible .title-link-option').fadeOut();
-         });
-         $('#clear-title-link').bind('click', function() {
-             model.config.titleLink = null;
-         });
-         if (typeof model.config.title !== "undefined" && model.config.title != null) {
-             $('.view-content:visible .title-link-option').show();
-         }
-         if (typeof model.config.xaxis === "undefined") {
-             $('.required-setting[rel=property-xaxis]').show();
-             $('.required-setting[rel=property-xaxis]:visible').bind('mouseover', function() {
-                 $('#'+$(this).attr('rel')).addClass('ui-state-highlight');
-             }).bind('mouseout', function() {
-                 $('#'+$(this).attr('rel')).removeClass('ui-state-highlight');
-             });
-             $('input[name=xaxis]').bind('change', function() {
-                 $('.required-setting[rel=property-xaxis]:visible').hide();
-             });
-         } else {
-             $('.required-setting[rel=property-xaxis]:visible').hide();
-         }
-         if (typeof model.config.yaxis === "undefined") {
-             $('.required-setting[rel=property-yaxis]').show();
-             $('.required-setting[rel=property-yaxis]:visible').bind('mouseover', function() {
-                 $('#'+$(this).attr('rel')).addClass('ui-state-highlight');
-             }).bind('mouseout', function() {
-                 $('#'+$(this).attr('rel')).removeClass('ui-state-highlight');
-             });
-             $('input[name=yaxis]').bind('change', function() {
-                 $('.required-setting[rel=property-yaxis]:visible').hide();
-             });
-         } else {
-             $('.required-setting[rel=property-yaxis]:visible').hide();
-         }
+         model._setupSelectOptionHandler(xaxis, "xaxis", numbers);
+         model._setupSelectOptionHandler(yaxis, "yaxis", numbers);
+         xaxis.change();
+         yaxis.change();
+         model.findWidget().recordPager();
+
      }
 
     function generateExhibitHTML(config) {

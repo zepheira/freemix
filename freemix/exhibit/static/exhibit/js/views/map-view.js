@@ -8,88 +8,21 @@
         var root = Freemix.getTemplate("map-view-template");
         content.empty();
         root.appendTo(content);
-        o.findWidget().recordPager(
-            function(row, model, metadata) {
-                $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                    radio: true,
-                    checked: model.config.colorKey === metadata.property,
-                    change: function() {
-                        if ($(this).is(":checked")) {
-                            model.config.colorKey = metadata.property;
-                        }
-                    },
-                    name: 'colorKey'
-                });
+        o._setupViewForm();
+        o._setupLabelEditor();
+        o._setupTitlePropertyEditor();
 
-                if (Freemix.property.propertyHasType(metadata.property, "location")) {
-                    $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                        radio: true,
-                        checked: model.config.latlng === metadata.property,
-                        change: function() {
-                            if ($(this).is(":checked")) {
-                                model.config.latlng = metadata.property;
-                            }
-                        },
-                        name: 'latlng'
-                    });
-                } else {
-                     $('<td class="inner"><input type="radio" disabled="true" /></td>').insertAfter(row.find("td.visible"));
-                }
+        var latlng = content.find("#latlng_property");
+        var points = Freemix.property.getPropertiesWithTypes(["location"]);
+        o._setupSelectOptionHandler(latlng, "latlng", points);
+        latlng.change();
 
-                if (Freemix.property.propertyHasType(metadata.property, "url")) {
-                    $("<td class='inner title-link-option'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                        radio: true,
-                        checked: model.config.titleLink === metadata.property,
-                        change: function() {
-                            if ($(this).is(":checked")) {
-                                model.config.titleLink = metadata.property;
-                            }
-                        },
-                        name: 'titleLink'
-                    });
-                } else {
-                    $('<td class="inner title-link-option"><input type="radio" disabled="true" /></td>').insertAfter(row.find("td.visible"));
-                }
+        var color = content.find("#color_property");
+        o._setupSelectOptionHandler(color, "color", Freemix.property.enabledProperties(), true);
+        color.change();
 
-                $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                    radio: true,
-                    checked: model.config.title === metadata.property,
-                    change: function() {
-                        if ($(this).is(":checked")) {
-                            model.config.title = metadata.property;
-                            $('.view-content:visible .title-link-option').fadeIn();
-                        }
-                    },
-                    name: 'title'
-                });
-            }
-        );
-        $('#clear-color').bind('click', function() {
-            o.config.colorKey = null;
-        });
-        $('#clear-title').bind('click', function() {
-            o.config.title = null;
-            $('.view-content:visible .title-link-option').fadeOut();
-        });
-        $('#clear-title-link').bind('click', function() {
-            o.config.titleLink = null;
-        });
-        if (typeof o.config.title !== "undefined" && o.config.title != null) {
-            $('.view-content:visible .title-link-option').show();
-        }
-        if (typeof o.config.latlng === "undefined") {
-            $('.required-setting').show();
-            $('.required-setting:visible').bind('mouseover', function() {
-                $('#'+$(this).attr('rel')).addClass('ui-state-highlight');
-            }).bind('mouseout', function() {
-                $('#'+$(this).attr('rel')).removeClass('ui-state-highlight');
-            });
-            $('input[name=latlng]').bind('change', function() {
-                $('.required-setting:visible').hide();
-            });
-        } else {
-            $('.required-setting:visible').hide();
-        }
+        o.findWidget().recordPager();
+
     };
 
     Freemix.mapViewLib.generateExhibitHTML = function(config, viewClass) {

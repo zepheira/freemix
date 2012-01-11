@@ -6,47 +6,10 @@
         var root = Freemix.getTemplate("list-view-template");
         content.empty();
         root.appendTo(content);
-        var config = this.config;
-        this.findWidget().recordPager(
-            function(row, model, metadata) {
-                 if (Freemix.property.propertyHasType(metadata.property, "url")) {
-                     $("<td class='inner title-link-option'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                         radio: true,
-                         checked: model.config.titleLink === metadata.property,
-                         change: function() {
-                             if ($(this).is(":checked")) {
-                                 model.config.titleLink = metadata.property;
-                             }
-                         },
-                         name: 'titleLink'
-                     });
-                 } else {
-                     $('<td class="inner title-link-option"><input type="radio" disabled="true" /></td>').insertAfter(row.find("td.visible"));
-                 }
-
-                 $("<td class='inner'></td>").insertAfter(row.find("td.visible")).createChildCheck({
-                     radio: true,
-                     checked: model.config.title === metadata.property,
-                     change: function() {
-                         if ($(this).is(":checked")) {
-                             model.config.title = metadata.property;
-                             $('.view-content:visible .title-link-option').fadeIn();
-                         }
-                     },
-                     name: 'title'
-                 });
-            }
-        );
-        $('#clear-title').bind('click', function() {
-            config.title = null;
-            $('.view-content:visible .title-link-option').fadeOut();
-        });
-        $('#clear-title-link').bind('click', function() {
-            config.titleLink = null;
-        });
-        if (typeof config.title !== "undefined" && config.title != null) {
-            $('.view-content:visible .title-link-option').show();
-        }
+        this._setupViewForm();
+        this._setupLabelEditor();
+        this._setupTitlePropertyEditor();
+        this.findWidget().recordPager();
     }
 
     function generateExhibitHTML(config) {

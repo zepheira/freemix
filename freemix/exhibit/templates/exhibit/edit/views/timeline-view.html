@@ -1,79 +1,105 @@
-{% extends "exhibit/edit/views/record-view.html" %}
+
 {% load i18n %}
+<div class="record-view" id="timeline-view-template">
 
-{% block template_id %}id="timeline-view-template"{% endblock %}
-{% block view_header %}
-    <table class="view-config ui-widget-content"><tbody>
-    <tr><th>
-        <label for="top-band-unit">Top band time units</label>
-    </th><td>
-        <select id="top-band-unit">
-          <option value="">auto</option>
-          <option value="millisecond">millisecond</option>
-          <option value="second">second</option>
-          <option value="minute">minute</option>
-          <option value="hour">hour</option>
-          <option value="day">day</option>
-          <option value="week">week</option>
-          <option value="month">month</option>
-          <option value="year">year</option>
-          <option value="decade">decade</option>
-          <option value="century">century</option>
-          <option value="millennium">millennium</option>
-        </select>
-    </td></tr><tr><th>
-        <label for="bottom-band-unit">Bottom band</label>
-    </th><td>
-        <select id="bottom-band-unit">
-          <option value="">auto</option>
-          <option value="millisecond">millisecond</option>
-          <option value="second">second</option>
-          <option value="minute">minute</option>
-          <option value="hour">hour</option>
-          <option value="day">day</option>
-          <option value="week">week</option>
-          <option value="month">month</option>
-          <option value="year">year</option>
-          <option value="decade">decade</option>
-          <option value="century">century</option>
-          <option value="millennium">millennium</option>
-        </select>
-    </td></tr></tbody></table>
-{% endblock %}
+    <form class="view-form view-config ui-widget-content">
+       <fieldset>
+           <div id="view_label">
+               <label for="view_label_input">{% trans "View Label" %}</label>
+               <input type="text" id="view_label_input"/>
+           </div>
+           <div>
+               <label for="title_property">{% trans "Title" %}</label>
+               <select id="title_property"></select>
+           </div>
+           <div>
+               <label for="title_link_property">{% trans "Link" %}</label>
+               <select id="title_link_property"></select>
+           </div>
 
-{% block required-settings %}
-<div id="systemMsg">
-  <ul class="messages required-setting" rel="property-start">
-    <li class="warningMsg">Set a <strong>Start</strong> date for this view to display properly.</li>
-  </ul>
+           <div>
+               <label for="start_property">{% trans "Start Date" %}</label>
+               <select id="start_property"></select>
+           </div>
+
+           <div>
+               <label for="end_property">{% trans "End Date" %}</label>
+               <select id="end_property"></select>
+           </div>
+
+           <div>
+               <label for="color_property">{% trans "Color" %}</label>
+               <select id="color_property"></select>
+           </div>
+
+           <div>
+               <label for="top-band-unit">{% trans "Top band time units" %}</label>
+               <select id="top-band-unit">
+                 <option value="">auto</option>
+                 <option value="millisecond">millisecond</option>
+                 <option value="second">second</option>
+                 <option value="minute">minute</option>
+                 <option value="hour">hour</option>
+                 <option value="day">day</option>
+                 <option value="week">week</option>
+                 <option value="month">month</option>
+                 <option value="year">year</option>
+                 <option value="decade">decade</option>
+                 <option value="century">century</option>
+                 <option value="millennium">millennium</option>
+               </select>
+           </div>
+
+           <div>
+               <label for="bottom-band-unit">{% trans "Bottom band time units" %}</label>
+               <select id="bottom-band-unit">
+                 <option value="">auto</option>
+                 <option value="millisecond">millisecond</option>
+                 <option value="second">second</option>
+                 <option value="minute">minute</option>
+                 <option value="hour">hour</option>
+                 <option value="day">day</option>
+                 <option value="week">week</option>
+                 <option value="month">month</option>
+                 <option value="year">year</option>
+                 <option value="decade">decade</option>
+                 <option value="century">century</option>
+                 <option value="millennium">millennium</option>
+               </select>           </div>
+       </fieldset>
+   </form>
+
+    <div class="record-box">
+            <table class="property-list-table">
+                <thead class="ui-widget-header ui-corner-top">
+                    <tr>
+                        <th class="visible">Show</th>
+
+                        <th>Property</th>
+                        <th>
+                            Value
+                            <span class="record-pager">
+                                <button class="left-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
+                                <button class="right-record-button" title="{% trans "Next Record" %}">&nbsp;</button>
+                            </span>
+                            <span id="current-record">#p</span> of <span id="record-count">#t</span>
+
+                        </th>
+                      </tr>
+
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                <tr class='table-footer'>
+
+                    <td></td>
+                    <td colspan="2">
+                        <div class="record-controls ui-helper-clearfix ui-widget-header ui-corner-bottom">
+                        </div>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+
 </div>
-{% endblock %}
-
-{% block property-list-headers %}
-    <th class="visible">Show</th>
-    <th id="title-chooser">Title</th>
-    <th class="title-link-option" id="title-link-chooser">Link</th>
-    <th id="property-start">Start</th>
-    <th>End</th>
-    <th>Color</th>
-    <th>Property</th>
-    <th>
-        Value
-        <span class="record-pager">
-            <button class="left-record-button" title="{% trans "Previous Record" %}">&nbsp;</button>
-            <button class="right-record-button" title="{% trans "Next Record" %}">&nbsp;</button>
-        </span>
-        <span id="current-record">#p</span> of <span id="record-count">#t</span>
-
-    </th>
-  </tr>
-  <tr>
-    <td></td>
-    <td class="inner"><input type="radio" id="clear-title" name="title" checked="checked" /></td>
-    <td class="inner title-link-option"><input type="radio" id="clear-title-link" name="titleLink" checked="checked" /></td>
-    <td></td>
-    <td class="inner"><input type="radio" id="clear-end" name="endDate" checked="checked" /></td>
-    <td class="inner"><input type="radio" id="clear-color" name="colorKey" checked="checked" /></td>
-    <td colspan="2"><em>None</em></td>
-{% endblock %}
-{% block footer-filler-colspan %}colspan="6"{% endblock %}
