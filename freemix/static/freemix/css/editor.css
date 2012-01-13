@@ -80,7 +80,6 @@ font-size: 90%;
     position:relative;
 }
 
-
 .view-set {
     line-height: 1.0;
 }
@@ -106,6 +105,7 @@ font-size: 90%;
 .view-set a:active {
     outline: 0;
 }
+
 
 .view-content {
     clear: both;
@@ -260,7 +260,7 @@ margin-bottom: 10px;
 
 .property-list-table {
     margin-top: 10px; 
-    width: 100%;
+    width: 99%;
 }
 
 .property-list-table tr th {
@@ -384,6 +384,10 @@ body.attraction #identify .property-row .name > span {
 .record-box .property-list-table thead th {
     border-bottom: 1px solid #ddd;
     border-top: 1px solid #ddd;
+}
+
+.record-view {
+padding-top: 10px;
 }
 
 .property-list-table .title-link-option {
@@ -787,7 +791,7 @@ padding-bottom: 12px;
 
 /* styling widget editing and preview dialogs */
 
-.facet-editor-pane-title {
+.facet-editor-pane-title, .view-editor-pane-title {
   font-size: 110%;
   font-weight: bold;
   border: 1px solid lightgrey;
@@ -798,14 +802,23 @@ padding-bottom: 12px;
   margin-top: -10px;
 }
 
-.facet-preview {
+.facet-preview, .view-preview {
   margin-top: 10px;
   margin-right: 20px;
   background-color: #F5F5F5;
   border: 1px solid lightgrey;
 }
 
-.facet-preview .facet-edit-body {
+.view-lens-properties {
+  margin-top: 10px;
+  margin-right: 20px;
+  padding-bottom: 10px;
+  background-color: #F5F5F5;
+  border: 1px solid lightgrey;
+}
+
+
+.facet-preview .facet-edit-body, .view-preview .view-edit-body {
 padding: 20px 10px 0px 10px;
 margin-right: 20px;
 }
@@ -814,6 +827,25 @@ margin-right: 20px;
 padding-left: 10px;
 padding-top: 10px;
 }
+
+.list-view-editor, .map-view-editor, .scatterplot-view-editor, .table-view-editor, .timeline-view-editor, .piechart-view-editor, .thumbnail-view-editor {
+  border: 1px solid lightgrey;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+.view-properties .view-edit-body {
+padding-left: 10px;
+padding-top: 10px;
+}
+
+.view-lens-properties .view-edit-body {
+padding-left: 10px;
+padding-top: 10px;
+}
+
 
 .facet-properties .text-entry input {
 width: 80%;
