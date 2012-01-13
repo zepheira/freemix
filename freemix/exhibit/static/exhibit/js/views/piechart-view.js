@@ -15,7 +15,8 @@
     function generateExhibitHTML(config) {
         config = config || this.config;
 
-        var view = $("<div ex:role='view' ex:viewClass='Piechart' ex:viewLabel='" + this.config.name + "'></div>");
+        var view = $("<div ex:role='view' ex:viewClass='Piechart'></div>");
+        view.attr("ex:viewLabel", config.name);
         var properties = [];
         var props = Freemix.property.enabledProperties();
         $.each(config.metadata,

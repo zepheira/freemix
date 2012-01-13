@@ -59,6 +59,7 @@
             },
 
             getExhibitHtml: function() {
+
                 return "<span ex:content='" + this.expression() + "'/>";
             },
             getValueHtml: function(value) {

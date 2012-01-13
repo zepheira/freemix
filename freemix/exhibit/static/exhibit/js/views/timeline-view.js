@@ -61,9 +61,9 @@
         if (!config.startDate) {
             return $("<div ex:role='view' ex:viewLabel='Range Missing'></div>");
         }
-        var props = Freemix.property.enabledProperties();
         var colorKey = config.colorKey;
-        var view = $("<div ex:role='view' ex:viewClass='Timeline' ex:viewLabel='" + config.name + "'></div>");
+        var view = $("<div ex:role='view' ex:viewClass='Timeline'></div>");
+        view.attr("ex:viewLabel", config.name);
         if (colorKey) {
             view.attr("ex:colorKey", expression(colorKey));
         }
@@ -92,31 +92,9 @@
             view.attr("ex:bottomBandUnitsPerPixel", expression(config.bottomBandPixelsPerUnit));
         }
 
-        var lens = $("<div class='timeline-lens ui-widget-content' ex:role='lens' style='display:none'></div>");
-        var title = $("<div class='exhibit-title ui-widget-header'></div>");
-        if (this.config.title) {
-            var html = "<span ex:content='" + expression(this.config.title) + "' ></span>";
-            if (this.config.titleLink) {
-                html += "&nbsp;<a ex:href-content='" + expression(this.config.titleLink) + "' target='_blank'>(link)</a>";
-            }
-            title.append(html);
-            var formats = "item {title:expression(" + expression(this.config.title) + ")}";
-            view.attr("ex:formats", formats);
-        }
-        lens.append(title);
-        var table = $("<table class='property-list-table exhibit-list-table'></table>");
-        $.each(this.config.metadata,
-        function(index, metadata) {
-            var property = metadata.property;
-            var identify = props[property];
-            if (!metadata.hidden && identify) {
-                var label = identify.label();
-                $("<tr class='exhibit-property'><td class='exhibit-label'>" + label + "</td><td class='exhibit-value'>" + Freemix.exhibit.renderProperty(metadata) + "</td></tr>").appendTo(table);
-            }
+        this._renderFormats(view);
+        view.append(this._renderListLens(config));
 
-        });
-
-        lens.append(table).appendTo(view);
         return view;
     }
 

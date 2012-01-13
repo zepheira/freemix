@@ -68,7 +68,8 @@
             }
         }
 
-        var view = $("<div ex:role='view' ex:viewClass='Exhibit.ScatterPlotView' ex:viewLabel='" + config.name + "'></div>");
+        var view = $("<div ex:role='view' ex:viewClass='Exhibit.ScatterPlotView'></div>");
+        view.attr("ex:viewLabel", config.name);
         var props = Freemix.property.enabledProperties();
         if (xaxis) {
             view.attr("ex:x", props[xaxis].expression());
@@ -79,31 +80,9 @@
             view.attr("ex:yLabel", props[yaxis].label());
         }
 
-        var lens = $("<div class='scatterplot-lens' ex:role='lens' style='display:none'></div>");
-        var title = $("<div class='exhibit-title ui-widget-header'></div>");
-        if (config.title) {
-            var html = "<span ex:content='" + props[config.title].expression() + "' ></span>";
-            if (config.titleLink) {
-                html += "&nbsp;<a ex:href-content='" + props[config.titleLink].expression() + "' target='_blank'>(link)</a>";
-            }
-            title.append(html);
-            var formats = "item {title:expression(" + props[config.title].expression() + ")}";
-            view.attr("ex:formats", formats);
-        }
-        lens.append(title);
-        var table = $("<table class='property-list-table exhibit-list-table'></table>");
-        $.each(config.metadata,
-        function(index, metadata) {
-            var property = metadata.property;
-            var identify = props[property];
-            if (!metadata.hidden && identify) {
-                var label = identify.label();
-                $("<tr class='exhibit-property'><td class='exhibit-label'>" + label + "</td><td class='exhibit-value'>" + Freemix.exhibit.renderProperty(metadata) + "</td></tr>").appendTo(table);
-            }
+        this._renderFormats(view);
+        view.append(this._renderListLens(config));
 
-        });
-
-        lens.append(table).appendTo(view);
         return view;
     }
 

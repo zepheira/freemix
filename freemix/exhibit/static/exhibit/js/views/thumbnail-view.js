@@ -24,22 +24,27 @@
 
     function generateExhibitHTML(config) {
         config = config || this.config;
-        var props = Freemix.property.enabledProperties();
 
-        var view = $("<div ex:role='view' ex:viewClass='Thumbnail' ex:viewLabel='" + config.name + "'></div>");
+        var view = $("<div ex:role='view' ex:viewClass='Thumbnail'></div>");
+        view.attr("ex:viewLabel", config.name);
         view.attr("ex:showAll", config.showAll);
         view.attr("ex:abbreviatedCount", config.abbreviatedCount);
+        this._renderFormats(view);
+
         var lens = $("<div ex:role='lens' style='display:none;' class='image-thumbnail ui-state-highlight'></div>");
-        var img = $("<a class='lightbox' ex:href-content='." + config.image + "'><img class='image-thumbnail' ex:src-content='." + config.image +"'/></a>");
+        var img = $("<a class='lightbox'><img class='image-thumbnail'/></a>");
+        img.attr("ex:href-content", "." + config.image);
+        img.find("img").attr("ex:src-content", "." + config.image);
         lens.append(img);
         if (config.title) {
-            var title = $("<div class='name'><span ex:content='." + config.title + "'</div>");
+            var title = $("<div class='name'><span></span></div>");
+            var span = title.find("span");
+            span.attr("ex:content", "." + config.title);
             if (config.titleLink) {
-                title.find("span").wrap("<a ex:href-content='." + config.titleLink + "'></a>")
+                span.wrap($("<a></a>").attr("ex:href-content", "." + config.titleLink));
             }
             lens.append(title);
-            var formats = "item {title:expression(" + props[config.title].expression() + ")}";
-            view.attr("ex:formats", formats);
+
         }
         view.append(lens);
 

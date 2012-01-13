@@ -57,10 +57,11 @@
         getPopupContent: function() {
             var w = this;
             return $("<span><a href='#' class='rename'>Rename</a> | <a href='#' class='delete'>Delete</a></span>").find(".rename").click(function() {
-                var dialog = $("<span><input type='text' value='" + w.config.name +
-                    "' id='rename-component' /><div class='rename-component-buttons'>" +
+                var dialog = $("<span><input type='text' id='rename-component' />" +
+                    "<div class='rename-component-buttons'>" +
                     "<span class='button ui-state-default ui-corner-all'>OK</span>" +
                     "<span class='button ui-state-default ui-corner-all'>Cancel</span></div></span>");
+                dialog.find("#rename-compenent").val(w.config.name);
                 dialog.keydown(function(e) {
                     var code = (e.keyCode ? e.keyCode: e.which);
                     if (code == $.ui.keyCode.ENTER) {

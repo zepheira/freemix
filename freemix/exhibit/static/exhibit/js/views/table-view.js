@@ -46,7 +46,8 @@
         if (empty) {
             return $("<div ex:role='view' ex:viewLabel='Columns Missing'></div>");
         }
-        var view = $("<div ex:role='view' ex:viewClass='Tabular' ex:viewLabel='" + this.config.name + "'></div>");
+        var view = $("<div ex:role='view' ex:viewClass='Tabular' ></div>");
+        view.attr("ex:viewLabel", config.name);
         var labels = [];
         var columns = [];
         $.each(config.metadata,

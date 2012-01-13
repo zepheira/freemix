@@ -67,6 +67,8 @@
              var widget =  $("<li id='" + view.config.id +
                             "' class='view button button-icon-left ui-state-default'><span class='popup-button ui-icon ui-icon-triangle-1-s'/><span class='label'>" +
                             view.config.name + "</span></li>")
+                .attr("id", view.config.id)
+                 .find("span.label").text(view.config.name).end()
                 .data("model", view)
                 .hover(function() {$(this).addClass('ui-state-hover');}, function() {$(this).removeClass('ui-state-hover');})
                 .click(function() {
@@ -175,9 +177,57 @@
                 selector.get(0).options[0].selected = true;
              }
 
-        }
+        },
 
+        _renderListLens: function(config) {
+            var lens = $("<div class='list-lens' ex:role='lens' style='display:none'></div>");
+            var props = Freemix.property.enabledProperties();
+
+            var title = $("<div class='exhibit-title ui-widget-header'></div>");
+            if (config.title) {
+                var html = $("<span></span>");
+                html.attr("ex:content", props[config.title].expression());
+                title.append(html);
+                if (config.titleLink) {
+                    title.append("&nbsp;");
+                    html= $("<a target='_blank'>(link)</a>");
+                    html.attr("ex:href-content", props[config.titleLink].expression());
+                }
+                title.append(html);
+
+            }
+
+            var table = $("<table class='property-list-table exhibit-list-table'></table>");
+            $.each(config.metadata,
+            function(index, metadata) {
+                var property = metadata.property;
+                var identify = props[property];
+                if (!metadata.hidden && identify) {
+                    var tr = $("<tr class='exhibit-property'></tr>");
+                    var label = identify.label();
+                    var td = $("<td class='exhibit-label'></td>");
+                    td.text(label);
+                    tr.append(td);
+                    td = $("<td class='exhibit-value'>" + Freemix.exhibit.renderProperty(metadata) + "</td>");
+                    tr.append(td);
+                    table.append(tr);
+                }
+
+            });
+            lens.append(title);
+            lens.append(table);
+            return lens;
+
+        },
+        _renderFormats: function(view, config) {
+             config = config || this.config;
+             if (config.title) {
+                var props = Freemix.property.enabledProperties();
+                view.attr("ex:formats", "item {title:expression(" + props[config.title].expression() + ")}");
+             }
+        }
      });
+
 
     Freemix.view = {
         types: [],

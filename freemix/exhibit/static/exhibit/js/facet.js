@@ -60,11 +60,11 @@
         },
         generateWidget: function() {
             var facet = this;
-            return $("<div class='facet ui-draggable' id='" + this.config.id + "'>" +
+            return $("<div class='facet ui-draggable'>" +
                 "<div class='facet-header ui-state-default ui-helper-clearfix ui-dialog-titlebar' title='Click and drag to move to any other facet sidebar or to reorder facets'>" +
                 "<span class='ui-icon ui-icon-grip-dotted-vertical'/>" +
 
-                "<span class='label'>" + this.label + "</span>" +
+                "<span class='label'/>" +
                 "<a href='#' class='delete-button ui-icon ui-icon-closethick' title='Delete this facet'/>" +
                 "</div>" +
                 "<div class='facet-body ui-widget-content'>" +
@@ -72,6 +72,8 @@
                 "<div class='facet-menu'><a href='#' title='Edit this facet'><span class='ui-icon ui-icon-pencil'/>edit</a></div>" +
 
                 "</div></div>")
+            .attr("id", this.config.id)
+            .find("span.label").text(this.label).end()
             .data("model", this)
             .find(".delete-button").click(function() {
                     facet.remove();
