@@ -73,7 +73,8 @@
         },
         generateWidget: function() {
              var view = this;
-             return $("<li class='view button button-icon-right ui-state-default'>" +
+             return $("<li class='view ui-state-default ui-dialog-titlebar'>" +
+                 "<span class='ui-icon ui-icon-grip-dotted-vertical'/>" +
                  "<span class='label'></span>" +
                  "<a href='#' class='delete-button ui-icon ui-icon-closethick' title='Delete this view'/>" +
                  "</li>")
@@ -105,12 +106,14 @@
         },
         remove: function() {
             var container = this.getContainer();
-            this.findWidget().remove();
-            var next = container.find(".view-set>li.button:first");
-            if (next.size() > 0) {
-                next.data("model").select();
-            } else {
-                container.find(".view-content").empty();
+            if (container.find(".view-set>li.view").size() > 1) {
+                this.findWidget().remove();
+                var next = container.find(".view-set>li.view:first");
+                if (next.size() > 0) {
+                    next.data("model").select();
+                } else {
+                    container.find(".view-content").empty();
+                }
             }
         },
         display: function() {},

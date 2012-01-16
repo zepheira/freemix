@@ -43,7 +43,10 @@
             });
             w.data("model", facetContainer);
             w.addClass("ui-widget-content").addClass("facet-container");
-            w.append("<div class='create-facet ui-state-default'><div class='create-facet-button button button-icon-left' title='Add a Widget'><span class='ui-icon ui-icon-plus'></span><span class='label'>Add a Widget</span></div></div>");
+            w.append("<div class='create-facet ui-state-default'>" +
+                "<div class='create-facet-button button button-icon-right' title='Add a Widget'>" +
+                "<span class='ui-icon ui-icon-plus'></span><span class='label'>Add a Widget</span>" +
+                "</div></div>");
 
             var dialog =$("<div style='display:hidden;'></div>").appendTo('body');
             facetContainer._dialog = dialog;
@@ -99,7 +102,11 @@
                         $(ui.item).data("model")._container = undefined;
                     }
                 });
-            set.append("<li class='create-view ui-state-default'><div class='create-view-button button button-icon-left'><span class='ui-icon ui-icon-plus'></span><span class='label'>Add a View</span></div></li>");
+            set.append("<li class='create-view ui-state-default'>" +
+                "<div class='create-view-button button button-icon-right'>" +
+
+                "<span class='ui-icon ui-icon-plus'></span><span class='label'>Add a View</span>" +
+                "</div></li>");
 
             var dialog =$("<div style='display:hidden;'></div>").appendTo('body');
             viewContainer._dialog = dialog;
