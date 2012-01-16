@@ -21,6 +21,7 @@
     Freemix.mapViewLib.display = function() {
         var content = this.getContent();
         var root = Freemix.getTemplate("map-view-template");
+        var model = this;
         content.empty();
         root.appendTo(content);
         this._setupViewForm();
@@ -35,6 +36,16 @@
         var color = content.find("#color_property");
         this._setupSelectOptionHandler(color, "color", Freemix.property.enabledPropertiesArray(), true);
         color.change();
+
+        var zoom = content.find("#zoom_level");
+        zoom.change(function() {
+            model.config.zoom = $(this).val();
+        }).val(model.config.zoom);
+
+        if (!zoom.val()) {
+            zoom.get(0).options[0].selected = true;
+            zoom.change();
+        }
 
         this.findWidget().recordPager();
 
@@ -54,6 +65,9 @@
         }
         if (colorKey) {
             view.attr("ex:colorKey", '.' + colorKey);
+        }
+        if (config.zoom && config.zoom != "") {
+            view.attr("ex:zoom", config.zoom)
         }
         this._renderFormats(view);
 
