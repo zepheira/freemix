@@ -73,7 +73,7 @@
         },
         generateWidget: function() {
              var view = this;
-             return $("<li class='view ui-state-default ui-dialog-titlebar'>" +
+             return $("<li class='view ui-state-default'>" +
                  "<span class='ui-icon ui-icon-grip-dotted-vertical'/>" +
                  "<span class='label'></span>" +
                  "<a href='#' class='delete-button ui-icon ui-icon-closethick' title='Delete this view'/>" +
