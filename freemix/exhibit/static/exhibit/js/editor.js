@@ -103,8 +103,7 @@
                     }
                 });
             set.append("<li class='create-view ui-state-default'>" +
-                "<div class='create-view-button'>" +
-
+                "<div class='create-view-button button button-icon-right'>" +
                 "<span class='ui-icon ui-icon-plus'></span><span class='label'>Add a View</span>" +
                 "</div></li>");
 
