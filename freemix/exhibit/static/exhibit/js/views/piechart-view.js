@@ -18,7 +18,7 @@
         var view = $("<div ex:role='view' ex:viewClass='Piechart'></div>");
         view.attr("ex:viewLabel", config.name);
         var properties = [];
-        var props = Freemix.property.enabledProperties();
+        var props = Freemix.property.propertyList;
         $.each(config.metadata,
         function(index, metadata) {
             var property = metadata.property;

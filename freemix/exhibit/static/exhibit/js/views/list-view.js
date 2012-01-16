@@ -16,6 +16,7 @@
         config = config || this.config;
         var view = $("<div ex:role='view'></div>");
         view.attr("ex:viewLabel", config.name);
+        this._renderOrder(view, config);
         this._renderFormats(view);
         view.append(this._renderListLens(config));
         return view;
@@ -30,6 +31,8 @@
             type: "list",
             title: undefined,
             titleLink: undefined,
+            orders: [],
+            possibleOrders:[],
             metadata: []
         }
     });

@@ -1,6 +1,30 @@
 /*global jQuery */
 (function($, Freemix) {
 
+
+    $.fn.createChildCheck = function(config) {
+        return this.each(function() {
+            var $this = $(this);
+            var type = config.radio ? 'radio' : 'checkbox';
+            var name = config.name ? config.name : $.make_uuid();
+
+            var disabled = "";
+            if (config.enabled) {
+                if (!config.enabled()) {
+                    disabled = " disabled='true'";
+                }
+            }
+            var check = $("<input type='" + type + "' name='" + name + "'" + disabled + "/>");
+            $this.append(check);
+            if (config.checked) {
+                check.attr("checked", "checked");
+            }
+            if (config.change) {
+                check.click(config.change);
+            }
+        });
+    };
+
     // Set the record number.
     function setCurrentRecord(model, record_num) {
         model.getContent().data("record_num", record_num);
@@ -111,8 +135,9 @@
                     createRow(model, metadata, table, row_callback);
                 }
             });
-            $.each(Freemix.property.enabledProperties(),
-                function(name, property) {
+            $.each(Freemix.property.enabledPropertiesArray(),
+                function() {
+                    var name = this.name();
                     var metadata = $.grep(model.config.metadata, function(p) {
                         return p.property == name;
                     });

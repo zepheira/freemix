@@ -11,7 +11,7 @@
          this._setupViewForm();
          this._setupLabelEditor();
 
-         var props = Freemix.property.enabledProperties();
+         var props = Freemix.property.enabledPropertiesArray();
 
          var sort  = content.find("#sort_property");
 
@@ -33,9 +33,8 @@
         config = config || this.config;
         var empty = true;
 
-        var props = Freemix.property.enabledProperties();
-        $.each(config.metadata,
-        function(index, metadata) {
+        var props = Freemix.property.propertyList;
+        $.each(config.metadata, function(index, metadata) {
             var property = metadata.property;
             var identify = props[property];
             if (!metadata.hidden && identify) {
@@ -50,8 +49,7 @@
         view.attr("ex:viewLabel", config.name);
         var labels = [];
         var columns = [];
-        $.each(config.metadata,
-        function(index, metadata) {
+        $.each(config.metadata, function(index, metadata) {
             var property = metadata.property;
             var identify = props[property];
             if (!metadata.hidden && identify) {

@@ -47,7 +47,7 @@
 
         },
         validate: function() {
-            success=true;
+            var success=true;
             if (!root.find("#edit_field_dialog_fields").val() ||
                 root.find("#edit_field_dialog_fields").val().length === 0) {
 
@@ -71,7 +71,7 @@
             root.find("#edit_field_dialog_create").hide();
             root.find(".advanced_pattern").hide();
             root.find("select#edit_field_dialog_fields").empty();
-            $.each(Freemix.property.enabledProperties(), function() {
+            $.each(Freemix.property.enabledPropertiesArray(), function() {
                 var prop = this;
                 $("<option>", {
                     id: prop.name(),
@@ -102,7 +102,7 @@
             root.find("#edit_field_dialog_create, .pattern_form").show();
         },
         validate: function() {
-            success=true;
+            var success=true;
             if (!root.find("#edit_field_pattern_text").val() ||
                 root.find("#edit_field_pattern_text").val().length === 0) {
 
@@ -142,7 +142,7 @@
             root.find("#edit_field_pattern_type_select").val("pattern");
             root.find("#edit_field_dialog_create").hide();
             root.find("select#edit_field_pattern_source_select").empty();
-            $.each(Freemix.property.enabledProperties(), function() {
+            $.each(Freemix.property.enabledPropertiesArray(), function() {
                 var prop = this;
                 $("<option>", {
                     id: prop.name(),

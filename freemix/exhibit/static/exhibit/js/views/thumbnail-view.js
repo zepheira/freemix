@@ -30,6 +30,8 @@
         view.attr("ex:showAll", config.showAll);
         view.attr("ex:abbreviatedCount", config.abbreviatedCount);
         this._renderFormats(view);
+        this._renderOrder(view, config);
+
 
         var lens = $("<div ex:role='lens' style='display:none;' class='image-thumbnail ui-state-highlight'></div>");
         var img = $("<a class='lightbox'><img class='image-thumbnail'/></a>");
@@ -63,7 +65,9 @@
             image: undefined,
             title: undefined,
             titleLink: undefined,
-            abbreviatedCount: "12"
+            abbreviatedCount: "12",
+            orders: [],
+            possibleOrders: []
         }
     });
 

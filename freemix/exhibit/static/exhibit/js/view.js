@@ -1,8 +1,17 @@
 /*global jQuery */
 (function($, Freemix) {
 
+    function renderProperty(metadata) {
+        var property = Freemix.property.propertyList[metadata.property];
+        if (property.enabled()) {
+            return property.getExhibitHtml();
+        } else {
+            return "";
+        }
+    }
 
-    Freemix.exhibit.viewContainer = $.extend(true, {}, Freemix.exhibit.container,{
+
+    Freemix.exhibit.viewContainer = {
         id: "",
         findWidget: function() {
             return $(".view-container#" + this.id, Freemix.getBuilder());
@@ -49,7 +58,7 @@
         getPopupButton: function() {
             return this.findWidget().find(".create-view-button");
         }
-    });
+    };
 
     Freemix.exhibit.view = $.extend(true, {}, Freemix.exhibit.widget, {
         propertyTypes: ["text", "image", "currency", "url", "location", "date", "number"],
@@ -64,11 +73,12 @@
         },
         generateWidget: function() {
              var view = this;
-             var widget =  $("<li id='" + view.config.id +
-                            "' class='view button button-icon-left ui-state-default'><span class='popup-button ui-icon ui-icon-triangle-1-s'/><span class='label'>" +
-                            view.config.name + "</span></li>")
+             return $("<li class='view button button-icon-right ui-state-default'>" +
+                 "<span class='label'></span>" +
+                 "<a href='#' class='delete-button ui-icon ui-icon-closethick' title='Delete this view'/>" +
+                 "</li>")
                 .attr("id", view.config.id)
-                 .find("span.label").text(view.config.name).end()
+                .find("span.label").text(view.config.name).end()
                 .data("model", view)
                 .hover(function() {$(this).addClass('ui-state-hover');}, function() {$(this).removeClass('ui-state-hover');})
                 .click(function() {
@@ -76,13 +86,13 @@
                         $(this).data("model").select();
                     }
                     return false;
-                });
-            widget.find(".popup-button").hide();
-            widget.find("span.popup-button").freemixPopupButton("Edit View", function() {
-                return view.getPopupContent();
-            });
+                })
 
-            return widget;
+                .find(".delete-button").click(function() {
+                     view.remove();
+                     return false;
+                 }).end();
+
         },
         select: function() {
             var control = this.findWidget();
@@ -106,8 +116,14 @@
         display: function() {},
         generateExhibitHTML: function(config) {},
         showEditor: function(vc) {
-            vc.hidePopup();
+            vc._dialog.dialog("close");
             vc.addView(this);
+        },
+        _expression: function(p) {
+            return "." + p;
+        },
+        _mapExpressions: function (arr) {
+            return $.map(arr, this._expression).join(",");
         },
         _setupViewForm: function(config) {
             config = config || this.config;
@@ -129,7 +145,7 @@
         _setupTitlePropertyEditor: function(config) {
             config = config||this.config;
             var links = Freemix.property.getPropertiesWithTypes(["image", "url"]);
-            var titles = Freemix.property.enabledProperties();
+            var titles = Freemix.property.enabledPropertiesArray();
             var content = this.getContent();
             var title = content.find("#title_property");
             var title_link = content.find("#title_link_property");
@@ -156,14 +172,17 @@
         },
         _setupSelectOptionHandler: function(selector, key, collection, nullable) {
             var config = this.config;
-            if (nullable) {
-                selector.append("<option value=''></option>");
-            }
+
             $.each(collection, function() {
-                var option = "<option value='" + this.name() + "'>" + this.label() + "</option>";
+                var option = $("<option></option>");
+                option.attr("value", this.name());
+                option.text(this.label());
                 selector.append(option);
             });
 
+            if (nullable) {
+                selector.prepend("<option value=''></option>");
+            }
              selector.change(function() {
                   var value = $(this).val();
                   if (value && value != ( "" || undefined)) {
@@ -179,9 +198,12 @@
 
         },
 
+        _setupMultiSelectOptionHandler: function(selector, key, collection) {
+
+        },
         _renderListLens: function(config) {
             var lens = $("<div class='list-lens' ex:role='lens' style='display:none'></div>");
-            var props = Freemix.property.enabledProperties();
+            var props = Freemix.property.propertyList;
 
             var title = $("<div class='exhibit-title ui-widget-header'></div>");
             if (config.title) {
@@ -208,7 +230,7 @@
                     var td = $("<td class='exhibit-label'></td>");
                     td.text(label);
                     tr.append(td);
-                    td = $("<td class='exhibit-value'>" + Freemix.exhibit.renderProperty(metadata) + "</td>");
+                    td = $("<td class='exhibit-value'>" +renderProperty(metadata) + "</td>");
                     tr.append(td);
                     table.append(tr);
                 }
@@ -222,9 +244,27 @@
         _renderFormats: function(view, config) {
              config = config || this.config;
              if (config.title) {
-                var props = Freemix.property.enabledProperties();
+                var props = Freemix.property.propertyList;
                 view.attr("ex:formats", "item {title:expression(" + props[config.title].expression() + ")}");
              }
+        },
+        _renderOrder: function(view, config) {
+            if (config.orders && (config.orders.length > 0)) {
+                var orders = config.orders.join(",");
+                view.attr("ex:orders", this._mapExpressions(config.orders));
+            } else if (config.title) {
+                view.attr("ex:orders", this._expression(config.title));
+            }
+
+            if (config.possibleOrders && config.possibleOrders.length > 0) {
+                view.attr("ex:possibleOrders", this._mapExpressions(config.possibleOrders));
+            } else {
+                var exp = this._expression;
+
+                view.attr("ex:possibleOrders", $.map(Freemix.property.enabledPropertiesArray(), function(p) {
+                    return exp(p.name());
+                }).join(","));
+            }
         }
      });
 

@@ -39,7 +39,7 @@
          }
 
          var dates = Freemix.property.getPropertiesWithTypes(model.propertyTypes);
-         var colors = Freemix.property.enabledProperties();
+         var colors = Freemix.property.enabledPropertiesArray();
 
          model._setupSelectOptionHandler(start, "startDate", dates);
          model._setupSelectOptionHandler(end, "endDate", dates, true);

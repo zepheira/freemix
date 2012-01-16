@@ -1,39 +1,6 @@
 /*global jQuery */
 (function($, Freemix) {
 
-    $.fn.freemixPopupButton = function(title, contentFunction, config) {
-        return this.each(function() {
-            var $this = $(this);
-            $this.qtip($.extend(true, {
-                content: {
-                    text: "<div style='display:none;'></div>",
-                    title: {
-                        text: title,
-                        button: "<span class='ui-icon ui-icon-closethick'/>"
-                    }
-                },
-                position: {
-                    adjust: {
-                        screen: true
-                    }
-                },
-                show: 'click',
-                hide: 'unfocus',
-                style: {
-                    name: 'themeroller'
-                }
-            },
-            config));
-
-            var api = $this.qtip("api");
-            api.beforeShow = function(event) {
-                api.updateContent("<div style='display:none;'></div>");
-                api.updateContent(contentFunction());
-            };
-
-        });
-    };
-
     $.fn.freemixThumbnails = function(tags, items, clickHandler) {
         return this.each(function() {
             var list = $("<ul></ul>");
@@ -133,9 +100,33 @@
                     }
                 });
             set.append("<li class='create-view ui-state-default'><div class='create-view-button button button-icon-left'><span class='ui-icon ui-icon-plus'></span><span class='label'>Add a View</span></div></li>");
-            set.find(".create-view-button").freemixPopupButton("Select view type", function() {
-                    return viewContainer.getPopupContent();
-                },{style: {width: {max: 450}}});
+
+            var dialog =$("<div style='display:hidden;'></div>").appendTo('body');
+            viewContainer._dialog = dialog;
+            dialog.dialog({
+                width: 500,
+                height: "auto",
+                modal: true,
+                draggable: false,
+                resizable: false,
+                autoOpen: false,
+                title: "Select view type",
+                show: "fade",
+                hide: "fade"
+            });
+
+            set.find(".create-view-button").click(function() {
+                dialog.empty();
+                dialog.append(viewContainer.getPopupContent());
+                dialog.dialog("option", {
+                    "title":"Select view type",
+                    "buttons": [],
+                    "width": 500,
+                    "position": "center"
+                });
+
+                dialog.dialog("open");
+            });
         });
     };
 

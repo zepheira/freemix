@@ -1,7 +1,7 @@
 /*global jQuery */
 (function($, Freemix) {
 
-    Freemix.exhibit.facetContainer = $.extend(true,{}, Freemix.exhibit.container, {
+    Freemix.exhibit.facetContainer = {
         id: "",
         findWidget: function() {
             if (!this._selector) {
@@ -51,7 +51,7 @@
         getPopupButton: function() {
             return this.findWidget().find(".create-facet-button");
         }
-    });
+    };
 
     Freemix.exhibit.facet = $.extend(true, {}, Freemix.exhibit.widget, {
         facetClass: Exhibit.ListFacet,
@@ -149,9 +149,9 @@
         },
         generatePropertyList: function(types) {
             var properties = [];
-            var proplist = types? Freemix.property.getPropertiesWithTypes(types) : Freemix.property.enabledProperties();
-            $.each(proplist, function(name, property) {
-                properties.push(Freemix.exhibit.getExpressionCount(property.expression(), property.label()));
+            var proplist = types? Freemix.property.getPropertiesWithTypes(types) : Freemix.property.enabledPropertiesArray();
+            $.each(proplist, function() {
+                properties.push(Freemix.exhibit.getExpressionCount(this.expression(), this.label()));
             });
             properties.sort(sorter);
             return properties;

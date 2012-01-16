@@ -10,12 +10,23 @@
         });
     }
 
+    function alpha_sort(a,b) {
+        a = a.label().toLowerCase();
+        b = b.label().toLowerCase();
+
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+    }
+
+
     var context;
     Freemix.property = {
         add: function(config) {
             Freemix.profile.properties.push(config);
             var prop = this.createProperty(config);
             this.propertyList[config.property] = prop;
+            this.clearCache();
             return prop;
         },
         createProperty: function(config) {
@@ -23,6 +34,7 @@
                 config: config
             });
         },
+
         prototype: {
             config: {property: '', enabled: true, tags: [], width: undefined},
             name: function() {
@@ -143,6 +155,9 @@
                     results.push(prop);
                 }
             });
+
+            results.sort(alpha_sort);
+
             return results;
         },
         getPropertiesWithTypes: function(types) {
@@ -158,18 +173,33 @@
                     if (found) results.push(prop);
                 }
             });
-            return results;
-        },
-        enabledProperties: function() {
-            var results = {};
-            $.each(this.propertyList, function(name, prop) {
-                if (prop.enabled()) {
-                    results[name] = prop;
-                }
-            });
+            results.sort(alpha_sort);
             return results;
         },
 
+        cache: function() {
+            var enabledPropertiesArray = [];
+            this._enabledPropertiesArray = enabledPropertiesArray;
+
+            $.each(this.propertyList, function(name, prop) {
+                if (prop.enabled()) {
+                    enabledPropertiesArray.push(prop);
+                }
+            });
+
+            enabledPropertiesArray.sort(alpha_sort);
+
+        },
+        clearCache: function() {
+            delete this._enabledPropertiesArray;
+        },
+
+        enabledPropertiesArray: function() {
+            if (!this._enabledPropertiesArray) {
+                this.cache();
+            }
+            return this._enabledPropertiesArray;
+        },
         type: {}
     };
 

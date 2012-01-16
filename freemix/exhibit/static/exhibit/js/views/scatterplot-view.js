@@ -70,7 +70,7 @@
 
         var view = $("<div ex:role='view' ex:viewClass='Exhibit.ScatterPlotView'></div>");
         view.attr("ex:viewLabel", config.name);
-        var props = Freemix.property.enabledProperties();
+        var props = Freemix.property.propertyList;
         if (xaxis) {
             view.attr("ex:x", props[xaxis].expression());
             view.attr("ex:xLabel", props[xaxis].label());

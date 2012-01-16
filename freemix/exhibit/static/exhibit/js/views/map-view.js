@@ -33,7 +33,7 @@
         latlng.change();
 
         var color = content.find("#color_property");
-        this._setupSelectOptionHandler(color, "color", Freemix.property.enabledProperties(), true);
+        this._setupSelectOptionHandler(color, "color", Freemix.property.enabledPropertiesArray(), true);
         color.change();
 
         this.findWidget().recordPager();
@@ -57,7 +57,6 @@
         }
         this._renderFormats(view);
 
-        var lens = $("<div class='map-lens' ex:role='lens' style='display:none'></div>");
         view.append(this._renderListLens(config));
 
         return view;
