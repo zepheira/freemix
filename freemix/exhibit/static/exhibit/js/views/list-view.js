@@ -9,6 +9,11 @@
         this._setupViewForm();
         this._setupLabelEditor();
         this._setupTitlePropertyEditor();
+        this._setupMultiSelectOptionHandler(content.find("select#sort_order"), "orders", Freemix.property.enabledPropertiesArray());
+
+//        content.find("#sort_options").accordion({ active: false, collapsible:true });
+
+
         this.findWidget().recordPager();
     }
 

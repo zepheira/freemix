@@ -209,7 +209,11 @@
     function updateBuilder() {
         $(".view-container", Freemix.getBuilder()).each(function() {
             var container = $(this).data("model");
-            container.getSelected().data("model").select();
+            var selected = container.getSelected();
+            if (selected.size() == 0) {
+                selected = container.findWidget().find(".view-set>li:first")
+            }
+            selected.data("model").select();
         });
     }
 

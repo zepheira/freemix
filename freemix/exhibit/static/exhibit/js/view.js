@@ -42,7 +42,7 @@
         },
         addView: function(view) {
             $('.view-set li.create-view', this.findWidget()).before(view.findWidget());
-            view.select();
+//            view.select();
         },
         getSelected: function() {
             return this.findWidget().find(".view-set>li.ui-state-active");
@@ -121,6 +121,7 @@
         showEditor: function(vc) {
             vc._dialog.dialog("close");
             vc.addView(this);
+            this.select();
         },
         _expression: function(p) {
             return "." + p;
@@ -202,6 +203,37 @@
         },
 
         _setupMultiSelectOptionHandler: function(selector, key, collection) {
+            var config = this.config;
+            var value = this.config[key];
+            if (value) {
+                $.each(value, function() {
+                    var prop = Freemix.property.propertyList[this];
+                    if (prop.enabled()) {
+                        var option = $("<option selected='selected'></option>");
+                        option.attr("name", prop.name());
+                        option.text(prop.label());
+                        selector.append(option);
+                    }
+                });
+            }
+
+            $.each(collection, function() {
+                if ($.inArray(this.name(), value) < 0) {
+                    var option = $("<option></option>");
+                    option.attr("name", this.name());
+                    option.text(this.label());
+                    selector.append(option);
+                }
+            });
+
+            selector.parent().on('change', 'select', function() {
+                config[key] = $(this).val();
+            });
+
+            selector.multiselect({width: 400, height: 125, sortable: true});
+
+
+
 
         },
         _renderListLens: function(config) {

@@ -18,6 +18,7 @@
          // Set up image property selector
          this._setupSelectOptionHandler(image, "image", images);
          this._setupTitlePropertyEditor();
+         this._setupMultiSelectOptionHandler(content.find("select#sort_order"), "orders", Freemix.property.enabledPropertiesArray());
 
          image.change();
      }

@@ -487,10 +487,12 @@ a.identify-type-selector:hover {
 }
 
 .ui-multiselect ul {
+    float: none;
     -moz-user-select: none;
 }
 
 .ui-multiselect li {
+    float:none;
     margin: 0;
     padding: 0;
     cursor: default;
@@ -586,11 +588,6 @@ a.identify-type-selector:hover {
     padding: 7px;
 }
 
-.ui-multiselect .search {
-    float: left;
-    padding: 4px;
-}
-
 .ui-multiselect .count {
     float: left;
     padding: 7px;
@@ -608,12 +605,18 @@ a.identify-type-selector:hover {
 }
 
 .ui-multiselect input.search {
+    float: left;
     height: 13px;
     opacity: 0.9;
     padding: 1px;
     margin: 4px;
-    width: 100px;
+    width: 90px;
 }
+
+form.uniForm .ctrlHolder.multiselect ul li {
+    float:none;
+}
+
 
 /** 
  * fairly certain these get overridden by the theme
