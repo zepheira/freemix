@@ -112,6 +112,9 @@ font-size: 90%;
     clear: both;
 }
 
+.view-set li {
+    margin-right: 4px;
+}
 
 .view-set .view {
     cursor: move;
@@ -265,9 +268,6 @@ font-weight: bold;
 
 .ui-icon.delete-button {
     float: right;
-    padding-top: 9px;
-    padding-bottom: 9px; /* pad extra to allow for 'o' as connector for view pane */
-    height: 15px;
 }
 
 .freemix-themeable .facet-content .ui-slider {
