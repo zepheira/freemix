@@ -15,7 +15,7 @@
 
          var sort  = content.find("#sort_property");
 
-         model._setupSelectOptionHandler(sort, "sortProperty", props, true);
+         model._setupPropertySelect(sort, "sortProperty", props, true);
          sort.change();
 
          var sort_order = content.find("#sort_order");

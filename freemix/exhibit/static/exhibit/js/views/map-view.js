@@ -30,22 +30,16 @@
 
         var latlng = content.find("#latlng_property");
         var points = Freemix.property.getPropertiesWithTypes(["location"]);
-        this._setupSelectOptionHandler(latlng, "latlng", points);
+        this._setupPropertySelect(latlng, "latlng", points);
         latlng.change();
 
         var color = content.find("#color_property");
-        this._setupSelectOptionHandler(color, "color", Freemix.property.enabledPropertiesArray(), true);
+        this._setupPropertySelect(color, "color", Freemix.property.enabledPropertiesArray(), true);
         color.change();
 
         var zoom = content.find("#zoom_level");
-        zoom.change(function() {
-            model.config.zoom = $(this).val();
-        }).val(model.config.zoom);
-
-        if (!zoom.val()) {
-            zoom.get(0).options[0].selected = true;
-            zoom.change();
-        }
+        this._setupSelectPropertyHandler(zoom, "zoom");
+        zoom.change();
 
         this.findWidget().recordPager();
 

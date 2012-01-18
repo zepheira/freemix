@@ -18,8 +18,8 @@
          var xaxis = content.find("#xaxis_property");
          var yaxis = content.find("#yaxis_property");
 
-         model._setupSelectOptionHandler(xaxis, "xaxis", numbers);
-         model._setupSelectOptionHandler(yaxis, "yaxis", numbers);
+         model._setupPropertySelect(xaxis, "xaxis", numbers);
+         model._setupPropertySelect(yaxis, "yaxis", numbers);
          xaxis.change();
          yaxis.change();
          model.findWidget().recordPager();

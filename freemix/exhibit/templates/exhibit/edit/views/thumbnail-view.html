@@ -13,9 +13,15 @@
                             <label for="view_label_input">{% trans "Label" %}</label>
                             <input type="text" id="view_label_input"/>
                         </div>
-                        <div class="ctrlHolder multiselect">
-                            <label for="sort_order">{% trans "Sort By" %}</label>
-                            <select multiple="multiple" id="sort_order" name="sort_order[]" class="sort-order">
+                        <div class="ctrlHolder pull-down">
+                            <label for="sort_property">{% trans "Sort By" %}</label>
+                            <select id="sort_property"></select>
+                        </div>
+                        <div class="ctrlHolder pull-down">
+                            <label for="sort_order">{% trans "Sort Order" %}</label>
+                            <select id="sort_order" name="sort_order" class="sort-order">
+                                <option value="ascending">{% trans "Ascending" %}</option>
+                                <option value="descending">{% trans "Descending" %}</option>
                             </select>
                         </div>
                     </fieldset>

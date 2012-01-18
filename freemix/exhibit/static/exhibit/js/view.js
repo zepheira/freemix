@@ -10,7 +10,6 @@
         }
     }
 
-
     Freemix.exhibit.viewContainer = {
         id: "",
         findWidget: function() {
@@ -154,7 +153,7 @@
             var title = content.find("#title_property");
             var title_link = content.find("#title_link_property");
 
-            this._setupSelectOptionHandler(title, "title", titles, true);
+            this._setupPropertySelect(title, "title", titles, true);
             title.change(function() {
                  if (title.val() && links.length > 0) {
                      title_link.removeAttr("disabled");
@@ -166,7 +165,7 @@
             });
 
             if (links.length > 0) {
-                 this._setupSelectOptionHandler(title_link, "titleLink", links, true);
+                 this._setupPropertySelect(title_link, "titleLink", links, true);
             } else {
                  title_link.attr("disabled", true);
             }
@@ -174,9 +173,17 @@
             title_link.change();
 
         },
-        _setupSelectOptionHandler: function(selector, key, collection, nullable) {
-            var config = this.config;
 
+        _setupMultiPropertySortEditor: function() {
+            var content = this.getContent();
+            var sort = content.find("#sort_property");
+            var order = content.find("#sort_order");
+            var props = Freemix.property.enabledPropertiesArray();
+            this._populatePropertySelect(sort, props, true);
+            this._setupSelectMultiPropertyHandler(sort, "orders");
+            this._setupSelectMultiPropertyHandler(order, "directions");
+        },
+        _populatePropertySelect: function(selector, collection, nullable) {
             $.each(collection, function() {
                 var option = $("<option></option>");
                 option.attr("value", this.name());
@@ -187,55 +194,81 @@
             if (nullable) {
                 selector.prepend("<option value=''></option>");
             }
-             selector.change(function() {
-                  var value = $(this).val();
-                  if (value && value != ( "" || undefined)) {
-                      config[key] = value;
-                  } else {
-                      config[key] = undefined;
-                  }
-              }).val(config[key]);
-
-             if (!selector.val()) {
-                selector.get(0).options[0].selected = true;
-             }
-
         },
 
-        _setupMultiSelectOptionHandler: function(selector, key, collection) {
+        _setupSelectPropertyHandler: function(selector, key) {
             var config = this.config;
-            var value = this.config[key];
-            if (value) {
-                $.each(value, function() {
-                    var prop = Freemix.property.propertyList[this];
-                    if (prop.enabled()) {
-                        var option = $("<option selected='selected'></option>");
-                        option.attr("name", prop.name());
-                        option.text(prop.label());
-                        selector.append(option);
-                    }
-                });
-            }
 
-            $.each(collection, function() {
-                if ($.inArray(this.name(), value) < 0) {
-                    var option = $("<option></option>");
-                    option.attr("name", this.name());
-                    option.text(this.label());
-                    selector.append(option);
+            selector.change(function() {
+                 var value = $(this).val();
+                 if (value && value != ( "" || undefined)) {
+                     config[key] = value;
+                 } else {
+                     config[key] = undefined;
+                 }
+             }).val(config[key]);
+
+            if (!selector.val()) {
+               selector.get(0).options[0].selected = true;
+            }
+        },
+
+        _setupSelectMultiPropertyHandler: function(selector, key) {
+            var config = this.config;
+
+            selector.change(function() {
+                var value = $(this).val();
+                if ($.isArray(value)) {
+                    config[key] = value;
+                } else if (value && value != ( "" || undefined)) {
+                    config[key] = [value];
+                } else {
+                    config[key] = [];
                 }
             });
 
-            selector.parent().on('change', 'select', function() {
-                config[key] = $(this).val();
-            });
-
-            selector.multiselect({width: 400, height: 125, sortable: true});
-
-
-
-
+            if (config[key] && config[key].length > 0) {
+                selector.val(config[key][0]);
+            } else {
+                selector.val('');
+            }
         },
+
+        _setupPropertySelect: function(selector, key, collection, nullable) {
+            this._populatePropertySelect(selector, collection, nullable);
+            this._setupSelectPropertyHandler(selector, key);
+        },
+//        _setupMultiSelectOptionHandler: function(selector, key, collection) {
+//            var config = this.config;
+//            var value = this.config[key];
+//            if (value) {
+//                $.each(value, function() {
+//                    var prop = Freemix.property.propertyList[this];
+//                    if (prop.enabled()) {
+//                        var option = $("<option selected='selected'></option>");
+//                        option.attr("name", prop.name());
+//                        option.text(prop.label());
+//                        selector.append(option);
+//                    }
+//                });
+//            }
+//
+//            $.each(collection, function() {
+//                if ($.inArray(this.name(), value) < 0) {
+//                    var option = $("<option></option>");
+//                    option.attr("name", this.name());
+//                    option.text(this.label());
+//                    selector.append(option);
+//                }
+//            });
+//
+//            selector.parent().on('change', 'select', function() {
+//                config[key] = $(this).val();
+//            });
+//
+//            selector.multiselect({width: 400, height: 125, sortable: true});
+//
+//        },
         _renderListLens: function(config) {
             var lens = $("<div class='list-lens' ex:role='lens' style='display:none'></div>");
             var props = Freemix.property.propertyList;
@@ -284,11 +317,19 @@
              }
         },
         _renderOrder: function(view, config) {
+            var show_directions = true;
             if (config.orders && (config.orders.length > 0)) {
-                var orders = config.orders.join(",");
                 view.attr("ex:orders", this._mapExpressions(config.orders));
-            } else if (config.title) {
-                view.attr("ex:orders", this._expression(config.title));
+                if (config.directions && (config.directions.length == config.orders.length)) {
+                    view.attr("ex:directions", config.directions.join(","));
+                }
+            } else {
+                if (config.title) {
+                    view.attr("ex:orders", this._expression(config.title));
+                }
+                if (config.directions && (config.directions.length > 0)) {
+                    view.attr("ex:directions", config.directions[0]);
+                }
             }
 
             if (config.possibleOrders && config.possibleOrders.length > 0) {

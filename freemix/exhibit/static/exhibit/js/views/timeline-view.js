@@ -19,31 +19,17 @@
          var top_band = content.find("#top-band-unit");
          var bottom_band = content.find("#bottom-band-unit");
 
-         top_band.change(function() {
-             var value = $(this).val();
-             model.config.topBandUnit = $(this).val();
-         }).val(model.config.topBandUnit);
-
-         bottom_band.change(function() {
-             var value = $(this).val();
-             model.config.bottomBandUnit = $(this).val();
-         }).val(model.config.bottomBandUnit);
-
-         if (!top_band.val()) {
-             top_band.get(0).options[0].selected = true;
-             top_band.change();
-         }
-         if (!bottom_band.val()) {
-             bottom_band.get(0).options[0].selected = true;
-             bottom_band.change();
-         }
+         this._setupSelectPropertyHandler(top_band, "topBandUnit");
+         this._setupSelectPropertyHandler(bottom_band, "bottomBandUnit");
+         top_band.change();
+         bottom_band.change();
 
          var dates = Freemix.property.getPropertiesWithTypes(model.propertyTypes);
          var colors = Freemix.property.enabledPropertiesArray();
 
-         model._setupSelectOptionHandler(start, "startDate", dates);
-         model._setupSelectOptionHandler(end, "endDate", dates, true);
-         model._setupSelectOptionHandler(color, "colorKey", colors, true);
+         model._setupPropertySelect(start, "startDate", dates);
+         model._setupPropertySelect(end, "endDate", dates, true);
+         model._setupPropertySelect(color, "colorKey", colors, true);
 
          start.change();
          end.change();
@@ -79,10 +65,10 @@
         if (config.endDate) {
             view.attr("ex:end", expression(config.endDate));
         }
-        if (config.topBandUnit) {
+        if (config.topBandUnit && config.topBandUnit.length > 0 && config.topBandUnit !="auto") {
             view.attr("ex:topBandUnit", config.topBandUnit);
         }
-        if (config.bottomBandUnit) {
+        if (config.bottomBandUnit && config.bottomBandUnit.length > 0 && config.bottomBandUnit != "auto") {
             view.attr("ex:bottomBandUnit", config.bottomBandUnit);
         }
         if (config.topBandPixelsPerUnit) {

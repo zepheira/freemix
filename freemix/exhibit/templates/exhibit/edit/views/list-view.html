@@ -14,15 +14,18 @@
                             <input type="text" id="view_label_input"/>
                         </div>
 
-{#                        <div id="sort_options">#}
-{#                            <h3>Sort Options</h3>#}
-                                <div class="ctrlHolder multiselect">
-                                    <label for="sort_order">{% trans "Sort By" %}</label>
-                                    <select multiple="multiple" id="sort_order" name="sort_order[]" class="sort-order">
-                                    </select>
-                                </div>
+                        <div class="ctrlHolder pull-down">
+                            <label for="sort_property">{% trans "Sort By" %}</label>
+                            <select id="sort_property"></select>
+                        </div>
+                        <div class="ctrlHolder pull-down">
+                            <label for="sort_order">{% trans "Sort Order" %}</label>
+                            <select id="sort_order" name="sort_order" class="sort-order">
+                                <option value="ascending">{% trans "Ascending" %}</option>
+                                <option value="descending">{% trans "Descending" %}</option>
+                            </select>
+                        </div>
 
-{#                        </div>#}
                     </fieldset>
                 </form>
             </div>
