@@ -6,7 +6,8 @@
         thumbnail: "/static/exhibit/img/search-facet.png",
         label: "Search",
         config: {
-            type: "search"
+            type: "search",
+            name: "Search"
         },
         generateExhibitHTML: function (config) {
             config = config || this.config;
