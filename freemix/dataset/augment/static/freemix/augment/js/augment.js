@@ -79,7 +79,7 @@
                     text: prop.label()
                 }).appendTo("select#edit_field_dialog_fields");
             });
-            root.find("select#edit_field_dialog_fields").multiselect("reset");
+            root.find("select#edit_field_dialog_fields").multiselect("refresh");
             root.find(".error").removeClass("error");
             root.find(".errorField").hide();
         }
